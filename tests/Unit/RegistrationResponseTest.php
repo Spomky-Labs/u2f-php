@@ -67,7 +67,6 @@ final class RegistrationResponseTest extends TestCase
         $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
         $request->getApplicationId()->willReturn('https://twofactors:4043');
         self::assertTrue($response->isValid($request->reveal(), [__DIR__.'/../certificates/yubico.crt']));
-
     }
 
     /**

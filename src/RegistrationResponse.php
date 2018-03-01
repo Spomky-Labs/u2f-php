@@ -25,7 +25,7 @@ class RegistrationResponse
         '1d8764f0f7cd1352df6150045c8f638e517270e8b5dda1c63ade9c2280240cae',
         'd0edc9a91a1677435a953390865d208c55b3183c6759c9b5a7ff494c322558eb',
         '6073c436dcd064a48127ddbf6032ac1a66fd59a0c24434f070d4e564c124c897',
-        'ca993121846c464d666096d35f13bf44c1b05af205f9b4a1e00cf6cc10c5e511'
+        'ca993121846c464d666096d35f13bf44c1b05af205f9b4a1e00cf6cc10c5e511',
     ];
 
     /**
@@ -76,7 +76,7 @@ class RegistrationResponse
      *
      * @return RegistrationResponse
      */
-    public static function create(string $challengeResponse): RegistrationResponse
+    public static function create(string $challengeResponse): self
     {
         return new self($challengeResponse);
     }
@@ -108,9 +108,9 @@ class RegistrationResponse
     /**
      * @param array $data
      *
-     * @return ClientData
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return ClientData
      */
     private function retrieveClientData(array $data): ClientData
     {
@@ -155,22 +155,22 @@ class RegistrationResponse
     /**
      * @param array $data
      *
-     * @return array
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return array
      */
     private function extractKeyData(array $data): array
     {
         if (!array_key_exists('registrationData', $data) || !is_string($data['registrationData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        $stream = fopen('php://memory','r+');
+        $stream = fopen('php://memory', 'r+');
         $registrationData = Base64Url::decode($data['registrationData']);
         fwrite($stream, $registrationData);
         rewind($stream);
 
         $reservedByte = fread($stream, 1);
-        if (!is_string($reservedByte ) || "\x05" !== $reservedByte) { // First byte is reserved with value x05
+        if (!is_string($reservedByte) || "\x05" !== $reservedByte) { // First byte is reserved with value x05
             throw new \InvalidArgumentException('Invalid response.');
         }
 
@@ -193,13 +193,13 @@ class RegistrationResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        $highOrder = ord($certHeader[2])<<8;
+        $highOrder = ord($certHeader[2]) << 8;
         $lowOrder = ord($certHeader[3]);
         $certLength = $highOrder + $lowOrder;
 
         $certBody = fread($stream, $certLength);
         $derCertificate = $this->unusedBytesFix($certHeader.$certBody);
-        $pemCert  = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
+        $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
         $pemCert .= chunk_split(base64_encode($derCertificate), 64, PHP_EOL);
         $pemCert .= '-----END CERTIFICATE-----'.PHP_EOL;
 
@@ -228,15 +228,16 @@ class RegistrationResponse
     private function unusedBytesFix(string $derCertificate): string
     {
         $certificateHash = hash('sha256', $derCertificate);
-        if(in_array($certificateHash, self::CERTIFICATES_HASHES)) {
+        if (in_array($certificateHash, self::CERTIFICATES_HASHES)) {
             $derCertificate[mb_strlen($derCertificate, '8bit') - 257] = "\0";
         }
+
         return $derCertificate;
     }
 
     /**
      * @param RegistrationRequest $challenge
-     * @param string[]              $attestationCertificates
+     * @param string[]            $attestationCertificates
      *
      * @return bool
      */
@@ -249,11 +250,11 @@ class RegistrationResponse
             return false;
         }
 
-        if(!empty($attestationCertificates) && openssl_x509_checkpurpose($this->registeredKey->getAttestationCertificate(), X509_PURPOSE_ANY, $attestationCertificates) !== true) {
+        if (!empty($attestationCertificates) && openssl_x509_checkpurpose($this->registeredKey->getAttestationCertificate(), X509_PURPOSE_ANY, $attestationCertificates) !== true) {
             return false;
         }
 
-        $dataToVerify  = "\0";
+        $dataToVerify = "\0";
         $dataToVerify .= hash('sha256', $this->clientData->getOrigin(), true);
         $dataToVerify .= hash('sha256', $this->clientData->getRawData(), true);
         $dataToVerify .= $this->registeredKey->getKeyHandler();

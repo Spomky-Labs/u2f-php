@@ -35,7 +35,7 @@ class PublicKey implements \JsonSerializable
      *
      * @return PublicKey
      */
-    public static function create(string $publicKey): PublicKey
+    public static function create(string $publicKey): self
     {
         return new self($publicKey);
     }

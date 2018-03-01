@@ -43,12 +43,12 @@ class SignatureRequest implements \JsonSerializable
     private function __construct(string $applicationId, array $registeredKeys)
     {
         $this->applicationId = $applicationId;
-        foreach($registeredKeys as $registeredKey) {
+        foreach ($registeredKeys as $registeredKey) {
             if (!$registeredKey instanceof RegisteredKey) {
                 throw new \InvalidArgumentException('Invalid registered keys list.');
             }
             $this->registeredKeys[Base64Url::encode($registeredKey->getKeyHandler())] = $registeredKey;
-        };
+        }
         $this->challenge = random_bytes(32);
     }
 
@@ -56,11 +56,11 @@ class SignatureRequest implements \JsonSerializable
      * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
      *
-     * @return SignatureRequest
-     *
      * @throws \Exception
+     *
+     * @return SignatureRequest
      */
-    public static function create(string $applicationId, array $registeredKeys): SignatureRequest
+    public static function create(string $applicationId, array $registeredKeys): self
     {
         return new self($applicationId, $registeredKeys);
     }
@@ -127,8 +127,8 @@ class SignatureRequest implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'appId' => $this->applicationId,
-            'challenge' => Base64Url::encode($this->challenge),
+            'appId'          => $this->applicationId,
+            'challenge'      => Base64Url::encode($this->challenge),
             'registeredKeys' => array_values($this->registeredKeys),
         ];
     }

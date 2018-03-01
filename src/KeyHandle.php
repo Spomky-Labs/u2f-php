@@ -35,7 +35,7 @@ class KeyHandle implements \JsonSerializable
      *
      * @return KeyHandle
      */
-    public static function create(string $keyHandle): KeyHandle
+    public static function create(string $keyHandle): self
     {
         return new self($keyHandle);
     }
