@@ -1,6 +1,12 @@
 FIDO U2F Support for PHP
 ========================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Spomky-Labs/u2f-php/badge.svg?branch=master)](https://coveralls.io/github/Spomky-Labs/u2f-php?branch=master)
+
+[![Build Status](https://travis-ci.org/Spomky-Labs/u2f-php.svg?branch=master)](https://travis-ci.org/Spomky-Labs/u2f-php)
+[![PHP 7 ready](http://php7ready.timesplinter.ch/spomky-labs/u2f-php/master/badge.svg)](https://travis-ci.org/spomky-labs/u2f-php)
+
 [![Latest Stable Version](https://poser.pugx.org/spomky-labs/u2f-php/v/stable.png)](https://packagist.org/packages/spomky-labs/u2f-php)
 [![Total Downloads](https://poser.pugx.org/spomky-labs/u2f-php/downloads.png)](https://packagist.org/packages/spomky-labs/u2f-php)
 [![Latest Unstable Version](https://poser.pugx.org/spomky-labs/u2f-php/v/unstable.png)](https://packagist.org/packages/spomky-labs/u2f-php)
