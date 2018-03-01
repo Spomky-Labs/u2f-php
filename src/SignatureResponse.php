@@ -77,7 +77,7 @@ class SignatureResponse
      *
      * @return SignatureResponse
      */
-    public static function create(string $signatureResponse): SignatureResponse
+    public static function create(string $signatureResponse): self
     {
         return new self($signatureResponse);
     }
@@ -125,9 +125,9 @@ class SignatureResponse
     /**
      * @param array $data
      *
-     * @return KeyHandle
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return KeyHandle
      */
     private function retrieveKeyHandle(array $data): KeyHandle
     {
@@ -141,9 +141,9 @@ class SignatureResponse
     /**
      * @param array $data
      *
-     * @return ClientData
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return ClientData
      */
     private function retrieveClientData(array $data): ClientData
     {
@@ -157,9 +157,9 @@ class SignatureResponse
     /**
      * @param array $data
      *
-     * @return array
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return array
      */
     private function extractSignatureData(array $data): array
     {
@@ -167,22 +167,22 @@ class SignatureResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        $stream = fopen('php://memory','r+');
+        $stream = fopen('php://memory', 'r+');
         $signatureData = Base64Url::decode($data['signatureData']);
         fwrite($stream, $signatureData);
         rewind($stream);
 
         $userPresenceByte = fread($stream, 1);
-        if (!is_string($userPresenceByte )) {
+        if (!is_string($userPresenceByte)) {
             throw new \InvalidArgumentException('Invalid response.');
         }
         $userPresence = (bool) ord($userPresenceByte);
 
         $counterBytes = fread($stream, 4);
-        if (!is_string($counterBytes )) {
+        if (!is_string($counterBytes)) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        $counter = unpack("Nctr", $counterBytes)['ctr'];
+        $counter = unpack('Nctr', $counterBytes)['ctr'];
         $signature = '';
         while (!feof($stream)) {
             $tmp = fread($stream, 1024);
@@ -204,6 +204,7 @@ class SignatureResponse
     /**
      * @param SignatureRequest $request
      * @param int|null         $currentCounter
+     *
      * @return bool
      */
     public function isValid(SignatureRequest $request, ?int $currentCounter = null): bool
@@ -215,11 +216,11 @@ class SignatureResponse
             return false;
         }
 
-        if($currentCounter !== null && $currentCounter >= $this->counter ) {
+        if ($currentCounter !== null && $currentCounter >= $this->counter) {
             return false;
         }
 
-        $dataToVerify  = hash('sha256', $this->clientData->getOrigin(), true);
+        $dataToVerify = hash('sha256', $this->clientData->getOrigin(), true);
         $dataToVerify .= $this->userPresenceByte;
         $dataToVerify .= $this->counterBytes;
         $dataToVerify .= hash('sha256', $this->clientData->getRawData(), true);

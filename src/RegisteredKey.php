@@ -61,7 +61,7 @@ class RegisteredKey implements \JsonSerializable
      *
      * @return RegisteredKey
      */
-    public static function create(string $version, KeyHandle $keyHandler, PublicKey $publicKey, string $certificate): RegisteredKey
+    public static function create(string $version, KeyHandle $keyHandler, PublicKey $publicKey, string $certificate): self
     {
         return new self($version, $keyHandler, $publicKey, $certificate);
     }
@@ -95,11 +95,11 @@ class RegisteredKey implements \JsonSerializable
      */
     public function getPublicKeyAsPem(): string
     {
-        $der  = "\x30\x59\x30\x13\x06\x07\x2a\x86\x48\xce\x3d\x02\x01";
+        $der = "\x30\x59\x30\x13\x06\x07\x2a\x86\x48\xce\x3d\x02\x01";
         $der .= "\x06\x08\x2a\x86\x48\xce\x3d\x03\x01\x07\x03\x42";
         $der .= "\0".$this->publicKey;
 
-        $pem  = '-----BEGIN PUBLIC KEY-----'.PHP_EOL;
+        $pem = '-----BEGIN PUBLIC KEY-----'.PHP_EOL;
         $pem .= chunk_split(base64_encode($der), 64, PHP_EOL);
         $pem .= '-----END PUBLIC KEY-----'.PHP_EOL;
 
@@ -120,7 +120,7 @@ class RegisteredKey implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'version' => $this->version,
+            'version'   => $this->version,
             'keyHandle' => Base64Url::encode($this->keyHandler),
         ];
     }

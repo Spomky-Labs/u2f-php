@@ -17,7 +17,7 @@ use Base64Url\Base64Url;
 
 class RegistrationRequest implements \JsonSerializable
 {
-    private const PROTOCOL_VERSION = "U2F_V2";
+    private const PROTOCOL_VERSION = 'U2F_V2';
 
     /**
      * @var string
@@ -45,11 +45,11 @@ class RegistrationRequest implements \JsonSerializable
     /**
      * @param string $applicationId
      *
-     * @return RegistrationRequest
-     *
      * @throws \Exception
+     *
+     * @return RegistrationRequest
      */
-    public static function create(string $applicationId): RegistrationRequest
+    public static function create(string $applicationId): self
     {
         return new self($applicationId);
     }
@@ -76,9 +76,9 @@ class RegistrationRequest implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'version' => self::PROTOCOL_VERSION,
+            'version'   => self::PROTOCOL_VERSION,
             'challenge' => Base64Url::encode($this->challenge),
-            'appId' => $this->applicationId,
+            'appId'     => $this->applicationId,
         ];
     }
 }

@@ -46,7 +46,6 @@ class ClientData
      * ClientData constructor.
      *
      * @param string $rawData
-     *
      * @param array  $clientData
      */
     private function __construct(string $rawData, array $clientData)
@@ -59,9 +58,10 @@ class ClientData
 
     /**
      * @param string $clientData
+     *
      * @return ClientData
      */
-    public static function create(string $clientData): ClientData
+    public static function create(string $clientData): self
     {
         $rawData = Base64Url::decode($clientData);
         if (!is_string($rawData)) {
@@ -72,7 +72,7 @@ class ClientData
             throw new \InvalidArgumentException('Invalid client data.');
         }
 
-        $diff = array_diff_key(get_class_vars(self::class),$clientData);
+        $diff = array_diff_key(get_class_vars(self::class), $clientData);
         unset($diff['rawData']);
         if (!empty($diff)) {
             throw new \InvalidArgumentException('Invalid client data.');
