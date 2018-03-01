@@ -17,6 +17,7 @@ matrix:
         - php: nightly
 
 before_script:
+    - mkdir -p build/logs
     - composer self-update
     - if [[ $deps = low ]]; then composer update --no-interaction --prefer-lowest ; fi
     - if [[ !$deps ]]; then composer install --no-interaction ; fi
