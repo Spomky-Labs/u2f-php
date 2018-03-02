@@ -66,8 +66,15 @@ final class SignatureResponseTest extends TestCase
         self::assertTrue($response->isValid($request->reveal(), 180));
     }
 
-    private function getValidSignatureResponse(): string
+    /**
+     * @return array
+     */
+    private function getValidSignatureResponse(): array
     {
-        return '{"keyHandle":"Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ","clientData":"eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9","signatureData":"AQAAALowRQIgU-oyzSNitffUGZgRSEijbBytbz8ZwxZvnKSVC90oAm8CIQDoMW5ZtwUooptNB5M-2W_jSjT0yNOkWnU_w1e9aj7vMA"}';
+        return [
+            "keyHandle" => "Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ",
+            "clientData" => "eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9",
+            "signatureData" => "AQAAALowRQIgU-oyzSNitffUGZgRSEijbBytbz8ZwxZvnKSVC90oAm8CIQDoMW5ZtwUooptNB5M-2W_jSjT0yNOkWnU_w1e9aj7vMA"
+        ];
     }
 }

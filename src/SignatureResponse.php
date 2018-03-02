@@ -55,31 +55,30 @@ class SignatureResponse
     /**
      * RegistrationChallengeMiddleware constructor.
      *
-     * @param string $signatureResponse
+     * @param array $data
      */
-    private function __construct(string $signatureResponse)
+    private function __construct(array $data)
     {
-        $json = json_decode($signatureResponse, true);
-        if (!is_array($json)) {
+        if (array_key_exists('errorCode', $data)) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        $this->keyHandle = $this->retrieveKeyHandle($json);
-        $this->clientData = $this->retrieveClientData($json);
+        $this->keyHandle = $this->retrieveKeyHandle($data);
+        $this->clientData = $this->retrieveClientData($data);
         if ('navigator.id.getAssertion' !== $this->clientData->getType()) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        list($this->userPresence, $this->userPresenceByte, $this->counter, $this->counterBytes, $this->signature) = $this->extractSignatureData($json);
+        list($this->userPresence, $this->userPresenceByte, $this->counter, $this->counterBytes, $this->signature) = $this->extractSignatureData($data);
     }
 
     /**
-     * @param string $signatureResponse
+     * @param array $data
      *
      * @return SignatureResponse
      */
-    public static function create(string $signatureResponse): self
+    public static function create(array $data): self
     {
-        return new self($signatureResponse);
+        return new self($data);
     }
 
     /**

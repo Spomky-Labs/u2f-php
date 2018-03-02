@@ -46,39 +46,35 @@ class RegistrationResponse
     /**
      * RegistrationChallengeMiddleware constructor.
      *
-     * @param string $challengeResponse
+     * @param array $data
      */
-    private function __construct(string $challengeResponse)
+    private function __construct(array $data)
     {
-        $json = json_decode($challengeResponse, true);
-        if (!is_array($json)) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
-        if (array_key_exists('errorCode', $json)) {
+        if (array_key_exists('errorCode', $data)) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        $this->checkVersion($json);
-        $clientData = $this->retrieveClientData($json);
+        $this->checkVersion($data);
+        $clientData = $this->retrieveClientData($data);
         if ('navigator.id.finishEnrollment' !== $clientData->getType()) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        $this->checkChallenge($json, $clientData);
-        list($publicKey, $keyHandle, $pemCert, $signature) = $this->extractKeyData($json);
+        $this->checkChallenge($data, $clientData);
+        list($publicKey, $keyHandle, $pemCert, $signature) = $this->extractKeyData($data);
 
         $this->clientData = $clientData;
-        $this->registeredKey = RegisteredKey::create($json['version'], $keyHandle, $publicKey, $pemCert);
+        $this->registeredKey = RegisteredKey::create($data['version'], $keyHandle, $publicKey, $pemCert);
         $this->signature = $signature;
     }
 
     /**
-     * @param string $challengeResponse
+     * @param array $data
      *
      * @return RegistrationResponse
      */
-    public static function create(string $challengeResponse): self
+    public static function create(array $data): self
     {
-        return new self($challengeResponse);
+        return new self($data);
     }
 
     /**
