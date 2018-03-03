@@ -42,7 +42,7 @@ class RegistrationRequest implements \JsonSerializable
      *
      * @throws \Exception
      */
-    private function __construct(string $applicationId, array $registeredKeys = [])
+    private function __construct(string $applicationId, array $registeredKeys)
     {
         $this->applicationId = $applicationId;
         $this->challenge = random_bytes(32);
@@ -55,15 +55,16 @@ class RegistrationRequest implements \JsonSerializable
     }
 
     /**
-     * @param string $applicationId
+     * @param string          $applicationId
+     * @param RegisteredKey[] $registeredKeys
      *
      * @throws \Exception
      *
      * @return RegistrationRequest
      */
-    public static function create(string $applicationId): self
+    public static function create(string $applicationId, array $registeredKeys = []): self
     {
-        return new self($applicationId);
+        return new self($applicationId, $registeredKeys);
     }
 
     /**
