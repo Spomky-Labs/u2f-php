@@ -50,7 +50,7 @@ class RegistrationResponse
      */
     private function __construct(array $data)
     {
-        if (array_key_exists('errorCode', $data)) {
+        if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
