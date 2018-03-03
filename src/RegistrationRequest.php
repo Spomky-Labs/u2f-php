@@ -100,7 +100,7 @@ class RegistrationRequest implements \JsonSerializable
             'registerRequests' => [
                 ['version'   => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
             ],
-            'registeredKeys' => $this->registeredKeys,
+            'registeredKeys' => array_values($this->registeredKeys),
         ];
     }
 }
