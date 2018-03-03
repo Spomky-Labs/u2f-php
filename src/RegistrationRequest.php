@@ -30,16 +30,28 @@ class RegistrationRequest implements \JsonSerializable
     private $challenge;
 
     /**
+     * @var RegisteredKey[]
+     */
+    private $registeredKeys = [];
+
+    /**
      * RegistrationRequest constructor.
      *
-     * @param string $applicationId
+     * @param string          $applicationId
+     * @param RegisteredKey[] $registeredKeys
      *
      * @throws \Exception
      */
-    private function __construct(string $applicationId)
+    private function __construct(string $applicationId, array $registeredKeys = [])
     {
         $this->applicationId = $applicationId;
         $this->challenge = random_bytes(32);
+        foreach ($registeredKeys as $registeredKey) {
+            if (!$registeredKey instanceof RegisteredKey) {
+                throw new \InvalidArgumentException('Invalid registered keys list.');
+            }
+            $this->registeredKeys[Base64Url::encode($registeredKey->getKeyHandler())] = $registeredKey;
+        }
     }
 
     /**
@@ -71,14 +83,24 @@ class RegistrationRequest implements \JsonSerializable
     }
 
     /**
+     * @return RegisteredKey[]
+     */
+    public function getRegisteredKeys(): array
+    {
+        return $this->registeredKeys;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function jsonSerialize(): array
     {
         return [
-            'version'   => self::PROTOCOL_VERSION,
-            'challenge' => Base64Url::encode($this->challenge),
             'appId'     => $this->applicationId,
+            'registerRequests' => [
+                ['version'   => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
+            ],
+            'registeredKeys' => $this->registeredKeys,
         ];
     }
 }

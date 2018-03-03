@@ -30,8 +30,11 @@ final class RegistrationRequestTest extends TestCase
 
         self::assertEquals('https://twofactors:4043', $request->getApplicationId());
         self::assertEquals(32, mb_strlen($request->getChallenge(), '8bit'));
-        self::assertArrayHasKey('version', $request->jsonSerialize());
-        self::assertArrayHasKey('challenge', $request->jsonSerialize());
+        self::assertArrayHasKey('registerRequests', $request->jsonSerialize());
+        self::assertArrayHasKey('registeredKeys', $request->jsonSerialize());
         self::assertArrayHasKey('appId', $request->jsonSerialize());
+        self::assertInternalType('array', $request->jsonSerialize()['registerRequests']);
+        self::assertInternalType('array', $request->jsonSerialize()['registeredKeys']);
+        self::assertEquals(1, count($request->jsonSerialize()['registerRequests']));
     }
 }
