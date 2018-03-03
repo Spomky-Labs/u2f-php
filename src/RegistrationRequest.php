@@ -96,7 +96,7 @@ class RegistrationRequest implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'appId'     => $this->applicationId,
+            'appId'            => $this->applicationId,
             'registerRequests' => [
                 ['version'   => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
             ],
