@@ -64,9 +64,9 @@ final class ClientDataTest extends TestCase
     public function theClientDataIsValid()
     {
         $data = json_encode([
-            'typ' => 'foo',
-            'challenge' => Base64Url::encode('bar'),
-            'origin' => 'here',
+            'typ'        => 'foo',
+            'challenge'  => Base64Url::encode('bar'),
+            'origin'     => 'here',
             'cid_pubkey' => 'none',
         ]);
         $client_data = ClientData::create(
