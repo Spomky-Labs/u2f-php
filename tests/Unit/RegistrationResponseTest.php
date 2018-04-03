@@ -25,6 +25,179 @@ final class RegistrationResponseTest extends TestCase
 {
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theRegistrationRequestContainsAnError()
+    {
+        RegistrationResponse::create([
+            'errorCode' => 1,
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function thereIsNoClientData()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theClientDataIsInvalid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 123,
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theVersionIsMissing()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theVersionIsInvalid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 123,
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unsupported protocol version.
+     */
+    public function theVersionIsNotSupported()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V1',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theChallengeIsMissing()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theChallengeIsInvalid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'challenge'        => 123,
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theChallengeIsNotTheSameAsTheOneInTheClientData()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'challenge'        => Base64Url::encode('bad value'),
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theRegistrationDataIsMissing()
+    {
+        RegistrationResponse::create([
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theRegistrationDataIsInvalid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 123,
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theTypeIsNotSupported()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAwMDBaGA8yMDUwMDkwNDAwMDAwMFowKDEmMCQGA1UEAwwdWXViaWNvIFUyRiBFRSBTZXJpYWwgOTU4MTUwMzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT9uN6zoe1w62NsBm62AGmWpflw_LXbiPw7MF1B5ZZvDBtUuFL-8KCQftF_O__CnU0yG5z4qEos6qA4yr011ZjeoyYwJDAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTALBgkqhkiG9w0BAQsDggEBAH7T-2zMJSAT-C8hjCo32mAx0g5_MIHa_K6xKPx_myM5FL-2TWE18XziIfp2T0U-8Sc6jOlllWRCuy8eR0g_c33LyYtYU3f-9QsnDgKJ-IQ28a3PSbJiHuXjAt9VW5q3QnLgafkYFJs97E8SIosQwPiN42r1inS7RCuFrgBTZL2mcCBY_B8th5tTARHqYOhsY_F_pZRMyD8KommEiz7jiKbAnmsFlT_LuPR-g6J-AHKmPDKtZIZOkm1xEvoZl_eDllb7syvo94idDwFFUZonr92ORrBMpCkNhUC2NLiGFh51iMhimdzdZDXRZ4o6bwp0gpxN0_cMNSTR3fFteK3SG2QwRAIgDh1xe2NkrGHygQQsdbUbsIDo5rzK98uGFdtRnnkAcMECIAueb-X0G1j67XwU3JRd8_9bAJiFBnzTxvTWifRUtiUm',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJ1bnN1cHBvcnRlZC50eXBlIiwiY2hhbGxlbmdlIjoiM2xwM2xjdVlTSG8zeXJHZnVMdlE1TkVkLUxXRFRIUlZhRElLWGZCdmg4cyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9',
+        ]);
+    }
+
+    /**
+     * @test
      */
     public function iCanLoadAValidRegistrationResponse()
     {

@@ -64,9 +64,6 @@ class ClientData
     public static function create(string $clientData): self
     {
         $rawData = Base64Url::decode($clientData);
-        if (!is_string($rawData)) {
-            throw new \InvalidArgumentException('Invalid client data.');
-        }
         $clientData = json_decode($rawData, true);
         if (!is_array($clientData)) {
             throw new \InvalidArgumentException('Invalid client data.');
