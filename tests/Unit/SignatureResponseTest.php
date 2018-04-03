@@ -29,6 +29,18 @@ final class SignatureResponseTest extends TestCase
 {
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid response.
+     */
+    public function theSignatureRequestContainsAnError()
+    {
+        SignatureResponse::create([
+            'errorCode' => 1,
+        ]);
+    }
+
+    /**
+     * @test
      */
     public function iCanCreateASignatureResponseAndUseIt()
     {
