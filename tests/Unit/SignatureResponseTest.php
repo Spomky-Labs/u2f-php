@@ -79,6 +79,90 @@ final class SignatureResponseTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function theChallengeInTheRequestDoesNotMatchTheChallengeInTheClientData()
+    {
+        $response = SignatureResponse::create(
+            $this->getValidSignatureResponse()
+        );
+
+        $request = $this->prophesize(SignatureRequest::class);
+        $request->getChallenge()->willReturn('foo');
+        $request->getApplicationId()->willReturn('https://twofactors:4043');
+        $request->hasRegisteredKey(Argument::type(KeyHandle::class))->willReturn(true);
+        $request->getRegisteredKey(Argument::type(KeyHandle::class))->willReturn(
+            RegisteredKey::create(
+                'U2F_V2',
+                KeyHandle::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
+                'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
+                'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
+                '-----END PUBLIC KEY-----'.PHP_EOL
+            )
+        );
+
+        self::assertFalse($response->isValid($request->reveal(), 180));
+    }
+
+    /**
+     * @test
+     */
+    public function theApplicationIdInTheRequestDoesNotMatchTheApplicationIdInTheClientData()
+    {
+        $response = SignatureResponse::create(
+            $this->getValidSignatureResponse()
+        );
+
+        $request = $this->prophesize(SignatureRequest::class);
+        $request->getChallenge()->willReturn(Base64Url::decode('F-zksRh5thzKyZR6O0Fr7QxlZ-xEX9_mNH8H3cHn_Po'));
+        $request->getApplicationId()->willReturn('https://no-factors:443');
+        $request->hasRegisteredKey(Argument::type(KeyHandle::class))->willReturn(true);
+        $request->getRegisteredKey(Argument::type(KeyHandle::class))->willReturn(
+            RegisteredKey::create(
+                'U2F_V2',
+                KeyHandle::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
+                'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
+                'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
+                '-----END PUBLIC KEY-----'.PHP_EOL
+            )
+        );
+
+        self::assertFalse($response->isValid($request->reveal(), 180));
+    }
+
+    /**
+     * @test
+     */
+    public function theCounterIsInvalid()
+    {
+        $response = SignatureResponse::create(
+            $this->getValidSignatureResponse()
+        );
+
+        $request = $this->prophesize(SignatureRequest::class);
+        $request->getChallenge()->willReturn(Base64Url::decode('F-zksRh5thzKyZR6O0Fr7QxlZ-xEX9_mNH8H3cHn_Po'));
+        $request->getApplicationId()->willReturn('https://twofactors:4043');
+        $request->hasRegisteredKey(Argument::type(KeyHandle::class))->willReturn(true);
+        $request->getRegisteredKey(Argument::type(KeyHandle::class))->willReturn(
+            RegisteredKey::create(
+                'U2F_V2',
+                KeyHandle::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
+                'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
+                'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
+                '-----END PUBLIC KEY-----'.PHP_EOL
+            )
+        );
+
+        self::assertFalse($response->isValid($request->reveal(), 250));
+    }
+
+    /**
      * @return array
      */
     private function getValidSignatureResponse(): array
