@@ -166,40 +166,43 @@ class RegistrationResponse
         rewind($stream);
 
         $reservedByte = fread($stream, 1);
-        if (!is_string($reservedByte) || "\x05" !== $reservedByte) { // First byte is reserved with value x05
-            throw new \InvalidArgumentException('Invalid response.');
+        if (!is_string($reservedByte) || "\x05" !== $reservedByte) { // 1 byte reserved with value x05
+            throw new \InvalidArgumentException('Bad reserved byte.');
         }
 
-        $publicKey = fread($stream, self::PUBLIC_KEY_LENGTH);
-        if (!is_string($publicKey)) { // Bytes of the public key
-            throw new \InvalidArgumentException('Invalid response.');
-        }
-        $keyHandleLength = fread($stream, 1);
-        if (!is_string($keyHandleLength)) {
-            throw new \InvalidArgumentException('Invalid response.');
+        $publicKey = fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
+        if (!is_string($publicKey) || mb_strlen($publicKey, '8bit') !== self::PUBLIC_KEY_LENGTH) {
+            throw new \InvalidArgumentException('Bad public key length.');
         }
 
-        $keyHandle = fread($stream, ord($keyHandleLength));
-        if (!is_string($keyHandle)) {
-            throw new \InvalidArgumentException('Invalid response.');
+        $keyHandleLength = fread($stream, 1); // 1 byte for the key handle length
+        if (!is_string($keyHandleLength) || ord($keyHandleLength) === 0) {
+            throw new \InvalidArgumentException('Bad key handle length.');
         }
 
-        $certHeader = fread($stream, 4);
-        if (!is_string($certHeader)) {
-            throw new \InvalidArgumentException('Invalid response.');
+        $keyHandle = fread($stream, ord($keyHandleLength)); // x bytes for the key handle
+        if (!is_string($keyHandle) || mb_strlen($keyHandle, '8bit') !== ord($keyHandleLength)) {
+            throw new \InvalidArgumentException('Bad key handle.');
+        }
+
+        $certHeader = fread($stream, 4); // 4 bytes for the certificate header
+        if (!is_string($certHeader) || mb_strlen($certHeader, '8bit') !== 4) {
+            throw new \InvalidArgumentException('Bad certificate header.');
         }
 
         $highOrder = ord($certHeader[2]) << 8;
         $lowOrder = ord($certHeader[3]);
         $certLength = $highOrder + $lowOrder;
-
-        $certBody = fread($stream, $certLength);
+        $certBody = fread($stream, $certLength); // x bytes for the certificate
+        if (!is_string($certBody) || mb_strlen($certBody, '8bit') !== $certLength) {
+            throw new \InvalidArgumentException('Bad certificate.');
+        }
         $derCertificate = $this->unusedBytesFix($certHeader.$certBody);
         $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
         $pemCert .= chunk_split(base64_encode($derCertificate), 64, PHP_EOL);
         $pemCert .= '-----END CERTIFICATE-----'.PHP_EOL;
 
-        $signature = '';
+        $signature = ''; // The rest is the signature
         while (!feof($stream)) {
             $tmp = fread($stream, 1024);
             if (!is_string($tmp)) {

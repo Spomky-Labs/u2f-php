@@ -198,6 +198,111 @@ final class RegistrationResponseTest extends TestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad reserved byte.
+     */
+    public function theReservedByteIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => Base64Url::encode("\x00"),
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad public key length.
+     */
+    public function thePublicKeyLengthIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => Base64Url::encode("\x05-------"),
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad key handle length.
+     */
+    public function theKeyHandleLengthOctetIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad key handle length.
+     */
+    public function theKeyHandleLengthIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6AA',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad key handle.
+     */
+    public function theKeyHandleIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFw',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad certificate header.
+     */
+    public function theCertificateHeaderIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwgg',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bad certificate.
+     */
+    public function theCertificateIsNotValid()
+    {
+        RegistrationResponse::create([
+            'registrationData' => 'BQRXlpZUqJXsfHYh7MCh1us-yprazMqTJyjWXocA0j_UT59xmzHgf1mkT9Dr82nGtYPX396PrUQx4_54haTZo8g6QFrNackWqHMDTcWCFyB7bYzjtetvJFUNhCuhFVWf8FirNPPfq7M09n5Ep0n5uFesFfa8s9vivFZuRbP6-3LQHKEwggItMIIBF6ADAgECAgQFtgV5MAsGCSqGSIb3DQEBCzAuMSwwKgYDVQQDEyNZdWJp',
+            'version'          => 'U2F_V2',
+            'challenge'        => '3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s',
+            'clientData'       => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IjNscDNsY3VZU0hvM3lyR2Z1THZRNU5FZC1MV0RUSFJWYURJS1hmQnZoOHMiLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
+        ]);
+    }
+
+    /**
+     * @test
      */
     public function iCanLoadAValidRegistrationResponse()
     {
