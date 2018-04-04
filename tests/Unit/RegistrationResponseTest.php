@@ -348,6 +348,51 @@ final class RegistrationResponseTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function theChallengeInTheRequestDoesNotMatchTheChallengeInTheClientData()
+    {
+        $response = RegistrationResponse::create(
+            $this->getValidRegistrationResponse()
+        );
+        $request = $this->prophesize(RegistrationRequest::class);
+        $request->getChallenge()->willReturn('foo');
+        $request->getApplicationId()->willReturn('https://twofactors:4043');
+
+        self::assertFalse($response->isValid($request->reveal()));
+    }
+
+    /**
+     * @test
+     */
+    public function theApplicationIdInTheRequestDoesNotMatchTheApplicationIdInTheClientData()
+    {
+        $response = RegistrationResponse::create(
+            $this->getValidRegistrationResponse()
+        );
+        $request = $this->prophesize(RegistrationRequest::class);
+        $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
+        $request->getApplicationId()->willReturn('https://no-factors:443');
+
+        self::assertFalse($response->isValid($request->reveal()));
+    }
+
+    /**
+     * @test
+     */
+    public function theAttestationCertificateIsRejected()
+    {
+        $response = RegistrationResponse::create(
+            $this->getValidRegistrationResponse()
+        );
+        $request = $this->prophesize(RegistrationRequest::class);
+        $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
+        $request->getApplicationId()->willReturn('https://twofactors:4043');
+
+        self::assertFalse($response->isValid($request->reveal(), [__DIR__.'/../certificates/frank4dd-cacert.crt']));
+    }
+
+    /**
      * @return array
      */
     private function getValidRegistrationResponse(): array
