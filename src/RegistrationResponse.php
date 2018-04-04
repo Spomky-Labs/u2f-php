@@ -168,30 +168,35 @@ class RegistrationResponse
         $reservedByte = fread($stream, 1);
         if (!is_string($reservedByte) || "\x05" !== $reservedByte) { // 1 byte reserved with value x05
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad reserved byte.');
         }
 
         $publicKey = fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
         if (!is_string($publicKey) || mb_strlen($publicKey, '8bit') !== self::PUBLIC_KEY_LENGTH) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad public key length.');
         }
 
         $keyHandleLength = fread($stream, 1); // 1 byte for the key handle length
         if (!is_string($keyHandleLength) || ord($keyHandleLength) === 0) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad key handle length.');
         }
 
         $keyHandle = fread($stream, ord($keyHandleLength)); // x bytes for the key handle
         if (!is_string($keyHandle) || mb_strlen($keyHandle, '8bit') !== ord($keyHandleLength)) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad key handle.');
         }
 
         $certHeader = fread($stream, 4); // 4 bytes for the certificate header
         if (!is_string($certHeader) || mb_strlen($certHeader, '8bit') !== 4) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad certificate header.');
         }
 
@@ -201,6 +206,7 @@ class RegistrationResponse
         $certBody = fread($stream, $certLength); // x bytes for the certificate
         if (!is_string($certBody) || mb_strlen($certBody, '8bit') !== $certLength) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Bad certificate.');
         }
         $derCertificate = $this->unusedBytesFix($certHeader.$certBody);
@@ -213,6 +219,7 @@ class RegistrationResponse
             $tmp = fread($stream, 1024);
             if (!is_string($tmp)) {
                 fclose($stream);
+
                 throw new \InvalidArgumentException('Invalid response.');
             }
             $signature .= $tmp;

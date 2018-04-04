@@ -174,6 +174,7 @@ class SignatureResponse
         $userPresenceByte = fread($stream, 1);
         if (!is_string($userPresenceByte)) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Invalid response.');
         }
         $userPresence = (bool) ord($userPresenceByte);
@@ -181,6 +182,7 @@ class SignatureResponse
         $counterBytes = fread($stream, 4);
         if (!is_string($counterBytes)) {
             fclose($stream);
+
             throw new \InvalidArgumentException('Invalid response.');
         }
         $counter = unpack('Nctr', $counterBytes)['ctr'];
@@ -189,6 +191,7 @@ class SignatureResponse
             $tmp = fread($stream, 1024);
             if (!is_string($tmp)) {
                 fclose($stream);
+
                 throw new \InvalidArgumentException('Invalid response.');
             }
             $signature .= $tmp;
