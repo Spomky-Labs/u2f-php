@@ -271,6 +271,6 @@ class RegistrationResponse
         $dataToVerify .= $this->registeredKey->getKeyHandler();
         $dataToVerify .= $this->registeredKey->getPublicKey();
 
-        return openssl_verify($dataToVerify, $this->signature, $this->registeredKey->getAttestationCertificate(), 'sha256') === 1;
+        return openssl_verify($dataToVerify, $this->signature, $this->registeredKey->getAttestationCertificate(), OPENSSL_ALGO_SHA256) === 1;
     }
 }

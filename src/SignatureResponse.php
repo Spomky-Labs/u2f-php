@@ -230,6 +230,6 @@ class SignatureResponse
 
         $registeredKey = $request->getRegisteredKey($this->keyHandle);
 
-        return openssl_verify($dataToVerify, $this->signature, $registeredKey->getPublicKeyAsPem(), 'sha256') === 1;
+        return openssl_verify($dataToVerify, $this->signature, $registeredKey->getPublicKeyAsPem(), OPENSSL_ALGO_SHA256) === 1;
     }
 }
