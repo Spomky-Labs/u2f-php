@@ -191,7 +191,7 @@ class SignatureResponse
         $counter = unpack('Nctr', $counterBytes)['ctr'];
         $signature = '';
         while (!feof($stream)) {
-            $signature .=fread($stream, 1024);
+            $signature .= fread($stream, 1024);
         }
         fclose($stream);
 
