@@ -167,12 +167,15 @@ class SignatureResponse
         }
 
         $stream = fopen('php://memory', 'r+');
+        if (false === $stream) {
+            throw new \InvalidArgumentException('Unable to load the registration data.');
+        }
         $signatureData = Base64Url::decode($data['signatureData']);
         fwrite($stream, $signatureData);
         rewind($stream);
 
         $userPresenceByte = fread($stream, 1);
-        if (!is_string($userPresenceByte) || mb_strlen($userPresenceByte, '8bit') !== 1) {
+        if (mb_strlen($userPresenceByte, '8bit') !== 1) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Invalid response.');
@@ -180,7 +183,7 @@ class SignatureResponse
         $userPresence = (bool) ord($userPresenceByte);
 
         $counterBytes = fread($stream, 4);
-        if (!is_string($counterBytes) || mb_strlen($counterBytes, '8bit') !== 4) {
+        if (mb_strlen($counterBytes, '8bit') !== 4) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Invalid response.');
@@ -188,14 +191,9 @@ class SignatureResponse
         $counter = unpack('Nctr', $counterBytes)['ctr'];
         $signature = '';
         while (!feof($stream)) {
-            $tmp = fread($stream, 1024);
-            if (!is_string($tmp)) {
-                fclose($stream);
-
-                throw new \InvalidArgumentException('Invalid response.');
-            }
-            $signature .= $tmp;
+            $signature .=fread($stream, 1024);
         }
+        fclose($stream);
 
         return [
             $userPresence,
