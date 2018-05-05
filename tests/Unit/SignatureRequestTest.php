@@ -15,10 +15,10 @@ namespace U2FAuthentication\Tests\Unit;
 
 use Base64Url\Base64Url;
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\KeyHandle;
-use U2FAuthentication\PublicKey;
-use U2FAuthentication\RegisteredKey;
-use U2FAuthentication\SignatureRequest;
+use U2FAuthentication\Fido\KeyHandle;
+use U2FAuthentication\Fido\PublicKey;
+use U2FAuthentication\Fido\RegisteredKey;
+use U2FAuthentication\Fido\SignatureRequest;
 
 /**
  * @group Unit

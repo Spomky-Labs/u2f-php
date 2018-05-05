@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace U2FAuthentication\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\PublicKey;
+use U2FAuthentication\Fido\PublicKey;
 
 /**
  * @group Unit

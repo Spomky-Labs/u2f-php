@@ -15,7 +15,7 @@ namespace U2FAuthentication\Tests\Unit;
 
 use Base64Url\Base64Url;
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\ClientData;
+use U2FAuthentication\Fido\ClientData;
 
 /**
  * @group Unit

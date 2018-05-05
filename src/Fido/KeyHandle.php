@@ -11,9 +11,9 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication;
+namespace U2FAuthentication\Fido;
 
-class PublicKey implements \JsonSerializable
+class KeyHandle implements \JsonSerializable
 {
     /**
      * @var string
@@ -21,23 +21,23 @@ class PublicKey implements \JsonSerializable
     private $value;
 
     /**
-     * PublicKey constructor.
+     * KeyHandle constructor.
      *
-     * @param string $publicKey
+     * @param string $keyHandle
      */
-    private function __construct(string $publicKey)
+    private function __construct(string $keyHandle)
     {
-        $this->value = $publicKey;
+        $this->value = $keyHandle;
     }
 
     /**
-     * @param string $publicKey
+     * @param string $keyHandle
      *
-     * @return PublicKey
+     * @return KeyHandle
      */
-    public static function create(string $publicKey): self
+    public static function create(string $keyHandle): self
     {
-        return new self($publicKey);
+        return new self($keyHandle);
     }
 
     /**

@@ -11,14 +11,12 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication;
+namespace U2FAuthentication\Fido;
 
 use Base64Url\Base64Url;
 
-class RegistrationRequest implements \JsonSerializable
+class SignatureRequest implements \JsonSerializable
 {
-    private const PROTOCOL_VERSION = 'U2F_V2';
-
     /**
      * @var string
      */
@@ -35,7 +33,7 @@ class RegistrationRequest implements \JsonSerializable
     private $registeredKeys = [];
 
     /**
-     * RegistrationRequest constructor.
+     * SignatureRequest constructor.
      *
      * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
@@ -45,13 +43,13 @@ class RegistrationRequest implements \JsonSerializable
     private function __construct(string $applicationId, array $registeredKeys)
     {
         $this->applicationId = $applicationId;
-        $this->challenge = random_bytes(32);
         foreach ($registeredKeys as $registeredKey) {
             if (!$registeredKey instanceof RegisteredKey) {
                 throw new \InvalidArgumentException('Invalid registered keys list.');
             }
             $this->registeredKeys[Base64Url::encode($registeredKey->getKeyHandler())] = $registeredKey;
         }
+        $this->challenge = random_bytes(32);
     }
 
     /**
@@ -60,11 +58,43 @@ class RegistrationRequest implements \JsonSerializable
      *
      * @throws \Exception
      *
-     * @return RegistrationRequest
+     * @return SignatureRequest
      */
-    public static function create(string $applicationId, array $registeredKeys = []): self
+    public static function create(string $applicationId, array $registeredKeys): self
     {
         return new self($applicationId, $registeredKeys);
+    }
+
+    /**
+     * @param RegisteredKey $registeredKey
+     */
+    public function addRegisteredKey(RegisteredKey $registeredKey): void
+    {
+        $this->registeredKeys[Base64Url::encode($registeredKey->getKeyHandler())] = $registeredKey;
+    }
+
+    /**
+     * @param KeyHandle $keyHandle
+     *
+     * @return bool
+     */
+    public function hasRegisteredKey(KeyHandle $keyHandle): bool
+    {
+        return array_key_exists(Base64Url::encode($keyHandle->getValue()), $this->registeredKeys);
+    }
+
+    /**
+     * @param KeyHandle $keyHandle
+     *
+     * @return RegisteredKey
+     */
+    public function getRegisteredKey(KeyHandle $keyHandle): RegisteredKey
+    {
+        if (!$this->hasRegisteredKey($keyHandle)) {
+            throw new \InvalidArgumentException('Unsupported key handle.');
+        }
+
+        return $this->registeredKeys[Base64Url::encode($keyHandle->getValue())];
     }
 
     /**
@@ -97,10 +127,8 @@ class RegistrationRequest implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'appId'            => $this->applicationId,
-            'registerRequests' => [
-                ['version'   => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
-            ],
+            'appId'          => $this->applicationId,
+            'challenge'      => Base64Url::encode($this->challenge),
             'registeredKeys' => array_values($this->registeredKeys),
         ];
     }

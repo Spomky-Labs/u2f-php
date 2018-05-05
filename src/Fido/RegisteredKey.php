@@ -11,7 +11,7 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication;
+namespace U2FAuthentication\Fido;
 
 use Base64Url\Base64Url;
 

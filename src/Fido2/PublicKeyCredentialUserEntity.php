@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 Spomky-Labs
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+namespace U2FAuthentication\Fido2;
+
+class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
+{
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $displayName;
+
+    /**
+     * PublicKeyCredentialUserEntity constructor.
+     *
+     * @param string      $name
+     * @param null|string $icon
+     * @param string      $id
+     * @param string      $displayName
+     */
+    public function __construct(string $name, ?string $icon, string $id, string $displayName)
+    {
+        parent::__construct($name, $icon);
+        $this->id = $id;
+        $this->displayName = $displayName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName(): string
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize(): array
+    {
+        $json = parent::jsonSerialize();
+        $json['id'] = $this->id;
+        $json['displayName'] = $this->displayName;
+
+        return $json;
+    }
+}
