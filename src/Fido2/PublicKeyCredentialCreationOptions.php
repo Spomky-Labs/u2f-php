@@ -19,7 +19,6 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
     public const ATTESTATION_CONVEYANCE_PREFERENCE_INDIRECT = 'indirect';
     public const ATTESTATION_CONVEYANCE_PREFERENCE_DIRECT = 'direct';
 
-
     /**
      * @var PublicKeyCredentialRpEntity
      */
@@ -61,7 +60,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
     private $attestation;
 
     /**
-     * @var AuthenticationExtensionsClientInputs $extensions
+     * @var AuthenticationExtensionsClientInputs
      */
     private $extensions;
 

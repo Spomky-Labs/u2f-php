@@ -22,6 +22,7 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 
     /**
      * PublicKeyCredentialRpEntity constructor.
+     *
      * @param string      $name
      * @param null|string $icon
      * @param null|string $id
