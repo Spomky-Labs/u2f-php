@@ -26,8 +26,8 @@ class AuthenticatorAttestationResponseChecker
         '6073c436dcd064a48127ddbf6032ac1a66fd59a0c24434f070d4e564c124c897',
         'ca993121846c464d666096d35f13bf44c1b05af205f9b4a1e00cf6cc10c5e511',
     ];
-    private const FLAG_AT   = 0b01000000;
-    private const FLAG_ED   = 0b10000000;
+    private const FLAG_AT = 0b01000000;
+    private const FLAG_ED = 0b10000000;
 
     /**
      * @var Decoder
@@ -62,10 +62,8 @@ class AuthenticatorAttestationResponseChecker
             throw new \InvalidArgumentException();
         }
         if ($publicKeyCredentialCreationOptions->getRp()->getId()) {
-
         }
     }
-
 
     /**
      * @param string $attestationObject
@@ -82,7 +80,6 @@ class AuthenticatorAttestationResponseChecker
         $normalized = $data->getNormalizedData();
         foreach ($normalized['attStmt']['x5c'] as $cert) {
             dump($this->getPublicKeyAsPem($cert));
-
         }
         dump(base64_encode($normalized['attStmt']['sig']));
         $authDataStream = new StringStream($normalized['authData']);
@@ -99,14 +96,14 @@ class AuthenticatorAttestationResponseChecker
             $credentialId = $authDataStream->read($credentialLength);
             $credentialPublicKey = $this->decoder->decode($authDataStream);
             //TODO: should be converted into a COSE Key
-            $attestedCredentialData  = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
+            $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
         } else {
             $attestedCredentialData = null;
         }
 
         if (ord($flags) & self::FLAG_ED) {
             $extension = $this->decoder->decode($authDataStream);
-            //TODO: should be correctly handled
+        //TODO: should be correctly handled
         } else {
             $extension = null;
         }
@@ -128,7 +125,6 @@ class AuthenticatorAttestationResponseChecker
      */
     private function getPublicKeyAsPem(string $publicKey): string
     {
-
         $derCertificate = $this->unusedBytesFix($publicKey);
         $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
         $pemCert .= chunk_split(base64_encode($derCertificate), 64, PHP_EOL);
