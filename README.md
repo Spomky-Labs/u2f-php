@@ -1,5 +1,5 @@
-FIDO U2F Support for PHP
-========================
+FIDO/FIDO2 U2F Support for PHP
+==============================
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/Spomky-Labs/u2f-php/badge.svg?branch=master)](https://coveralls.io/github/Spomky-Labs/u2f-php?branch=master)
