@@ -42,19 +42,19 @@ class AuthenticatorData
      */
     private $extensions;
 
-    private const FLAG_UP   = 0b00000001;
+    private const FLAG_UP = 0b00000001;
     private const FLAG_RFU1 = 0b00000010;
-    private const FLAG_UV   = 0b00000100;
+    private const FLAG_UV = 0b00000100;
     private const FLAG_RFU2 = 0b00111000;
-    private const FLAG_AT   = 0b01000000;
-    private const FLAG_ED   = 0b10000000;
+    private const FLAG_AT = 0b01000000;
+    private const FLAG_ED = 0b10000000;
 
     /**
      * AuthenticatorData constructor.
      *
      * @param string $rpIdHash
      * @param string $flags
-     * @param int $signCount
+     * @param int    $signCount
      * @param $attestedCredentialData
      * @param CBORObject|null $extensions
      */

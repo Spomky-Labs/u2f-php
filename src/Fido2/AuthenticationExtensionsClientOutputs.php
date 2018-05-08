@@ -25,9 +25,6 @@ class AuthenticationExtensionsClientOutputs
         $this->extensions[$extension->getName()] = $extension->getValue();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return $this->extensions;

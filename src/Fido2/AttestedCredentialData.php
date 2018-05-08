@@ -35,8 +35,8 @@ class AttestedCredentialData
     /**
      * AttestedCredentialData constructor.
      *
-     * @param string $aaguid
-     * @param string $credentialId
+     * @param string          $aaguid
+     * @param string          $credentialId
      * @param null|CBORObject $credentialPublicKey
      */
     public function __construct(string $aaguid, string $credentialId, ?CBORObject $credentialPublicKey)
