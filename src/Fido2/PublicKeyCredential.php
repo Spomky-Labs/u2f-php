@@ -21,23 +21,63 @@ class PublicKeyCredential extends Credential
     private $rawId;
 
     /**
-     * @var AuthenticatorResponse
+     * @var AuthenticatorAttestationResponse
      */
     private $response;
 
     /**
      * PublicKeyCredential constructor.
      *
-     * @param string                $id
-     * @param string                $type
-     * @param string                $rawId
-     * @param AuthenticatorResponse $response
+     * @param string                           $id
+     * @param string                           $type
+     * @param string                           $rawId
+     * @param AuthenticatorAttestationResponse $response
      */
-    public function __construct(string $id, string $type, string $rawId, AuthenticatorResponse $response)
+    public function __construct(string $id, string $type, string $rawId, AuthenticatorAttestationResponse $response)
     {
         parent::__construct($id, $type);
         $this->rawId = $rawId;
         $this->response = $response;
+    }
+
+    /**
+     * @param array $json
+     *
+     * @return PublicKeyCredential
+     */
+    public static function createFromJson(array $json): self
+    {
+        if (!array_key_exists('id', $json)) {
+            throw new \InvalidArgumentException();
+        }
+        if (!array_key_exists('rawId', $json)) {
+            throw new \InvalidArgumentException();
+        }
+        if (!array_key_exists('type', $json)) {
+            throw new \InvalidArgumentException();
+        }
+        if (!array_key_exists('response', $json)) {
+            throw new \InvalidArgumentException();
+        }
+
+        return new self(
+            $json['id'],
+            $json['type'],
+            $json['rawId'],
+            AuthenticatorAttestationResponse::createFromJson($json['response'])
+        );
+    }
+
+    /**
+     * @param string $data
+     *
+     * @return PublicKeyCredential
+     */
+    public static function createFromReceivedData(string $data): self
+    {
+        $json = json_decode($data, true);
+
+        return self::createFromJson($json);
     }
 
     /**
@@ -49,9 +89,9 @@ class PublicKeyCredential extends Credential
     }
 
     /**
-     * @return AuthenticatorResponse
+     * @return AuthenticatorAttestationResponse
      */
-    public function getResponse(): AuthenticatorResponse
+    public function getResponse(): AuthenticatorAttestationResponse
     {
         return $this->response;
     }

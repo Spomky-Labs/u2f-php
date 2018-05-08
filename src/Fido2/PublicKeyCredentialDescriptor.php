@@ -32,18 +32,18 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     private $id;
 
     /**
-     * @var string[]
+     * @var null|string[]
      */
     private $transports;
 
     /**
      * PublicKeyCredentialDescriptor constructor.
      *
-     * @param string   $type
-     * @param string   $id
-     * @param string[] $transports
+     * @param string        $type
+     * @param string        $id
+     * @param null|string[] $transports
      */
-    public function __construct(string $type, string $id, array $transports)
+    public function __construct(string $type, string $id, ?array $transports)
     {
         $this->type = $type;
         $this->id = $id;
@@ -79,10 +79,14 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
+        $json = [
             'type'       => $this->type,
             'id'         => $this->id,
-            'transports' => $this->transports,
         ];
+        if ($this->transports) {
+            $json['transports'] = $this->transports;
+        }
+
+        return $json;
     }
 }

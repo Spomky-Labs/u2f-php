@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-class PublicKeyCredentialEntity implements \JsonSerializable
+abstract class PublicKeyCredentialEntity implements \JsonSerializable
 {
     /**
      * @var string

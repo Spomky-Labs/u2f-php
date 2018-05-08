@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-class AuthenticationExtensionsClientInputs implements \JsonSerializable
+class AuthenticationExtensionsClientOutputs
 {
     /**
      * @var mixed[]

@@ -59,7 +59,6 @@ class RegistrationResponse
         if ('navigator.id.finishEnrollment' !== $clientData->getType()) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        $this->checkChallenge($data, $clientData);
         list($publicKey, $keyHandle, $pemCert, $signature) = $this->extractKeyData($data);
 
         $this->clientData = $clientData;
@@ -129,22 +128,6 @@ class RegistrationResponse
         }
         if (!in_array($data['version'], self::SUPPORTED_PROTOCOL_VERSIONS)) {
             throw new \InvalidArgumentException('Unsupported protocol version.');
-        }
-    }
-
-    /**
-     * @param array      $data
-     * @param ClientData $clientData
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function checkChallenge(array $data, ClientData $clientData): void
-    {
-        if (!array_key_exists('challenge', $data) || !is_string($data['challenge'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
-        if (!hash_equals(Base64Url::decode($data['challenge']), $clientData->getChallenge())) {
-            throw new \InvalidArgumentException('Invalid response.');
         }
     }
 

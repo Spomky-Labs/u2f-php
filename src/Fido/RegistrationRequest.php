@@ -39,8 +39,6 @@ class RegistrationRequest implements \JsonSerializable
      *
      * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
-     *
-     * @throws \Exception
      */
     private function __construct(string $applicationId, array $registeredKeys)
     {
@@ -57,8 +55,6 @@ class RegistrationRequest implements \JsonSerializable
     /**
      * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
-     *
-     * @throws \Exception
      *
      * @return RegistrationRequest
      */

@@ -71,6 +71,7 @@ class ClientData
 
         $diff = array_diff_key(get_class_vars(self::class), $clientData);
         unset($diff['rawData']);
+        unset($diff['cid_pubkey']);
         if (!empty($diff)) {
             throw new \InvalidArgumentException('Invalid client data.');
         }

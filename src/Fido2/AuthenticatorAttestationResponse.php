@@ -33,6 +33,26 @@ class AuthenticatorAttestationResponse extends AuthenticatorResponse
     }
 
     /**
+     * @param array $json
+     *
+     * @return AuthenticatorAttestationResponse
+     */
+    public static function createFromJson(array $json): self
+    {
+        if (!array_key_exists('clientDataJSON', $json)) {
+            throw new \InvalidArgumentException();
+        }
+        if (!array_key_exists('attestationObject', $json)) {
+            throw new \InvalidArgumentException();
+        }
+
+        return new self(
+            $json['clientDataJSON'],
+            $json['attestationObject']
+        );
+    }
+
+    /**
      * @return string
      */
     public function getAttestationObject(): string
