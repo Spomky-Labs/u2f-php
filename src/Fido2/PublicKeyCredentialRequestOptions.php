@@ -13,20 +13,23 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-class PublicKeyCredentialRequestOptions
+class PublicKeyCredentialRequestOptions implements \JsonSerializable
 {
+    public const USER_VERIFICATION_REQUIREMENT_REQUIRED = 'required';
+    public const USER_VERIFICATION_REQUIREMENT_PREFERRED = 'preferred';
+    public const USER_VERIFICATION_REQUIREMENT_DISCOURAGED = 'discouraged';
     /**
      * @var string
      */
     private $challenge;
 
     /**
-     * @var null|int
+     * @var int|null
      */
     private $timeout;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $rpId;
 
@@ -36,7 +39,7 @@ class PublicKeyCredentialRequestOptions
     private $allowCredentials;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $userVerification;
 
@@ -50,12 +53,12 @@ class PublicKeyCredentialRequestOptions
      *
      * @param string                               $challenge
      * @param int|null                             $timeout
-     * @param string                               $rpId
+     * @param string|null                          $rpId
      * @param PublicKeyCredentialDescriptor[]      $allowCredentials
-     * @param string                               $userVerification
+     * @param string|null                          $userVerification
      * @param AuthenticationExtensionsClientInputs $extensions
      */
-    public function __construct(string $challenge, ?int $timeout, string $rpId, array $allowCredentials, string $userVerification, AuthenticationExtensionsClientInputs $extensions)
+    public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials = [], ?string $userVerification = null, AuthenticationExtensionsClientInputs $extensions)
     {
         $this->challenge = $challenge;
         $this->timeout = $timeout;
@@ -82,9 +85,9 @@ class PublicKeyCredentialRequestOptions
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRpId(): string
+    public function getRpId(): ?string
     {
         return $this->rpId;
     }
@@ -98,9 +101,9 @@ class PublicKeyCredentialRequestOptions
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUserVerification(): string
+    public function getUserVerification(): ?string
     {
         return $this->userVerification;
     }
@@ -111,5 +114,48 @@ class PublicKeyCredentialRequestOptions
     public function getExtensions(): AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize(): array
+    {
+        $json = [
+            'rpId'      => $this->rpId,
+            'challenge' => $this->splitChallenge(),
+        ];
+
+        if ($this->userVerification) {
+            $json['userVerification'] = $this->userVerification;
+        }
+
+        if (!empty($this->allowCredentials)) {
+            $json['allowCredentials'] = $this->allowCredentials;
+        }
+
+        if (!empty($this->extensions)) {
+            $json['extensions'] = $this->extensions;
+        }
+
+        if (!is_null($this->timeout)) {
+            $json['timeout'] = $this->timeout;
+        }
+
+        return $json;
+    }
+
+    /**
+     * @return int[]
+     */
+    private function splitChallenge(): array
+    {
+        $result = [];
+        $split = str_split($this->challenge);
+        foreach ($split as $char) {
+            $result[] = ord($char);
+        }
+
+        return $result;
     }
 }

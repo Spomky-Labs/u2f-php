@@ -33,7 +33,7 @@ class AuthenticatorData
     private $signCount;
 
     /**
-     * @var null
+     * @var AttestedCredentialData
      */
     private $attestedCredentialData;
 
@@ -55,10 +55,10 @@ class AuthenticatorData
      * @param string $rpIdHash
      * @param string $flags
      * @param int    $signCount
-     * @param $attestedCredentialData
+     * @param AttestedCredentialData $attestedCredentialData
      * @param CBORObject|null $extensions
      */
-    public function __construct(string $rpIdHash, string $flags, int $signCount, $attestedCredentialData, ?CBORObject $extensions)
+    public function __construct(string $rpIdHash, string $flags, int $signCount, AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
         $this->rpIdHash = $rpIdHash;
         $this->flags = $flags;
@@ -132,9 +132,9 @@ class AuthenticatorData
     }
 
     /**
-     * @return null
+     * @return AttestedCredentialData
      */
-    public function getAttestedCredentialData()
+    public function getAttestedCredentialData():AttestedCredentialData
     {
         return $this->attestedCredentialData;
     }
