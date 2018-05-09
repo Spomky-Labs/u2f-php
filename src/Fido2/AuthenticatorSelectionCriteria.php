@@ -41,8 +41,8 @@ class AuthenticatorSelectionCriteria implements \JsonSerializable
      * AuthenticatorSelectionCriteria constructor.
      *
      * @param null|string $authenticatorAttachment
-     * @param bool   $requireResidentKey
-     * @param string $userVerification
+     * @param bool        $requireResidentKey
+     * @param string      $userVerification
      */
     public function __construct(?string $authenticatorAttachment = null, bool $requireResidentKey = false, string $userVerification = self::USER_VERIFICATION_REQUIREMENT_PREFERRED)
     {
