@@ -52,11 +52,11 @@ class AuthenticatorData
     /**
      * AuthenticatorData constructor.
      *
-     * @param string $rpIdHash
-     * @param string $flags
-     * @param int    $signCount
+     * @param string                 $rpIdHash
+     * @param string                 $flags
+     * @param int                    $signCount
      * @param AttestedCredentialData $attestedCredentialData
-     * @param CBORObject|null $extensions
+     * @param CBORObject|null        $extensions
      */
     public function __construct(string $rpIdHash, string $flags, int $signCount, AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
