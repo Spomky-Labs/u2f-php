@@ -32,6 +32,6 @@ final class PublicKeyTest extends TestCase
 
         self::assertEquals('foo', $key->getValue());
         self::assertEquals('foo', $key->jsonSerialize());
-        self::assertEquals('foo', $key->__toString());
+        self::assertEquals('foo', (string) $key);
     }
 }
