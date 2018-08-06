@@ -32,6 +32,6 @@ final class KeyHandleTest extends TestCase
 
         self::assertEquals('foo', $handle->getValue());
         self::assertEquals('foo', $handle->jsonSerialize());
-        self::assertEquals('foo', $handle->__toString());
+        self::assertEquals('foo', (string) $handle);
     }
 }

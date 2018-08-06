@@ -18,7 +18,7 @@
     "require": {
         "php": "^7.1",
         "spomky-labs/base64url": "^1.0",
-        "spomky-labs/cbor-php": "^0.0@dev"
+        "spomky-labs/cbor-php": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",
