@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 require_once 'vendor/autoload.php';
 
-use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
-use U2FAuthentication\Fido2\PublicKeyCredentialRpEntity;
+use U2FAuthentication\Fido2\AuthenticationExtensionsClientInputs;
+use U2FAuthentication\Fido2\AuthenticatorSelectionCriteria;
 use U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions;
 use U2FAuthentication\Fido2\PublicKeyCredentialParameters;
-use U2FAuthentication\Fido2\AuthenticatorSelectionCriteria;
-use U2FAuthentication\Fido2\AuthenticationExtensionsClientInputs;
+use U2FAuthentication\Fido2\PublicKeyCredentialRpEntity;
+use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
 
 session_start();
 
