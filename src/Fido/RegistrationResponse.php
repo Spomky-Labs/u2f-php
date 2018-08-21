@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -45,8 +45,6 @@ class RegistrationResponse
 
     /**
      * RegistrationChallengeMiddleware constructor.
-     *
-     * @param array $data
      */
     private function __construct(array $data)
     {
@@ -67,8 +65,6 @@ class RegistrationResponse
     }
 
     /**
-     * @param array $data
-     *
      * @return RegistrationResponse
      */
     public static function create(array $data): self
@@ -76,40 +72,27 @@ class RegistrationResponse
         return new self($data);
     }
 
-    /**
-     * @return ClientData
-     */
     public function getClientData(): ClientData
     {
         return $this->clientData;
     }
 
-    /**
-     * @return RegisteredKey
-     */
     public function getRegisteredKey(): RegisteredKey
     {
         return $this->registeredKey;
     }
 
-    /**
-     * @return string
-     */
     public function getSignature(): string
     {
         return $this->signature;
     }
 
     /**
-     * @param array $data
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return ClientData
      */
     private function retrieveClientData(array $data): ClientData
     {
-        if (!array_key_exists('clientData', $data) || !is_string($data['clientData'])) {
+        if (!array_key_exists('clientData', $data) || !\is_string($data['clientData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
@@ -117,30 +100,24 @@ class RegistrationResponse
     }
 
     /**
-     * @param array $data
-     *
      * @throws \InvalidArgumentException
      */
     private function checkVersion(array $data): void
     {
-        if (!array_key_exists('version', $data) || !is_string($data['version'])) {
+        if (!array_key_exists('version', $data) || !\is_string($data['version'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        if (!in_array($data['version'], self::SUPPORTED_PROTOCOL_VERSIONS)) {
+        if (!\in_array($data['version'], self::SUPPORTED_PROTOCOL_VERSIONS, true)) {
             throw new \InvalidArgumentException('Unsupported protocol version.');
         }
     }
 
     /**
-     * @param array $data
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return array
      */
     private function extractKeyData(array $data): array
     {
-        if (!array_key_exists('registrationData', $data) || !is_string($data['registrationData'])) {
+        if (!array_key_exists('registrationData', $data) || !\is_string($data['registrationData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
         $stream = fopen('php://memory', 'r+');
@@ -159,35 +136,35 @@ class RegistrationResponse
         }
 
         $publicKey = fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
-        if (mb_strlen($publicKey, '8bit') !== self::PUBLIC_KEY_LENGTH) {
+        if (self::PUBLIC_KEY_LENGTH !== mb_strlen($publicKey, '8bit')) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Bad public key length.');
         }
 
         $keyHandleLength = fread($stream, 1); // 1 byte for the key handle length
-        if (ord($keyHandleLength) === 0) {
+        if (0 === \ord($keyHandleLength)) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Bad key handle length.');
         }
 
-        $keyHandle = fread($stream, ord($keyHandleLength)); // x bytes for the key handle
-        if (mb_strlen($keyHandle, '8bit') !== ord($keyHandleLength)) {
+        $keyHandle = fread($stream, \ord($keyHandleLength)); // x bytes for the key handle
+        if (mb_strlen($keyHandle, '8bit') !== \ord($keyHandleLength)) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Bad key handle.');
         }
 
         $certHeader = fread($stream, 4); // 4 bytes for the certificate header
-        if (mb_strlen($certHeader, '8bit') !== 4) {
+        if (4 !== mb_strlen($certHeader, '8bit')) {
             fclose($stream);
 
             throw new \InvalidArgumentException('Bad certificate header.');
         }
 
-        $highOrder = ord($certHeader[2]) << 8;
-        $lowOrder = ord($certHeader[3]);
+        $highOrder = \ord($certHeader[2]) << 8;
+        $lowOrder = \ord($certHeader[3]);
         $certLength = $highOrder + $lowOrder;
         $certBody = fread($stream, $certLength); // x bytes for the certificate
         if (mb_strlen($certBody, '8bit') !== $certLength) {
@@ -208,21 +185,16 @@ class RegistrationResponse
 
         return [
             PublicKey::create($publicKey),
-            KeyHandle::create($keyHandle),
+            KeyHandler::create($keyHandle),
             $pemCert,
             $signature,
         ];
     }
 
-    /**
-     * @param string $derCertificate
-     *
-     * @return string
-     */
     private function unusedBytesFix(string $derCertificate): string
     {
         $certificateHash = hash('sha256', $derCertificate);
-        if (in_array($certificateHash, self::CERTIFICATES_HASHES)) {
+        if (\in_array($certificateHash, self::CERTIFICATES_HASHES, true)) {
             $derCertificate[mb_strlen($derCertificate, '8bit') - 257] = "\0";
         }
 
@@ -230,10 +202,7 @@ class RegistrationResponse
     }
 
     /**
-     * @param RegistrationRequest $challenge
-     * @param string[]            $attestationCertificates
-     *
-     * @return bool
+     * @param string[] $attestationCertificates
      */
     public function isValid(RegistrationRequest $challenge, array $attestationCertificates = []): bool
     {
@@ -244,7 +213,7 @@ class RegistrationResponse
             return false;
         }
 
-        if (!empty($attestationCertificates) && openssl_x509_checkpurpose($this->registeredKey->getAttestationCertificate(), X509_PURPOSE_ANY, $attestationCertificates) !== true) {
+        if (!empty($attestationCertificates) && true !== openssl_x509_checkpurpose($this->registeredKey->getAttestationCertificate(), X509_PURPOSE_ANY, $attestationCertificates)) {
             return false;
         }
 
@@ -254,6 +223,6 @@ class RegistrationResponse
         $dataToVerify .= $this->registeredKey->getKeyHandler();
         $dataToVerify .= $this->registeredKey->getPublicKey();
 
-        return openssl_verify($dataToVerify, $this->signature, $this->registeredKey->getAttestationCertificate(), OPENSSL_ALGO_SHA256) === 1;
+        return 1 === openssl_verify($dataToVerify, $this->signature, $this->registeredKey->getAttestationCertificate(), OPENSSL_ALGO_SHA256);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -39,8 +39,6 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     /**
      * PublicKeyCredentialDescriptor constructor.
      *
-     * @param string   $type
-     * @param string   $id
      * @param string[] $transports
      */
     public function __construct(string $type, string $id, array $transports = [])
@@ -50,17 +48,11 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
         $this->transports = $transports;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
@@ -80,8 +72,8 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     public function jsonSerialize()
     {
         $json = [
-            'type'       => $this->type,
-            'id'         => $this->splitId(),
+            'type' => $this->type,
+            'id' => $this->splitId(),
         ];
         if ($this->transports) {
             $json['transports'] = $this->transports;
@@ -98,7 +90,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
         $result = [];
         $split = str_split($this->id);
         foreach ($split as $char) {
-            $result[] = ord($char);
+            $result[] = \ord($char);
         }
 
         return $result;

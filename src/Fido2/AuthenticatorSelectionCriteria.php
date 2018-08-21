@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -39,10 +39,6 @@ class AuthenticatorSelectionCriteria implements \JsonSerializable
 
     /**
      * AuthenticatorSelectionCriteria constructor.
-     *
-     * @param null|string $authenticatorAttachment
-     * @param bool   $requireResidentKey
-     * @param string $userVerification
      */
     public function __construct(?string $authenticatorAttachment = null, bool $requireResidentKey = false, string $userVerification = self::USER_VERIFICATION_REQUIREMENT_PREFERRED)
     {
@@ -51,25 +47,16 @@ class AuthenticatorSelectionCriteria implements \JsonSerializable
         $this->userVerification = $userVerification;
     }
 
-    /**
-     * @return null|string
-     */
     public function getAuthenticatorAttachment(): ?string
     {
         return $this->authenticatorAttachment;
     }
 
-    /**
-     * @return bool
-     */
     public function isRequireResidentKey(): bool
     {
         return $this->requireResidentKey;
     }
 
-    /**
-     * @return string
-     */
     public function getUserVerification(): string
     {
         return $this->userVerification;
@@ -81,8 +68,8 @@ class AuthenticatorSelectionCriteria implements \JsonSerializable
     public function jsonSerialize()
     {
         $json = [
-            'requireResidentKey'      => $this->requireResidentKey,
-            'userVerification'        => $this->userVerification,
+            'requireResidentKey' => $this->requireResidentKey,
+            'userVerification' => $this->userVerification,
         ];
         if ($this->authenticatorAttachment) {
             $json['authenticatorAttachment'] = $this->authenticatorAttachment;

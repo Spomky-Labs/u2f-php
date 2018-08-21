@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -51,12 +51,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
     /**
      * PublicKeyCredentialRequestOptions constructor.
      *
-     * @param string                               $challenge
-     * @param int|null                             $timeout
-     * @param string|null                          $rpId
-     * @param PublicKeyCredentialDescriptor[]      $allowCredentials
-     * @param string|null                          $userVerification
-     * @param AuthenticationExtensionsClientInputs $extensions
+     * @param PublicKeyCredentialDescriptor[] $allowCredentials
      */
     public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials = [], ?string $userVerification = null, AuthenticationExtensionsClientInputs $extensions)
     {
@@ -68,25 +63,16 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         $this->extensions = $extensions;
     }
 
-    /**
-     * @return string
-     */
     public function getChallenge(): string
     {
         return $this->challenge;
     }
 
-    /**
-     * @return int|null
-     */
     public function getTimeout(): ?int
     {
         return $this->timeout;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRpId(): ?string
     {
         return $this->rpId;
@@ -100,17 +86,11 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         return $this->allowCredentials;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUserVerification(): ?string
     {
         return $this->userVerification;
     }
 
-    /**
-     * @return AuthenticationExtensionsClientInputs
-     */
     public function getExtensions(): AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
@@ -122,7 +102,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
     public function jsonSerialize(): array
     {
         $json = [
-            'rpId'      => $this->rpId,
+            'rpId' => $this->rpId,
             'challenge' => $this->splitChallenge(),
         ];
 
@@ -138,7 +118,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
             $json['extensions'] = $this->extensions;
         }
 
-        if (!is_null($this->timeout)) {
+        if (!\is_null($this->timeout)) {
             $json['timeout'] = $this->timeout;
         }
 
@@ -153,7 +133,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         $result = [];
         $split = str_split($this->challenge);
         foreach ($split as $char) {
-            $result[] = ord($char);
+            $result[] = \ord($char);
         }
 
         return $result;

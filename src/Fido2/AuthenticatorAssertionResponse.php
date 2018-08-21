@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -32,11 +32,6 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
 
     /**
      * AuthenticatorAssertionResponse constructor.
-     *
-     * @param string $clientDataJSON
-     * @param string $authenticatorData
-     * @param string $signature
-     * @param string $userHandle
      */
     public function __construct(string $clientDataJSON, string $authenticatorData, string $signature, string $userHandle)
     {
@@ -46,25 +41,16 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
         $this->userHandle = $userHandle;
     }
 
-    /**
-     * @return string
-     */
     public function getAuthenticatorData(): string
     {
         return $this->authenticatorData;
     }
 
-    /**
-     * @return string
-     */
     public function getSignature(): string
     {
         return $this->signature;
     }
 
-    /**
-     * @return null|string
-     */
     public function getUserHandle(): ?string
     {
         return $this->userHandle;
@@ -76,9 +62,9 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
     public function jsonSerialize(): array
     {
         $json = [
-            'clientDataJSON'    => $this->getClientDataJSON(),
+            'clientDataJSON' => $this->getClientDataJSON(),
             'authenticatorData' => $this->authenticatorData,
-            'signature'         => $this->signature,
+            'signature' => $this->signature,
         ];
         if ($this->userHandle) {
             $json['userHandle'] = $this->userHandle;

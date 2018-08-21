@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -27,9 +27,6 @@ abstract class PublicKeyCredentialEntity implements \JsonSerializable
 
     /**
      * PublicKeyCredentialEntity constructor.
-     *
-     * @param string      $name
-     * @param null|string $icon
      */
     public function __construct(string $name, ?string $icon)
     {
@@ -37,17 +34,11 @@ abstract class PublicKeyCredentialEntity implements \JsonSerializable
         $this->icon = $icon;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return null|string
-     */
     public function getIcon(): ?string
     {
         return $this->icon;

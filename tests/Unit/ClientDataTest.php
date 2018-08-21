@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -64,19 +64,19 @@ final class ClientDataTest extends TestCase
     public function theClientDataIsValid()
     {
         $data = json_encode([
-            'typ'        => 'foo',
-            'challenge'  => Base64Url::encode('bar'),
-            'origin'     => 'here',
+            'typ' => 'foo',
+            'challenge' => Base64Url::encode('bar'),
+            'origin' => 'here',
             'cid_pubkey' => 'none',
         ]);
         $client_data = ClientData::create(
             Base64Url::encode($data)
         );
 
-        self::assertEquals('foo', $client_data->getType());
-        self::assertEquals('bar', $client_data->getChallenge());
-        self::assertEquals('here', $client_data->getOrigin());
-        self::assertEquals('none', $client_data->getChannelIdPublicKey());
-        self::assertEquals($data, $client_data->getRawData());
+        static::assertEquals('foo', $client_data->getType());
+        static::assertEquals('bar', $client_data->getChallenge());
+        static::assertEquals('here', $client_data->getOrigin());
+        static::assertEquals('none', $client_data->getChannelIdPublicKey());
+        static::assertEquals($data, $client_data->getRawData());
     }
 }

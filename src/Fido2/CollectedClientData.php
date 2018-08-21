@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -13,51 +13,33 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Base64Url\Base64Url;
+
 class CollectedClientData
 {
     /**
      * @var string
      */
-    private $type;
+    private $rawData;
 
     /**
-     * @var string
+     * @var array
      */
-    private $challenge;
+    private $data;
 
-    /**
-     * @var string
-     */
-    private $origin;
-
-    /**
-     * @var null|TokenBinding
-     */
-    private $tokenBinding;
-
-    /**
-     * CollectedClientData constructor.
-     *
-     * @param string            $type
-     * @param string            $challenge
-     * @param string            $origin
-     * @param null|TokenBinding $tokenBinding
-     */
-    public function __construct(string $type, string $challenge, string $origin, ?TokenBinding $tokenBinding)
+    public function __construct(string $rawData, array $data)
     {
-        $this->type = $type;
-        $this->challenge = $challenge;
-        $this->origin = $origin;
-        $this->tokenBinding = $tokenBinding;
+        $this->data = $data;
+        $this->rawData = $rawData;
     }
 
     /**
-     * @param array $json
-     *
      * @return CollectedClientData
      */
-    public static function createFormJson(array $json): self
+    public static function createFormJson(string $data): self
     {
+        $json = json_decode(Base64Url::decode($data), true);
+
         if (!array_key_exists('type', $json)) {
             throw new \InvalidArgumentException();
         }
@@ -68,48 +50,50 @@ class CollectedClientData
             throw new \InvalidArgumentException();
         }
         if (array_key_exists('tokenBinding', $json)) {
-            $tokenBinding = TokenBinding::createFormJson($json['tokenBinding']);
+            $json['tokenBinding'] = TokenBinding::createFormJson($json['tokenBinding']);
         } else {
-            $tokenBinding = null;
+            $json['tokenBinding'] = null;
         }
 
-        return new self(
-            $json['type'],
-            $json['challenge'],
-            $json['origin'],
-            $tokenBinding
-        );
+        return new self(Base64Url::decode($data), $json);
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
-        return $this->type;
+        return $this->data['type'];
     }
 
-    /**
-     * @return string
-     */
     public function getChallenge(): string
     {
-        return $this->challenge;
+        return $this->data['challenge'];
     }
 
-    /**
-     * @return string
-     */
     public function getOrigin(): string
     {
-        return $this->origin;
+        return $this->data['origin'];
     }
 
-    /**
-     * @return null|TokenBinding
-     */
     public function getTokenBinding(): ?TokenBinding
     {
-        return $this->tokenBinding;
+        return $this->data['tokenBinding'];
+    }
+
+    public function getRawData(): string
+    {
+        return $this->rawData;
+    }
+
+    public function has(string $key)
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    public function get(string $key)
+    {
+        if (!$this->has($key)) {
+            throw new \InvalidArgumentException(sprintf('The collected client data has no key "%s".', $key));
+        }
+
+        return $this->data['origin'];
     }
 }

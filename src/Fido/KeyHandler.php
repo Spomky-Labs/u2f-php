@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
-class KeyHandle implements \JsonSerializable
+class KeyHandler implements \JsonSerializable
 {
     /**
      * @var string
@@ -22,8 +22,6 @@ class KeyHandle implements \JsonSerializable
 
     /**
      * KeyHandle constructor.
-     *
-     * @param string $keyHandle
      */
     private function __construct(string $keyHandle)
     {
@@ -31,18 +29,13 @@ class KeyHandle implements \JsonSerializable
     }
 
     /**
-     * @param string $keyHandle
-     *
-     * @return KeyHandle
+     * @return KeyHandler
      */
     public static function create(string $keyHandle): self
     {
         return new self($keyHandle);
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;
@@ -56,9 +49,6 @@ class KeyHandle implements \JsonSerializable
         return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->value;

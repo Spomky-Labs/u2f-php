@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -21,8 +21,6 @@ final class StringStream implements Stream
 
     /**
      * StringStream constructor.
-     *
-     * @param string $data
      */
     public function __construct(string $data)
     {
@@ -37,7 +35,7 @@ final class StringStream implements Stream
             return '';
         }
         $data = fread($this->resource, $length);
-        if (!is_string($data)) {
+        if (!\is_string($data)) {
             throw new \InvalidArgumentException('Cannot stream the data');
         }
         if (mb_strlen($data, '8bit') !== $length) {

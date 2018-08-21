@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -37,7 +37,6 @@ class RegistrationRequest implements \JsonSerializable
     /**
      * RegistrationRequest constructor.
      *
-     * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
      */
     private function __construct(string $applicationId, array $registeredKeys)
@@ -48,12 +47,11 @@ class RegistrationRequest implements \JsonSerializable
             if (!$registeredKey instanceof RegisteredKey) {
                 throw new \InvalidArgumentException('Invalid registered keys list.');
             }
-            $this->registeredKeys[Base64Url::encode($registeredKey->getKeyHandler())] = $registeredKey;
+            $this->registeredKeys[Base64Url::encode((string) $registeredKey->getKeyHandler())] = $registeredKey;
         }
     }
 
     /**
-     * @param string          $applicationId
      * @param RegisteredKey[] $registeredKeys
      *
      * @return RegistrationRequest
@@ -63,17 +61,11 @@ class RegistrationRequest implements \JsonSerializable
         return new self($applicationId, $registeredKeys);
     }
 
-    /**
-     * @return string
-     */
     public function getApplicationId(): string
     {
         return $this->applicationId;
     }
 
-    /**
-     * @return string
-     */
     public function getChallenge(): string
     {
         return $this->challenge;
@@ -93,9 +85,9 @@ class RegistrationRequest implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'appId'            => $this->applicationId,
+            'appId' => $this->applicationId,
             'registerRequests' => [
-                ['version'   => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
+                ['version' => self::PROTOCOL_VERSION, 'challenge' => Base64Url::encode($this->challenge)],
             ],
             'registeredKeys' => array_values($this->registeredKeys),
         ];

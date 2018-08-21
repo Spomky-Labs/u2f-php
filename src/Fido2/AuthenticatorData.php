@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -51,12 +51,6 @@ class AuthenticatorData
 
     /**
      * AuthenticatorData constructor.
-     *
-     * @param string $rpIdHash
-     * @param string $flags
-     * @param int    $signCount
-     * @param AttestedCredentialData $attestedCredentialData
-     * @param CBORObject|null $extensions
      */
     public function __construct(string $rpIdHash, string $flags, int $signCount, AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
@@ -67,81 +61,51 @@ class AuthenticatorData
         $this->extensions = $extensions;
     }
 
-    /**
-     * @return string
-     */
     public function getRpIdHash(): string
     {
         return $this->rpIdHash;
     }
 
-    /**
-     * @return bool
-     */
     public function isUserPresent(): bool
     {
-        return ord($this->flags) & self::FLAG_UP ? true : false;
+        return \ord($this->flags) & self::FLAG_UP ? true : false;
     }
 
-    /**
-     * @return bool
-     */
     public function isUserVerified(): bool
     {
-        return ord($this->flags) & self::FLAG_UV ? true : false;
+        return \ord($this->flags) & self::FLAG_UV ? true : false;
     }
 
-    /**
-     * @return bool
-     */
     public function hasAttestedCredentialData(): bool
     {
-        return ord($this->flags) & self::FLAG_AT ? true : false;
+        return \ord($this->flags) & self::FLAG_AT ? true : false;
     }
 
-    /**
-     * @return bool
-     */
     public function hasExtensions(): bool
     {
-        return ord($this->flags) & self::FLAG_ED ? true : false;
+        return \ord($this->flags) & self::FLAG_ED ? true : false;
     }
 
-    /**
-     * @return int
-     */
     public function getReservedForFutureUse1(): int
     {
-        return ord($this->flags) & self::FLAG_RFU1;
+        return \ord($this->flags) & self::FLAG_RFU1;
     }
 
-    /**
-     * @return int
-     */
     public function getReservedForFutureUse2(): int
     {
-        return ord($this->flags) & self::FLAG_RFU2;
+        return \ord($this->flags) & self::FLAG_RFU2;
     }
 
-    /**
-     * @return int
-     */
     public function getSignCount(): int
     {
         return $this->signCount;
     }
 
-    /**
-     * @return AttestedCredentialData
-     */
-    public function getAttestedCredentialData():AttestedCredentialData
+    public function getAttestedCredentialData(): AttestedCredentialData
     {
         return $this->attestedCredentialData;
     }
 
-    /**
-     * @return null
-     */
     public function getExtensions()
     {
         return $this->extensions;

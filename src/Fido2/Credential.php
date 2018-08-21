@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -27,9 +27,6 @@ abstract class Credential implements \JsonSerializable
 
     /**
      * Credential constructor.
-     *
-     * @param string $id
-     * @param string $type
      */
     public function __construct(string $id, string $type)
     {
@@ -37,17 +34,11 @@ abstract class Credential implements \JsonSerializable
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;

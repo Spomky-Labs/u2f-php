@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -67,15 +67,8 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
     /**
      * PublicKeyCredentialCreationOptions constructor.
      *
-     * @param PublicKeyCredentialRpEntity          $rp
-     * @param PublicKeyCredentialUserEntity        $user
-     * @param string                               $challenge
-     * @param PublicKeyCredentialParameters[]      $pubKeyCredParams
-     * @param null|int                             $timeout
-     * @param PublicKeyCredentialDescriptor[]      $excludeCredentials
-     * @param AuthenticatorSelectionCriteria       $authenticatorSelection
-     * @param string                               $attestation
-     * @param AuthenticationExtensionsClientInputs $extensions
+     * @param PublicKeyCredentialParameters[] $pubKeyCredParams
+     * @param PublicKeyCredentialDescriptor[] $excludeCredentials
      */
     public function __construct(PublicKeyCredentialRpEntity $rp, PublicKeyCredentialUserEntity $user, string $challenge, array $pubKeyCredParams, ?int $timeout, array $excludeCredentials, AuthenticatorSelectionCriteria $authenticatorSelection, string $attestation = self::ATTESTATION_CONVEYANCE_PREFERENCE_NONE, AuthenticationExtensionsClientInputs $extensions)
     {
@@ -90,25 +83,16 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         $this->extensions = $extensions;
     }
 
-    /**
-     * @return PublicKeyCredentialRpEntity
-     */
     public function getRp(): PublicKeyCredentialRpEntity
     {
         return $this->rp;
     }
 
-    /**
-     * @return PublicKeyCredentialUserEntity
-     */
     public function getUser(): PublicKeyCredentialUserEntity
     {
         return $this->user;
     }
 
-    /**
-     * @return string
-     */
     public function getChallenge(): string
     {
         return $this->challenge;
@@ -122,9 +106,6 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         return $this->pubKeyCredParams;
     }
 
-    /**
-     * @return null|int
-     */
     public function getTimeout(): ?int
     {
         return $this->timeout;
@@ -138,25 +119,16 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         return $this->excludeCredentials;
     }
 
-    /**
-     * @return AuthenticatorSelectionCriteria
-     */
     public function getAuthenticatorSelection(): AuthenticatorSelectionCriteria
     {
         return $this->authenticatorSelection;
     }
 
-    /**
-     * @return string
-     */
     public function getAttestation(): string
     {
         return $this->attestation;
     }
 
-    /**
-     * @return AuthenticationExtensionsClientInputs
-     */
     public function getExtensions(): AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
@@ -168,11 +140,11 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
     public function jsonSerialize(): array
     {
         $json = [
-            'rp'                     => $this->rp,
-            'pubKeyCredParams'       => $this->pubKeyCredParams,
-            'challenge'              => $this->splitChallenge(),
-            'attestation'            => $this->attestation,
-            'user'                   => $this->user,
+            'rp' => $this->rp,
+            'pubKeyCredParams' => $this->pubKeyCredParams,
+            'challenge' => $this->splitChallenge(),
+            'attestation' => $this->attestation,
+            'user' => $this->user,
             'authenticatorSelection' => $this->authenticatorSelection,
         ];
 
@@ -184,7 +156,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
             $json['extensions'] = $this->extensions;
         }
 
-        if (!is_null($this->timeout)) {
+        if (!\is_null($this->timeout)) {
             $json['timeout'] = $this->timeout;
         }
 
@@ -199,7 +171,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         $result = [];
         $split = str_split($this->challenge);
         foreach ($split as $char) {
-            $result[] = ord($char);
+            $result[] = \ord($char);
         }
 
         return $result;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -27,11 +27,6 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 
     /**
      * PublicKeyCredentialUserEntity constructor.
-     *
-     * @param string      $name
-     * @param null|string $icon
-     * @param string      $id
-     * @param string      $displayName
      */
     public function __construct(string $name, ?string $icon, string $id, string $displayName)
     {
@@ -40,17 +35,11 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
         $this->displayName = $displayName;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getDisplayName(): string
     {
         return $this->displayName;
