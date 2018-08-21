@@ -48,5 +48,3 @@ dump($publicKeyCredential);
 
 /* To Be Done */
 $publicKeyCredentialLoader->isValid($publicKeyCredential, $request);
-
-

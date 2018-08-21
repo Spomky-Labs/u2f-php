@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 require_once 'vendor/autoload.php';
 
-use U2FAuthentication\Fido2\PublicKeyCredentialRequestOptions;
 use U2FAuthentication\Fido2\AuthenticationExtensionsClient;
 use U2FAuthentication\Fido2\AuthenticationExtensionsClientInputs;
 use U2FAuthentication\Fido2\PublicKeyCredentialDescriptor;
+use U2FAuthentication\Fido2\PublicKeyCredentialRequestOptions;
 
 session_start();
 
@@ -30,7 +30,7 @@ $request = new PublicKeyCredentialRequestOptions(
             new PublicKeyCredentialDescriptor(
                 'public-key',
                 base64_decode('wpeVFZtUqnqy8nYUNUfH/+8LuZFT/+i3Gw6yQJ/0AqmiYYgMn5Ik80uBi61TzSSHEDFqR6gaROEUPRpJWHir7g==')
-            )
+            ),
     ],
     PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_PREFERRED,
     $extensions
