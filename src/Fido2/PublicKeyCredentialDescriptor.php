@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Spomky-Labs
+ * Copyright (c) 2014-2018 Spomky-Labs
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -73,7 +73,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     {
         $json = [
             'type' => $this->type,
-            'id'   => $this->splitId(),
+            'id' => $this->splitId(),
         ];
         if ($this->transports) {
             $json['transports'] = $this->transports;
