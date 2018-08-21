@@ -49,9 +49,6 @@ class AuthenticatorData
     private const FLAG_AT = 0b01000000;
     private const FLAG_ED = 0b10000000;
 
-    /**
-     * AuthenticatorData constructor.
-     */
     public function __construct(string $rpIdHash, string $flags, int $signCount, AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
         $this->rpIdHash = $rpIdHash;

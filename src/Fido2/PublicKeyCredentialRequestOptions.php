@@ -53,7 +53,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
      *
      * @param PublicKeyCredentialDescriptor[] $allowCredentials
      */
-    public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials = [], ?string $userVerification = null, AuthenticationExtensionsClientInputs $extensions)
+    public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials, ?string $userVerification = null, AuthenticationExtensionsClientInputs $extensions)
     {
         $this->challenge = $challenge;
         $this->timeout = $timeout;

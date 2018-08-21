@@ -70,7 +70,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
      * @param PublicKeyCredentialParameters[] $pubKeyCredParams
      * @param PublicKeyCredentialDescriptor[] $excludeCredentials
      */
-    public function __construct(PublicKeyCredentialRpEntity $rp, PublicKeyCredentialUserEntity $user, string $challenge, array $pubKeyCredParams, ?int $timeout, array $excludeCredentials, AuthenticatorSelectionCriteria $authenticatorSelection, string $attestation = self::ATTESTATION_CONVEYANCE_PREFERENCE_NONE, AuthenticationExtensionsClientInputs $extensions)
+    public function __construct(PublicKeyCredentialRpEntity $rp, PublicKeyCredentialUserEntity $user, string $challenge, array $pubKeyCredParams, ?int $timeout, array $excludeCredentials, AuthenticatorSelectionCriteria $authenticatorSelection, string $attestation, AuthenticationExtensionsClientInputs $extensions)
     {
         $this->rp = $rp;
         $this->user = $user;
