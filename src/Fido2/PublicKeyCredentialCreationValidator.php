@@ -17,9 +17,6 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportMana
 
 class PublicKeyCredentialCreationValidator
 {
-    /**
-     * @var AttestationStatementSupportManager
-     */
     private $attestationStatementSupportManager;
 
     public function __construct(AttestationStatementSupportManager $attestationStatementSupportManager)

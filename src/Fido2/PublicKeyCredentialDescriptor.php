@@ -21,14 +21,8 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     public const AUTHENTICATOR_TRANSPORT_NFC = 'nfc';
     public const AUTHENTICATOR_TRANSPORT_BLE = 'ble';
 
-    /**
-     * @var string
-     */
     private $type;
 
-    /**
-     * @var string
-     */
     private $id;
 
     /**
@@ -37,8 +31,6 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     private $transports;
 
     /**
-     * PublicKeyCredentialDescriptor constructor.
-     *
      * @param string[] $transports
      */
     public function __construct(string $type, string $id, array $transports = [])
@@ -66,9 +58,6 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
         return $this->transports;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         $json = [

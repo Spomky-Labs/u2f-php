@@ -41,9 +41,6 @@ class PublicKey implements \JsonSerializable
         return $this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): string
     {
         return $this->value;

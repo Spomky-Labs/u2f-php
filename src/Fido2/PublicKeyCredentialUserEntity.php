@@ -15,19 +15,10 @@ namespace U2FAuthentication\Fido2;
 
 class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 {
-    /**
-     * @var string
-     */
     private $id;
 
-    /**
-     * @var string
-     */
     private $displayName;
 
-    /**
-     * PublicKeyCredentialUserEntity constructor.
-     */
     public function __construct(string $name, ?string $icon, string $id, string $displayName)
     {
         parent::__construct($name, $icon);
@@ -45,9 +36,6 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
         return $this->displayName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         $json = parent::jsonSerialize();

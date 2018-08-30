@@ -17,9 +17,6 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationObject;
 
 class AuthenticatorAttestationResponse extends AuthenticatorResponse
 {
-    /**
-     * @var AttestationObject
-     */
     private $attestationObject;
 
     public function __construct(CollectedClientData $clientDataJSON, AttestationObject $attestationObject)
@@ -33,9 +30,6 @@ class AuthenticatorAttestationResponse extends AuthenticatorResponse
         return $this->attestationObject;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

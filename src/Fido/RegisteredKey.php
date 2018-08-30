@@ -89,9 +89,6 @@ class RegisteredKey implements \JsonSerializable
         return $this->attestationCertificate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return [

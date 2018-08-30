@@ -17,25 +17,16 @@ use Base64Url\Base64Url;
 
 class CollectedClientData
 {
-    /**
-     * @var string
-     */
     private $rawData;
 
-    /**
-     * @var array
-     */
     private $data;
 
     public function __construct(string $rawData, array $data)
     {
-        $this->data = $data;
         $this->rawData = $rawData;
+        $this->data = $data;
     }
 
-    /**
-     * @return CollectedClientData
-     */
     public static function createFormJson(string $data): self
     {
         $json = json_decode(Base64Url::decode($data), true);
@@ -83,7 +74,7 @@ class CollectedClientData
         return $this->rawData;
     }
 
-    public function has(string $key)
+    public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
@@ -94,6 +85,6 @@ class CollectedClientData
             throw new \InvalidArgumentException(sprintf('The collected client data has no key "%s".', $key));
         }
 
-        return $this->data['origin'];
+        return $this->data[$key];
     }
 }

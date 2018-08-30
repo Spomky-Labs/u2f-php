@@ -15,19 +15,10 @@ namespace U2FAuthentication\Fido2;
 
 class PublicKeyCredential extends Credential
 {
-    /**
-     * @var string
-     */
     private $rawId;
 
-    /**
-     * @var AuthenticatorAttestationResponse
-     */
     private $response;
 
-    /**
-     * PublicKeyCredential constructor.
-     */
     public function __construct(string $id, string $type, string $rawId, AuthenticatorAttestationResponse $response)
     {
         parent::__construct($id, $type);
@@ -53,9 +44,6 @@ class PublicKeyCredential extends Credential
         return new PublicKeyCredentialDescriptor($this->getType(), $this->getId(), $transport);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

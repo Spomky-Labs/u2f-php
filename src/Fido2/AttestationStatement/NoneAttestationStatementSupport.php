@@ -16,19 +16,13 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\CollectedClientData;
 
-final class NoneAttestationStatement implements AttestationStatementSupport
+final class NoneAttestationStatementSupport implements AttestationStatementSupport
 {
-    /**
-     * {@inheritdoc}
-     */
     public function name(): string
     {
         return 'none';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData, CollectedClientData $collectedClientData): bool
     {
         return empty($attestationStatement->getAttStmt());

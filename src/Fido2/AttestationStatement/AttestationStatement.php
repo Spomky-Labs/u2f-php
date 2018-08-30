@@ -15,23 +15,17 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 class AttestationStatement
 {
-    /**
-     * @var
-     */
     private $fmt;
 
-    /**
-     * @var array
-     */
     private $attStmt;
 
-    public function __construct($fmt, array $attStmt)
+    public function __construct(string $fmt, array $attStmt)
     {
         $this->fmt = $fmt;
         $this->attStmt = $attStmt;
     }
 
-    public function getFmt()
+    public function getFmt(): string
     {
         return $this->fmt;
     }

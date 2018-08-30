@@ -17,19 +17,8 @@ use U2FAuthentication\Fido2\AuthenticatorData;
 
 class AttestationObject
 {
-    /**
-     * @var string
-     */
     private $rawAttestationObject;
-
-    /**
-     * @var AttestationStatement
-     */
     private $attStmt;
-
-    /**
-     * @var AuthenticatorData
-     */
     private $authData;
 
     public function __construct(string $rawAttestationObject, AttestationStatement $attStmt, AuthenticatorData $authData)

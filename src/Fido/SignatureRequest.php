@@ -100,9 +100,6 @@ class SignatureRequest implements \JsonSerializable
         return $this->registeredKeys;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

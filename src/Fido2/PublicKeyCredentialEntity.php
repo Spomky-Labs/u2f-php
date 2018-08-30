@@ -15,19 +15,10 @@ namespace U2FAuthentication\Fido2;
 
 abstract class PublicKeyCredentialEntity implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $name;
 
-    /**
-     * @var null|string
-     */
     private $icon;
 
-    /**
-     * PublicKeyCredentialEntity constructor.
-     */
     public function __construct(string $name, ?string $icon)
     {
         $this->name = $name;
@@ -44,9 +35,6 @@ abstract class PublicKeyCredentialEntity implements \JsonSerializable
         return $this->icon;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         $json = [

@@ -15,9 +15,6 @@ namespace U2FAuthentication\Fido2;
 
 abstract class AuthenticatorResponse implements \JsonSerializable
 {
-    /**
-     * @var CollectedClientData
-     */
     private $clientDataJSON;
 
     public function __construct(CollectedClientData $clientDataJSON)

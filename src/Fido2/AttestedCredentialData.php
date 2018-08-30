@@ -15,27 +15,13 @@ namespace U2FAuthentication\Fido2;
 
 class AttestedCredentialData
 {
-    /**
-     * @var string
-     */
     private $aaguid;
 
-    /**
-     * @var string
-     */
     private $credentialId;
 
-    /**
-     * @var null|array
-     */
     private $credentialPublicKey;
 
-    /**
-     * AttestedCredentialData constructor.
-     *
-     * @param null|array $credentialPublicKey
-     */
-    public function __construct(string $aaguid, string $credentialId, array $credentialPublicKey)
+    public function __construct(string $aaguid, string $credentialId, ?array $credentialPublicKey)
     {
         $this->aaguid = $aaguid;
         $this->credentialId = $credentialId;

@@ -16,7 +16,7 @@ namespace U2FAuthentication\Fido2;
 class AuthenticationExtensionsClientInputs implements \JsonSerializable
 {
     /**
-     * @var mixed[]
+     * @var AuthenticationExtensionsClient[]
      */
     private $extensions = [];
 
@@ -25,9 +25,6 @@ class AuthenticationExtensionsClientInputs implements \JsonSerializable
         $this->extensions[$extension->getName()] = $extension->getValue();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return $this->extensions;

@@ -4,7 +4,7 @@
 | Feature request?     | yes/no
 | BC Break report?     | yes/no
 | RFC? / Specification | yes/no
-| Library version      | x.y(.z)
+| Version              | x.y(.z)
 
 <!--
 Fill in this template according to your issue.

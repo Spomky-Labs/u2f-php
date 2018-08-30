@@ -17,29 +17,14 @@ use CBOR\CBORObject;
 
 class AuthenticatorData
 {
-    /**
-     * @var string
-     */
     private $rpIdHash;
 
-    /**
-     * @var string
-     */
     private $flags;
 
-    /**
-     * @var int
-     */
     private $signCount;
 
-    /**
-     * @var AttestedCredentialData
-     */
     private $attestedCredentialData;
 
-    /**
-     * @var null
-     */
     private $extensions;
 
     private const FLAG_UP = 0b00000001;

@@ -16,7 +16,7 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\CollectedClientData;
 
-final class FidoU2FAttestationStatement implements AttestationStatementSupport
+final class FidoU2FAttestationStatementSupport implements AttestationStatementSupport
 {
     private const CERTIFICATES_HASHES = [
         '349bca1031f8c82c4ceca38b9cebf1a69df9fb3b94eed99eb3fb9aa3822d26e8',
@@ -40,17 +40,11 @@ final class FidoU2FAttestationStatement implements AttestationStatementSupport
         $this->attestationCertificates = $attestationCertificates;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function name(): string
     {
         return 'fido-u2f';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData, CollectedClientData $collectedClientData): bool
     {
         foreach (['sig', 'x5c'] as $key) {
@@ -60,7 +54,7 @@ final class FidoU2FAttestationStatement implements AttestationStatementSupport
         }
         $x5c = $attestationStatement->get('x5c');
         if (!\is_array($x5c) || empty($x5c)) {
-            throw new \InvalidArgumentException('The attestation statement value "x5c" must contain at least one certificate.');
+            throw new \InvalidArgumentException('The attestation statement value "x5c" must be a list with at least one certificate.');
         }
 
         reset($x5c);
@@ -75,9 +69,6 @@ final class FidoU2FAttestationStatement implements AttestationStatementSupport
         $dataToVerify .= hash('sha256', $collectedClientData->getRawData(), true);
         $dataToVerify .= $authenticatorData->getAttestedCredentialData()->getCredentialId();
         $dataToVerify .= $this->extractPublicKey($authenticatorData->getAttestedCredentialData()->getCredentialPublicKey());
-        dump($dataToVerify);
-        dump($attestationStatement->get('sig'));
-        dump($x5c);
 
         return 1 === openssl_verify($dataToVerify, $attestationStatement->get('sig'), $x5c, OPENSSL_ALGO_SHA256);
     }
@@ -95,10 +86,10 @@ final class FidoU2FAttestationStatement implements AttestationStatementSupport
     private function extractPublicKey(?array $publicKey): string
     {
         if (!\is_array($publicKey) || !array_key_exists(-2, $publicKey) || !\is_string($publicKey[-2]) || 32 !== mb_strlen($publicKey[-2], '8bit')) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
         }
         if (!array_key_exists(-3, $publicKey) || !\is_string($publicKey[-3]) || 32 !== mb_strlen($publicKey[-3], '8bit')) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
         }
 
         return "\x04".$publicKey[-2].$publicKey[-3];

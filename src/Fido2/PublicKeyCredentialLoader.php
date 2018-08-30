@@ -19,14 +19,8 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationObjectLoader;
 
 class PublicKeyCredentialLoader
 {
-    /**
-     * @var Decoder
-     */
     private $decoder;
 
-    /**
-     * @var AttestationObjectLoader
-     */
     private $attestationObjectLoader;
 
     public function __construct(Decoder $decoder, AttestationObjectLoader $attestationObjectLoader)

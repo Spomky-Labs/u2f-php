@@ -18,19 +18,10 @@ class PublicKeyCredentialParameters implements \JsonSerializable
     public const ALGORITHM_ES256 = -7;
     public const ALGORITHM_RS256 = -257;
 
-    /**
-     * @var string
-     */
     private $type;
 
-    /**
-     * @var int
-     */
     private $alg;
 
-    /**
-     * PublicKeyCredentialParameters constructor.
-     */
     public function __construct(string $type, int $alg)
     {
         $this->type = $type;
@@ -47,9 +38,6 @@ class PublicKeyCredentialParameters implements \JsonSerializable
         return $this->alg;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

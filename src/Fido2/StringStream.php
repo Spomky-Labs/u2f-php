@@ -19,9 +19,6 @@ final class StringStream implements Stream
 {
     private $resource;
 
-    /**
-     * StringStream constructor.
-     */
     public function __construct(string $data)
     {
         $this->resource = fopen('php://memory', 'r+');

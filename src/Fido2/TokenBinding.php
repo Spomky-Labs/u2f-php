@@ -18,28 +18,17 @@ class TokenBinding
     public const TOKEN_BINDING_STATUS_PRESENT = 'present';
     public const TOKEN_BINDING_STATUS_SUPPORTED = 'supported';
     public const TOKEN_BINDING_STATUS_NOT_SUPPORTED = 'not-supported';
-    /**
-     * @var string
-     */
+
     private $status;
 
-    /**
-     * @var null|string
-     */
     private $id;
 
-    /**
-     * TokenBinding constructor.
-     */
     public function __construct(string $status, ?string $id)
     {
         $this->status = $status;
         $this->id = $id;
     }
 
-    /**
-     * @return TokenBinding
-     */
     public static function createFormJson(array $json): self
     {
         if (!array_key_exists('status', $json)) {

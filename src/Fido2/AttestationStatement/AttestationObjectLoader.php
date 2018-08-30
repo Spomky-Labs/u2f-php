@@ -24,9 +24,6 @@ class AttestationObjectLoader
     private const FLAG_AT = 0b01000000;
     private const FLAG_ED = 0b10000000;
 
-    /**
-     * @var Decoder
-     */
     private $decoder;
 
     public function __construct(Decoder $decoder)

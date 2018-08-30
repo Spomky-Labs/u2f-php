@@ -18,19 +18,11 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
     public const USER_VERIFICATION_REQUIREMENT_REQUIRED = 'required';
     public const USER_VERIFICATION_REQUIREMENT_PREFERRED = 'preferred';
     public const USER_VERIFICATION_REQUIREMENT_DISCOURAGED = 'discouraged';
-    /**
-     * @var string
-     */
+
     private $challenge;
 
-    /**
-     * @var int|null
-     */
     private $timeout;
 
-    /**
-     * @var string|null
-     */
     private $rpId;
 
     /**
@@ -38,14 +30,8 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
      */
     private $allowCredentials;
 
-    /**
-     * @var string|null
-     */
     private $userVerification;
 
-    /**
-     * @var AuthenticationExtensionsClientInputs
-     */
     private $extensions;
 
     /**
@@ -96,9 +82,6 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         return $this->extensions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         $json = [

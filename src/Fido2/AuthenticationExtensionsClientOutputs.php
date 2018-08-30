@@ -16,7 +16,7 @@ namespace U2FAuthentication\Fido2;
 class AuthenticationExtensionsClientOutputs
 {
     /**
-     * @var mixed[]
+     * @var AuthenticationExtensionsClient[]
      */
     private $extensions = [];
 

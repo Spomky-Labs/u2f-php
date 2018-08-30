@@ -15,19 +15,10 @@ namespace U2FAuthentication\Fido2;
 
 abstract class Credential implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $id;
 
-    /**
-     * @var string
-     */
     private $type;
 
-    /**
-     * Credential constructor.
-     */
     public function __construct(string $id, string $type)
     {
         $this->id = $id;

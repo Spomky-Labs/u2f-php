@@ -11,7 +11,7 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication\Tests\Unit;
+namespace U2FAuthentication\Tests\Unit\Fido;
 
 use Base64Url\Base64Url;
 use PHPUnit\Framework\TestCase;
@@ -300,7 +300,7 @@ final class RegistrationResponseTest extends TestCase
         $request = $this->prophesize(RegistrationRequest::class);
         $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
         $request->getApplicationId()->willReturn('https://twofactors:4043');
-        static::assertTrue($response->isValid($request->reveal(), [__DIR__.'/../certificates/yubico.crt']));
+        static::assertTrue($response->isValid($request->reveal(), [__DIR__.'/../../certificates/yubico.crt']));
     }
 
     /**
@@ -345,7 +345,7 @@ final class RegistrationResponseTest extends TestCase
         $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
         $request->getApplicationId()->willReturn('https://twofactors:4043');
 
-        static::assertFalse($response->isValid($request->reveal(), [__DIR__.'/../certificates/frank4dd-cacert.crt']));
+        static::assertFalse($response->isValid($request->reveal(), [__DIR__.'/../../certificates/frank4dd-cacert.crt']));
     }
 
     private function getValidRegistrationResponse(): array

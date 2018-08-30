@@ -56,9 +56,6 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
         return $this->userHandle;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         $json = [
