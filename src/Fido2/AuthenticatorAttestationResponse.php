@@ -15,6 +15,9 @@ namespace U2FAuthentication\Fido2;
 
 use U2FAuthentication\Fido2\AttestationStatement\AttestationObject;
 
+/**
+ * @see https://www.w3.org/TR/webauthn/#authenticatorattestationresponse
+ */
 class AuthenticatorAttestationResponse extends AuthenticatorResponse
 {
     private $attestationObject;

@@ -35,7 +35,11 @@ Please make sure to [follow these best practices](.github/CONTRIBUTING.md).
 # Security Issues
 
 If you discover a security vulnerability within the project, please **don't use the bug tracker and don't publish it publicly**.
-Instead, all security issues must be sent to security [at] spomky-labs.com. 
+Instead, all security issues must be sent to security [at] spomky-labs.com.
+
+# Support
+
+No support is provided on this repository. Commercial support is available at [https://spomky-labs.com](https://spomky-labs.com) (English or French).
 
 # Licence
 

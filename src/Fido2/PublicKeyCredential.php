@@ -13,13 +13,16 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+/**
+ * @see https://www.w3.org/TR/webauthn/#iface-pkcredential
+ */
 class PublicKeyCredential extends Credential
 {
     private $rawId;
 
     private $response;
 
-    public function __construct(string $id, string $type, string $rawId, AuthenticatorAttestationResponse $response)
+    public function __construct(string $id, string $type, string $rawId, AuthenticatorResponse $response)
     {
         parent::__construct($id, $type);
         $this->rawId = $rawId;
@@ -31,7 +34,7 @@ class PublicKeyCredential extends Credential
         return $this->rawId;
     }
 
-    public function getResponse(): AuthenticatorAttestationResponse
+    public function getResponse(): AuthenticatorResponse
     {
         return $this->response;
     }

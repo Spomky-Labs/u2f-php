@@ -15,6 +15,9 @@ namespace U2FAuthentication\Fido2;
 
 use CBOR\CBORObject;
 
+/**
+ * @see https://www.w3.org/TR/webauthn/#sec-authenticator-data
+ */
 class AuthenticatorData
 {
     private $rpIdHash;

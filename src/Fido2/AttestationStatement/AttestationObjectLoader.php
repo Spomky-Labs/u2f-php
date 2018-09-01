@@ -15,6 +15,7 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Base64Url\Base64Url;
 use CBOR\Decoder;
+use U2FAuthentication\Cose\KeyConverter;
 use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\StringStream;
@@ -50,14 +51,12 @@ class AttestationObjectLoader
             $credentialLength = unpack('n', $credentialLength)[1];
             $credentialId = $authDataStream->read($credentialLength);
             $credentialPublicKey = $this->decoder->decode($authDataStream);
-            //TODO: should be converted into a COSE Key
-            $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey->getNormalizedData());
+            $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
         } else {
             $attestedCredentialData = null;
         }
 
         if (\ord($flags) & self::FLAG_ED) {
-            //TODO: should be correctly handled
             $extension = $this->decoder->decode($authDataStream);
         } else {
             $extension = null;

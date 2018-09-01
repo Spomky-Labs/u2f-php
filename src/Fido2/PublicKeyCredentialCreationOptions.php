@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
+
 class PublicKeyCredentialCreationOptions implements \JsonSerializable
 {
     public const ATTESTATION_CONVEYANCE_PREFERENCE_NONE = 'none';
@@ -118,7 +120,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         $json = [
             'rp' => $this->rp,
             'pubKeyCredParams' => $this->pubKeyCredParams,
-            'challenge' => $this->splitChallenge(),
+            'challenge' => base64_encode($this->challenge),
             'attestation' => $this->attestation,
             'user' => $this->user,
             'authenticatorSelection' => $this->authenticatorSelection,
@@ -137,19 +139,5 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         }
 
         return $json;
-    }
-
-    /**
-     * @return int[]
-     */
-    private function splitChallenge(): array
-    {
-        $result = [];
-        $split = str_split($this->challenge);
-        foreach ($split as $char) {
-            $result[] = \ord($char);
-        }
-
-        return $result;
     }
 }

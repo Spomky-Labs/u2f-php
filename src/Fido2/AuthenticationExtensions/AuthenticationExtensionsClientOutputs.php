@@ -11,9 +11,9 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication\Fido2;
+namespace U2FAuthentication\Fido2\AuthenticationExtensions;
 
-class AuthenticationExtensionsClientInputs implements \JsonSerializable
+class AuthenticationExtensionsClientOutputs implements \JsonSerializable, \Countable, \IteratorAggregate
 {
     /**
      * @var AuthenticationExtensionsClient[]
@@ -28,5 +28,15 @@ class AuthenticationExtensionsClientInputs implements \JsonSerializable
     public function jsonSerialize()
     {
         return $this->extensions;
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->extensions);
+    }
+
+    public function count($mode = COUNT_NORMAL): int
+    {
+        return \count($this->extensions, $mode);
     }
 }

@@ -20,6 +20,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     public const AUTHENTICATOR_TRANSPORT_USB = 'usb';
     public const AUTHENTICATOR_TRANSPORT_NFC = 'nfc';
     public const AUTHENTICATOR_TRANSPORT_BLE = 'ble';
+    public const AUTHENTICATOR_TRANSPORT_INTERNAL = 'internal';
 
     private $type;
 
@@ -62,26 +63,12 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     {
         $json = [
             'type' => $this->type,
-            'id' => $this->splitId(),
+            'id' => base64_encode($this->id),
         ];
-        if ($this->transports) {
+        if ($this->transports && !empty($this->transports)) {
             $json['transports'] = $this->transports;
         }
 
         return $json;
-    }
-
-    /**
-     * @return int[]
-     */
-    private function splitId(): array
-    {
-        $result = [];
-        $split = str_split($this->id);
-        foreach ($split as $char) {
-            $result[] = \ord($char);
-        }
-
-        return $result;
     }
 }

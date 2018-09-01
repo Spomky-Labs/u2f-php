@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use CBOR\MapObject;
 use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\CollectedClientData;
 
@@ -83,9 +84,14 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         return $pemCert;
     }
 
-    private function extractPublicKey(?array $publicKey): string
+    private function extractPublicKey(?MapObject $publicKey): string
     {
-        if (!\is_array($publicKey) || !array_key_exists(-2, $publicKey) || !\is_string($publicKey[-2]) || 32 !== mb_strlen($publicKey[-2], '8bit')) {
+        if (!$publicKey instanceof MapObject) {
+            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
+        }
+
+        $publicKey = $publicKey->getNormalizedData();
+        if (!array_key_exists(-2, $publicKey) || !\is_string($publicKey[-2]) || 32 !== mb_strlen($publicKey[-2], '8bit')) {
             throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
         }
         if (!array_key_exists(-3, $publicKey) || !\is_string($publicKey[-3]) || 32 !== mb_strlen($publicKey[-3], '8bit')) {

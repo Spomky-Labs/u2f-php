@@ -28,6 +28,20 @@ class AttestationStatementSupportManager
         $this->attestationStatementSupports[$attestationStatementSupport->name()] = $attestationStatementSupport;
     }
 
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->attestationStatementSupports);
+    }
+
+    public function get(string $name): AttestationStatementSupport
+    {
+        if (!$this->has($name)) {
+            throw new \InvalidArgumentException(sprintf('The attestation statement format "%s" is not supported.', name));
+        }
+
+        return $this->attestationStatementSupports[$name];
+    }
+
     public function isValid(AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData, CollectedClientData $collectedClientData): bool
     {
         $fmt = $attestationStatement->getFmt();

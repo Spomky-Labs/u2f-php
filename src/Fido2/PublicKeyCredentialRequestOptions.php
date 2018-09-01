@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Traversable;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
+
 class PublicKeyCredentialRequestOptions implements \JsonSerializable
 {
     public const USER_VERIFICATION_REQUIREMENT_REQUIRED = 'required';
@@ -39,7 +42,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
      *
      * @param PublicKeyCredentialDescriptor[] $allowCredentials
      */
-    public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials, ?string $userVerification = null, AuthenticationExtensionsClientInputs $extensions)
+    public function __construct(string $challenge, ?int $timeout = null, ?string $rpId = null, array $allowCredentials = [], ?string $userVerification = null, ?AuthenticationExtensionsClientInputs $extensions = null)
     {
         $this->challenge = $challenge;
         $this->timeout = $timeout;
@@ -77,7 +80,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         return $this->userVerification;
     }
 
-    public function getExtensions(): AuthenticationExtensionsClientInputs
+    public function getExtensions(): ?AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
     }
@@ -85,9 +88,12 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
     public function jsonSerialize(): array
     {
         $json = [
-            'rpId' => $this->rpId,
-            'challenge' => $this->splitChallenge(),
+            'challenge' => base64_encode($this->challenge),
         ];
+
+        if ($this->rpId) {
+            $json['rpId'] = $this->rpId;
+        }
 
         if ($this->userVerification) {
             $json['userVerification'] = $this->userVerification;
@@ -97,7 +103,7 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
             $json['allowCredentials'] = $this->allowCredentials;
         }
 
-        if (!empty($this->extensions)) {
+        if ($this->extensions && 0 !== $this->extensions->count()) {
             $json['extensions'] = $this->extensions;
         }
 
@@ -106,19 +112,5 @@ class PublicKeyCredentialRequestOptions implements \JsonSerializable
         }
 
         return $json;
-    }
-
-    /**
-     * @return int[]
-     */
-    private function splitChallenge(): array
-    {
-        $result = [];
-        $split = str_split($this->challenge);
-        foreach ($split as $char) {
-            $result[] = \ord($char);
-        }
-
-        return $result;
     }
 }
