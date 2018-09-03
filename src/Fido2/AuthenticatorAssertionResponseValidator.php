@@ -55,7 +55,7 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /* @see 7.2.8 */
-        if (hash_equals($publicKeyCredentialRequestOptions->getChallenge(), $C->getChallenge())) {
+        if (!hash_equals($publicKeyCredentialRequestOptions->getChallenge(), $C->getChallenge())) {
             throw new \InvalidArgumentException('Invalid challenge.');
         }
 
