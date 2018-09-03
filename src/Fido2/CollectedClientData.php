@@ -37,6 +37,7 @@ class CollectedClientData
         if (!array_key_exists('challenge', $json)) {
             throw new \InvalidArgumentException();
         }
+        $json['challenge'] = Base64Url::decode($json['challenge']);
         if (!array_key_exists('origin', $json)) {
             throw new \InvalidArgumentException();
         }

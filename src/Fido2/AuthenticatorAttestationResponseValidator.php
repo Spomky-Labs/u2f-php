@@ -43,7 +43,7 @@ class AuthenticatorAttestationResponseValidator
         }
 
         /* @see 7.1.4 */
-        if (hash_equals($publicKeyCredentialCreationOptions->getChallenge(), $C->getChallenge())) {
+        if (!hash_equals($publicKeyCredentialCreationOptions->getChallenge(), $C->getChallenge())) {
             throw new \InvalidArgumentException('Invalid challenge.');
         }
 
@@ -66,14 +66,14 @@ class AuthenticatorAttestationResponseValidator
         }
 
         /** @see 7.1.7 */
-        $getClientDataJSONHash = hash('sha256', $authenticatorAttestationResponse->getClientDataJSON()->getRawData());
+        $getClientDataJSONHash = hash('sha256', $authenticatorAttestationResponse->getClientDataJSON()->getRawData(), true);
 
         /** @see 7.1.8 */
         $attestationObject = $authenticatorAttestationResponse->getAttestationObject();
 
         /** @see 7.1.9 */
-        $rpIdHash = hash('sha256', $rpId);
-        if (hash_equals($rpIdHash, $attestationObject->getAuthData()->getRpIdHash())) {
+        $rpIdHash = hash('sha256', $rpId, true);
+        if (!hash_equals($rpIdHash, $attestationObject->getAuthData()->getRpIdHash())) {
             throw new \InvalidArgumentException('rpId hash mismatch.');
         }
 
@@ -108,7 +108,7 @@ class AuthenticatorAttestationResponseValidator
         /** @see 7.1.16 */
         /** @see 7.1.17 */
         $credentialId = $attestationObject->getAuthData()->getAttestedCredentialData()->getCredentialId();
-        if ($this->credentialRepository->hasCredentialId($credentialId)) {
+        if ($this->credentialRepository->hasCredential($credentialId)) {
             throw new \InvalidArgumentException('The credential ID already exists.');
         }
 

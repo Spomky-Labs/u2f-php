@@ -102,6 +102,7 @@ class PublicKeyCredentialLoader
                 $extension = null;
             }
             $authenticatorData = new AuthenticatorData(
+                $authData,
                 $rp_id_hash,
                 $flags,
                 $signCount,

@@ -37,14 +37,14 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /* @see 7.2.3 */
-        if (!$this->credentialRepository->hasCredentialPublicKey($credentialId)) {
+        if (!$this->credentialRepository->hasCredential($credentialId)) {
             throw new \InvalidArgumentException('No credential public key available for the given credential ID.');
         }
         $credentialPublicKey = $this->credentialRepository->getCredentialPublicKey($credentialId);
 
         /** @see 7.2.4 */
         /** @see 7.2.5 */
-        //Nothirg to do. Use of objets directly
+        //Nothing to do. Use of objets directly
 
         /** @see 7.2.6 */
         $C = $authenticatorAssertionResponse->getClientDataJSON();
@@ -78,8 +78,8 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /** @see 7.2.11 */
-        $rpIdHash = hash('sha256', $rpId);
-        if (hash_equals($rpIdHash, $authenticatorAssertionResponse->getAuthenticatorData()->getRpIdHash())) {
+        $rpIdHash = hash('sha256', $rpId, true);
+        if (!hash_equals($rpIdHash, $authenticatorAssertionResponse->getAuthenticatorData()->getRpIdHash())) {
             throw new \InvalidArgumentException('rpId hash mismatch.');
         }
 
@@ -99,16 +99,38 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /** @see 7.2.15 */
-        $getClientDataJSONHash = hash('sha256', $authenticatorAssertionResponse->getClientDataJSON()->getRawData());
+        $getClientDataJSONHash = hash('sha256', $authenticatorAssertionResponse->getClientDataJSON()->getRawData(), true);
 
         /* @see 7.2.16 */
-        //TODO: check signature
+        $coseKey = $credentialPublicKey->getNormalizedData();
+        $key = "\04".$coseKey[-2].$coseKey[-3];
+        if (1 !== openssl_verify($authenticatorAssertionResponse->getAuthenticatorData()->getAuthData().$getClientDataJSONHash, $authenticatorAssertionResponse->getSignature(), $this->getPublicKeyAsPem($key), OPENSSL_ALGO_SHA256)) {
+            throw new \InvalidArgumentException('Invalid signature.');
+        }
 
         /* @see 7.2.17 */
-        //TODO: check counter
+        $storedCounter = $this->credentialRepository->getCredentialCounter($credentialId);
+        $currentCounter = $authenticatorAssertionResponse->getAuthenticatorData()->getSignCount();
+        if ($storedCounter >= $currentCounter) {
+            throw new \InvalidArgumentException('Invalid counter.');
+        }
+        $this->credentialRepository->updateCredentialCounter($credentialId, $currentCounter);
 
         /* @see 7.2.18 */
         //Great!
+    }
+
+    private function getPublicKeyAsPem(string $key): string
+    {
+        $der = "\x30\x59\x30\x13\x06\x07\x2a\x86\x48\xce\x3d\x02\x01";
+        $der .= "\x06\x08\x2a\x86\x48\xce\x3d\x03\x01\x07\x03\x42";
+        $der .= "\0".$key;
+
+        $pem = '-----BEGIN PUBLIC KEY-----'.PHP_EOL;
+        $pem .= chunk_split(base64_encode($der), 64, PHP_EOL);
+        $pem .= '-----END PUBLIC KEY-----'.PHP_EOL;
+
+        return $pem;
     }
 
     private function isCredentialIdAllowed(string $credentialId, array $allowedCredentials): bool

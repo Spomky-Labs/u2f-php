@@ -20,6 +20,8 @@ use CBOR\CBORObject;
  */
 class AuthenticatorData
 {
+    private $authData;
+
     private $rpIdHash;
 
     private $flags;
@@ -37,13 +39,19 @@ class AuthenticatorData
     private const FLAG_AT = 0b01000000;
     private const FLAG_ED = 0b10000000;
 
-    public function __construct(string $rpIdHash, string $flags, int $signCount, ?AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
+    public function __construct(string $authData, string $rpIdHash, string $flags, int $signCount, ?AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
         $this->rpIdHash = $rpIdHash;
         $this->flags = $flags;
         $this->signCount = $signCount;
         $this->attestedCredentialData = $attestedCredentialData;
         $this->extensions = $extensions;
+        $this->authData = $authData;
+    }
+
+    public function getAuthData(): string
+    {
+        return $this->authData;
     }
 
     public function getRpIdHash(): string

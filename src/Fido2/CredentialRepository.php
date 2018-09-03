@@ -17,11 +17,11 @@ use CBOR\CBORObject;
 
 interface CredentialRepository
 {
-    public function hasCredentialId(string $credentialId): bool;
-
-    public function getCredentialId(string $credentialId): AttestedCredentialData;
-
-    public function hasCredentialPublicKey(string $credentialId): bool;
+    public function hasCredential(string $credentialId): bool;
 
     public function getCredentialPublicKey(string $credentialId): CBORObject;
+
+    public function getCredentialCounter(string $credentialId): int;
+
+    public function updateCredentialCounter(string $credentialId, int $newCounter): void;
 }
