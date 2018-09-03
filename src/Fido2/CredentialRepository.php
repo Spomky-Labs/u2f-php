@@ -13,8 +13,15 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-interface CredentialIdRepository
+use CBOR\CBORObject;
+
+interface CredentialRepository
 {
     public function hasCredentialId(string $credentialId): bool;
+
     public function getCredentialId(string $credentialId): AttestedCredentialData;
+
+    public function hasCredentialPublicKey(string $credentialId): bool;
+
+    public function getCredentialPublicKey(string $credentialId): CBORObject;
 }

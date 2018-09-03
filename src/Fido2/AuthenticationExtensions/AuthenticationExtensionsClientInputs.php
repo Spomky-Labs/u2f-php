@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AuthenticationExtensions;
 
-use Traversable;
-
 class AuthenticationExtensionsClientInputs implements \JsonSerializable, \Countable, \IteratorAggregate
 {
     /**

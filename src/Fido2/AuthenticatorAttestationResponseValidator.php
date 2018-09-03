@@ -15,54 +15,61 @@ namespace U2FAuthentication\Fido2;
 
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportManager;
 
-class PublicKeyCredentialCreationValidator
+class AuthenticatorAttestationResponseValidator
 {
     private $attestationStatementSupportManager;
-    private $credentialIdRepository;
+    private $credentialRepository;
 
-    public function __construct(AttestationStatementSupportManager $attestationStatementSupportManager, CredentialIdRepository $credentialIdRepository)
+    public function __construct(AttestationStatementSupportManager $attestationStatementSupportManager, CredentialRepository $credentialRepository)
     {
         $this->attestationStatementSupportManager = $attestationStatementSupportManager;
-        $this->credentialIdRepository = $credentialIdRepository;
+        $this->credentialRepository = $credentialRepository;
     }
 
     /**
      * @see https://www.w3.org/TR/webauthn/#registering-a-new-credential
      */
-    public function check(PublicKeyCredential $publicKeyCredential, PublicKeyCredentialCreationOptions $publicKeyCredentialCreationOptions, ?string $rpId = null): void
+    public function check(AuthenticatorAttestationResponse $authenticatorAttestationResponse, PublicKeyCredentialCreationOptions $publicKeyCredentialCreationOptions, ?string $rpId = null): void
     {
-        /** @see 7.1.2 */
-        $C = $publicKeyCredential->getResponse()->getClientDataJSON();
+        /** @see 7.1.1 */
+        //Nothing to do
 
-        /** @see 7.1.3 */
+        /** @see 7.1.2 */
+        $C = $authenticatorAttestationResponse->getClientDataJSON();
+
+        /* @see 7.1.3 */
         if ('webauthn.create' !== $C->getType()) {
             throw new \InvalidArgumentException('The client data type is not "webauthn.create".');
         }
 
-        /** @see 7.1.4 */
+        /* @see 7.1.4 */
         if (hash_equals($publicKeyCredentialCreationOptions->getChallenge(), $C->getChallenge())) {
             throw new \InvalidArgumentException('Invalid challenge.');
         }
 
         /** @see 7.1.5 */
-        if ($rpId === null && $publicKeyCredentialCreationOptions->getRp()->getId() === null) {
+        $rpId = $rpId ?? $publicKeyCredentialCreationOptions->getRp()->getId();
+        if (null === $rpId) {
             throw new \InvalidArgumentException('No rpId.');
         }
-        $rpId = $rpId ?? $publicKeyCredentialCreationOptions->getRp()->getId();
-        if ($C->getOrigin() !== $rpId) {
+        $parsedRelyingPartyId = parse_url($C->getOrigin());
+        if (!array_key_exists('host', $parsedRelyingPartyId) || !\is_string($parsedRelyingPartyId['host'])) {
+            throw new \InvalidArgumentException('Invalid origin rpId.');
+        }
+        if ($parsedRelyingPartyId['host'] !== $rpId) {
             throw new \InvalidArgumentException('rpId mismatch.');
         }
 
-        /** @see 7.1.6 */
+        /* @see 7.1.6 */
         if ($C->getTokenBinding()) {
             throw new \InvalidArgumentException('Token binding not supported.');
         }
 
         /** @see 7.1.7 */
-        $getClientDataJSONHash = hash('sha256', $publicKeyCredential->getResponse()->getClientDataJSON()->getRawData());
+        $getClientDataJSONHash = hash('sha256', $authenticatorAttestationResponse->getClientDataJSON()->getRawData());
 
         /** @see 7.1.8 */
-        $attestationObject = $publicKeyCredential->getResponse()->getAttestationObject();
+        $attestationObject = $authenticatorAttestationResponse->getAttestationObject();
 
         /** @see 7.1.9 */
         $rpIdHash = hash('sha256', $rpId);
@@ -70,18 +77,18 @@ class PublicKeyCredentialCreationValidator
             throw new \InvalidArgumentException('rpId hash mismatch.');
         }
 
-        /** @see 7.1.10 */
+        /* @see 7.1.10 */
         if (!$attestationObject->getAuthData()->isUserPresent()) {
             throw new \InvalidArgumentException('User was not present');
         }
 
-        /** @see 7.1.11 */
-        if ($publicKeyCredentialCreationOptions->getAuthenticatorSelection()->getUserVerification() === AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED && !$attestationObject->getAuthData()->isUserVerified()) {
+        /* @see 7.1.11 */
+        if (AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED === $publicKeyCredentialCreationOptions->getAuthenticatorSelection()->getUserVerification() && !$attestationObject->getAuthData()->isUserVerified()) {
             throw new \InvalidArgumentException('User authentication required.');
         }
 
-        /** @see 7.1.12 */
-        if ($publicKeyCredentialCreationOptions->getExtensions()->count() !== 0) {
+        /* @see 7.1.12 */
+        if (0 !== $publicKeyCredentialCreationOptions->getExtensions()->count()) {
             throw new \InvalidArgumentException('Extensions not supported.');
         }
 
@@ -101,11 +108,11 @@ class PublicKeyCredentialCreationValidator
         /** @see 7.1.16 */
         /** @see 7.1.17 */
         $credentialId = $attestationObject->getAuthData()->getAttestedCredentialData()->getCredentialId();
-        if ($this->credentialIdRepository->hasCredentialId($credentialId)) {
-            throw new \InvalidArgumentException('No credential ID.');
+        if ($this->credentialRepository->hasCredentialId($credentialId)) {
+            throw new \InvalidArgumentException('The credential ID already exists.');
         }
 
-        /** @see 7.1.18 */
-        /** @see 7.1.19 */
+        /* @see 7.1.18 */
+        /* @see 7.1.19 */
     }
 }

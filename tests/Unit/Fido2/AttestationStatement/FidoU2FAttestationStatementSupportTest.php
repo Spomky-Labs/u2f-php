@@ -125,7 +125,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $attestationStatement->getAttStmt()->willReturn([
             'sig' => 'FOO',
             'x5c' => [
-                Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')
+                Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ'),
             ],
         ]);
         $attestationStatement->has('sig')->willReturn(true);

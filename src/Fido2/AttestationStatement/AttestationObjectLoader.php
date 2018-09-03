@@ -15,7 +15,6 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Base64Url\Base64Url;
 use CBOR\Decoder;
-use U2FAuthentication\Cose\KeyConverter;
 use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\StringStream;
@@ -43,7 +42,7 @@ class AttestationObjectLoader
         $rp_id_hash = $authDataStream->read(32);
         $flags = $authDataStream->read(1);
         $signCount = $authDataStream->read(4);
-        $signCount = unpack('l', $signCount)[1];
+        $signCount = unpack('N', $signCount)[1];
 
         if (\ord($flags) & self::FLAG_AT) {
             $aaguid = $authDataStream->read(16);

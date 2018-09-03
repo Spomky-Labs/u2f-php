@@ -19,6 +19,9 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationObjectLoader;
 
 class PublicKeyCredentialLoader
 {
+    private const FLAG_AT = 0b01000000;
+    private const FLAG_ED = 0b10000000;
+
     private $decoder;
 
     private $attestationObjectLoader;
@@ -54,25 +57,64 @@ class PublicKeyCredentialLoader
             $json['id'],
             $json['type'],
             $rawId,
-            $this->createAuthenticatorResponse($json['response'])
+            $this->createResponse($json['response'])
         );
 
         return $publicKeyCredential;
     }
 
-    private function createAuthenticatorResponse(array $response): AuthenticatorAttestationResponse
+    private function createResponse(array $response): AuthenticatorResponse
     {
         if (!array_key_exists('clientDataJSON', $response)) {
             throw new \InvalidArgumentException();
         }
-        if (!array_key_exists('attestationObject', $response)) {
-            throw new \InvalidArgumentException();
-        }
-        $attestationObject = $this->attestationObjectLoader->load($response['attestationObject']);
+        if (array_key_exists('attestationObject', $response)) {
+            $attestationObject = $this->attestationObjectLoader->load($response['attestationObject']);
 
-        return new AuthenticatorAttestationResponse(
-            CollectedClientData::createFormJson($response['clientDataJSON']),
-            $attestationObject
-        );
+            return new AuthenticatorAttestationResponse(
+                CollectedClientData::createFormJson($response['clientDataJSON']),
+                $attestationObject
+            );
+        }
+        if (array_key_exists('authenticatorData', $response) && array_key_exists('signature', $response)) {
+            $authData = Base64Url::decode($response['authenticatorData']);
+
+            $authDataStream = new StringStream($authData);
+            $rp_id_hash = $authDataStream->read(32);
+            $flags = $authDataStream->read(1);
+            $signCount = $authDataStream->read(4);
+            $signCount = unpack('N', $signCount)[1];
+
+            if (\ord($flags) & self::FLAG_AT) {
+                $aaguid = $authDataStream->read(16);
+                $credentialLength = $authDataStream->read(2);
+                $credentialLength = unpack('n', $credentialLength)[1];
+                $credentialId = $authDataStream->read($credentialLength);
+                $credentialPublicKey = $this->decoder->decode($authDataStream);
+                $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
+            } else {
+                $attestedCredentialData = null;
+            }
+
+            if (\ord($flags) & self::FLAG_ED) {
+                $extension = $this->decoder->decode($authDataStream);
+            } else {
+                $extension = null;
+            }
+            $authenticatorData = new AuthenticatorData(
+                $rp_id_hash,
+                $flags,
+                $signCount,
+                $attestedCredentialData,
+                $extension
+            );
+
+            return new AuthenticatorAssertionResponse(
+                CollectedClientData::createFormJson($response['clientDataJSON']),
+                $authenticatorData,
+                Base64Url::decode($response['signature']),
+                $response['userHandle'] ?? null
+            );
+        }
     }
 }

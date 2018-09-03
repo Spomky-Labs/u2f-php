@@ -18,25 +18,16 @@ namespace U2FAuthentication\Fido2;
  */
 class AuthenticatorAssertionResponse extends AuthenticatorResponse
 {
-    /**
-     * @var string
-     */
     private $authenticatorData;
 
-    /**
-     * @var string
-     */
     private $signature;
 
-    /**
-     * @var null|string
-     */
     private $userHandle;
 
     /**
      * AuthenticatorAssertionResponse constructor.
      */
-    public function __construct(string $clientDataJSON, string $authenticatorData, string $signature, string $userHandle)
+    public function __construct(CollectedClientData $clientDataJSON, AuthenticatorData $authenticatorData, string $signature, ?string $userHandle)
     {
         parent::__construct($clientDataJSON);
         $this->authenticatorData = $authenticatorData;
@@ -44,7 +35,7 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
         $this->userHandle = $userHandle;
     }
 
-    public function getAuthenticatorData(): string
+    public function getAuthenticatorData(): AuthenticatorData
     {
         return $this->authenticatorData;
     }

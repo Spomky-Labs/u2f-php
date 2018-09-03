@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-use Traversable;
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 
 class PublicKeyCredentialRequestOptions implements \JsonSerializable

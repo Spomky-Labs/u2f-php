@@ -37,7 +37,7 @@ class AuthenticatorData
     private const FLAG_AT = 0b01000000;
     private const FLAG_ED = 0b10000000;
 
-    public function __construct(string $rpIdHash, string $flags, int $signCount, AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
+    public function __construct(string $rpIdHash, string $flags, int $signCount, ?AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
     {
         $this->rpIdHash = $rpIdHash;
         $this->flags = $flags;
@@ -86,7 +86,7 @@ class AuthenticatorData
         return $this->signCount;
     }
 
-    public function getAttestedCredentialData(): AttestedCredentialData
+    public function getAttestedCredentialData(): ?AttestedCredentialData
     {
         return $this->attestedCredentialData;
     }
