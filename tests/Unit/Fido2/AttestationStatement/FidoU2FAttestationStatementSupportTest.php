@@ -23,7 +23,6 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 use U2FAuthentication\Fido2\AttestationStatement\FidoU2FAttestationStatementSupport;
 use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CollectedClientData;
 
 /**
  * @group Unit
@@ -44,10 +43,9 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $attestationStatement->getAttStmt()->willReturn();
         $attestationStatement->has('sig')->willReturn(false);
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('fido-u2f', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 
     /**
@@ -64,10 +62,9 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $attestationStatement->has('sig')->willReturn(true);
         $attestationStatement->has('x5c')->willReturn(false);
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('fido-u2f', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 
     /**
@@ -88,10 +85,9 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $attestationStatement->has('x5c')->willReturn(true);
         $attestationStatement->get('x5c')->willReturn('FOO');
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('fido-u2f', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 
     /**
@@ -112,10 +108,9 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $attestationStatement->has('x5c')->willReturn(true);
         $attestationStatement->get('x5c')->willReturn([]);
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('fido-u2f', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 
     /**
@@ -150,10 +145,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
         $authenticatorData->getRpIdHash()->willReturn('FOO');
         $authenticatorData->getAttestedCredentialData()->willReturn($attestedCredentialData->reveal());
 
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
-        $collectedClientData->getRawData()->willReturn('FOO');
-
         static::assertEquals('fido-u2f', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 }

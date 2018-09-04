@@ -65,7 +65,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
             'type' => $this->type,
             'id' => base64_encode($this->id),
         ];
-        if ($this->transports && !empty($this->transports)) {
+        if (!empty($this->transports)) {
             $json['transports'] = $this->transports;
         }
 

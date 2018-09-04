@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CollectedClientData;
 
 final class NoneAttestationStatementSupport implements AttestationStatementSupport
 {
@@ -23,7 +22,7 @@ final class NoneAttestationStatementSupport implements AttestationStatementSuppo
         return 'none';
     }
 
-    public function isValid(AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData, CollectedClientData $collectedClientData): bool
+    public function isValid(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
     {
         return empty($attestationStatement->getAttStmt());
     }

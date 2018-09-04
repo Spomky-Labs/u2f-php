@@ -15,9 +15,10 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Base64Url\Base64Url;
 use CBOR\Decoder;
+use CBOR\MapObject;
+use CBOR\StringStream;
 use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\StringStream;
 
 class AttestationObjectLoader
 {
@@ -50,6 +51,9 @@ class AttestationObjectLoader
             $credentialLength = unpack('n', $credentialLength)[1];
             $credentialId = $authDataStream->read($credentialLength);
             $credentialPublicKey = $this->decoder->decode($authDataStream);
+            if (!$credentialPublicKey instanceof MapObject) {
+                throw new \InvalidArgumentException('The data does not contain a valid credential public key.');
+            }
             $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
         } else {
             $attestedCredentialData = null;

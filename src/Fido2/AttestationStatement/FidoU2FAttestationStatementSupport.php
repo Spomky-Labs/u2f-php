@@ -15,7 +15,6 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use CBOR\MapObject;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CollectedClientData;
 
 final class FidoU2FAttestationStatementSupport implements AttestationStatementSupport
 {
@@ -46,7 +45,7 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         return 'fido-u2f';
     }
 
-    public function isValid(AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData, CollectedClientData $collectedClientData): bool
+    public function isValid(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
     {
         foreach (['sig', 'x5c'] as $key) {
             if (!$attestationStatement->has($key)) {
@@ -67,7 +66,7 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
 
         $dataToVerify = "\0";
         $dataToVerify .= $authenticatorData->getRpIdHash();
-        $dataToVerify .= hash('sha256', $collectedClientData->getRawData(), true);
+        $dataToVerify .= $clientDataJSONHash;
         $dataToVerify .= $authenticatorData->getAttestedCredentialData()->getCredentialId();
         $dataToVerify .= $this->extractPublicKey($authenticatorData->getAttestedCredentialData()->getCredentialPublicKey());
 

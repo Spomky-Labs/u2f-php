@@ -19,7 +19,6 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupport;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportManager;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CollectedClientData;
 
 /**
  * @group Unit
@@ -40,15 +39,14 @@ class AttestationStatementSupportManagerTest extends TestCase
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getFmt()->willReturn('bar');
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         $manager = new AttestationStatementSupportManager();
         $manager->add($attestationStatementSupport->reveal());
 
         $manager->isValid(
+            'FOO',
             $attestationStatement->reveal(),
-            $authenticatorData->reveal(),
-            $collectedClientData->reveal()
+            $authenticatorData->reveal()
         );
     }
 
@@ -59,20 +57,19 @@ class AttestationStatementSupportManagerTest extends TestCase
     {
         $attestationStatementSupport = $this->prophesize(AttestationStatementSupport::class);
         $attestationStatementSupport->name()->willReturn('FOO');
-        $attestationStatementSupport->isValid(Argument::type(AttestationStatement::class), Argument::type(AuthenticatorData::class), Argument::type(CollectedClientData::class))->willReturn(false);
+        $attestationStatementSupport->isValid(Argument::type('string'), Argument::type(AttestationStatement::class), Argument::type(AuthenticatorData::class))->willReturn(false);
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getFmt()->willReturn('FOO');
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         $manager = new AttestationStatementSupportManager();
         $manager->add($attestationStatementSupport->reveal());
 
         static::assertFalse($manager->isValid(
+            'foo',
             $attestationStatement->reveal(),
-            $authenticatorData->reveal(),
-            $collectedClientData->reveal()
+            $authenticatorData->reveal()
         ));
     }
 
@@ -83,20 +80,19 @@ class AttestationStatementSupportManagerTest extends TestCase
     {
         $attestationStatementSupport = $this->prophesize(AttestationStatementSupport::class);
         $attestationStatementSupport->name()->willReturn('FOO');
-        $attestationStatementSupport->isValid(Argument::type(AttestationStatement::class), Argument::type(AuthenticatorData::class), Argument::type(CollectedClientData::class))->willReturn(true);
+        $attestationStatementSupport->isValid(Argument::type('string'), Argument::type(AttestationStatement::class), Argument::type(AuthenticatorData::class))->willReturn(true);
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getFmt()->willReturn('FOO');
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         $manager = new AttestationStatementSupportManager();
         $manager->add($attestationStatementSupport->reveal());
 
         static::assertTrue($manager->isValid(
+            'foo',
             $attestationStatement->reveal(),
-            $authenticatorData->reveal(),
-            $collectedClientData->reveal()
+            $authenticatorData->reveal()
         ));
     }
 }

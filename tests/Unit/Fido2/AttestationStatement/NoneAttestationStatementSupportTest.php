@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 use U2FAuthentication\Fido2\AttestationStatement\NoneAttestationStatementSupport;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CollectedClientData;
 
 /**
  * @group Unit
@@ -35,10 +34,9 @@ class NoneAttestationStatementSupportTest extends TestCase
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn([]);
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('none', $support->name());
-        static::assertTrue($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertTrue($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 
     /**
@@ -53,9 +51,8 @@ class NoneAttestationStatementSupportTest extends TestCase
             'x5c' => ['FOO'],
         ]);
         $authenticatorData = $this->prophesize(AuthenticatorData::class);
-        $collectedClientData = $this->prophesize(CollectedClientData::class);
 
         static::assertEquals('none', $support->name());
-        static::assertFalse($support->isValid($attestationStatement->reveal(), $authenticatorData->reveal(), $collectedClientData->reveal()));
+        static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
     }
 }
