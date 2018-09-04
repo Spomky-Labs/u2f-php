@@ -100,7 +100,7 @@ class AuthenticatorAttestationResponseValidator
 
         /** @see 7.1.14 */
         $attestationStatementSupport = $this->attestationStatementSupportManager->get($fmt);
-        if (!$attestationStatementSupport->isValid($getClientDataJSONHash, $attestationObject->getAttStmt(), $attestationObject->getAuthData(), $C)) {
+        if (!$attestationStatementSupport->isValid($getClientDataJSONHash, $attestationObject->getAttStmt(), $attestationObject->getAuthData())) {
             throw new \InvalidArgumentException('Unvalid attestation statement.');
         }
 
