@@ -32,8 +32,8 @@ class AuthenticatorAssertionResponseValidator
             throw new \InvalidArgumentException('The credential ID is not allowed.');
         }
         /* @see 7.2.2 */
-        if (null !== $authenticatorAssertionResponse->getUserHandle()) {
-            throw new \RuntimeException('Not supported.'); //TODO: implementation shall be done.
+        if (!empty($authenticatorAssertionResponse->getUserHandle())) {
+            throw new \RuntimeException('User Handle not supported.'); //TODO: implementation shall be done.
         }
 
         /* @see 7.2.3 */
