@@ -10,7 +10,7 @@ FIDO/FIDO2 U2F Support for PHP
 [![Latest Stable Version](https://poser.pugx.org/spomky-labs/u2f-php/v/stable.png)](https://packagist.org/packages/spomky-labs/u2f-php)
 [![Total Downloads](https://poser.pugx.org/spomky-labs/u2f-php/downloads.png)](https://packagist.org/packages/spomky-labs/u2f-php)
 [![Latest Unstable Version](https://poser.pugx.org/spomky-labs/u2f-php/v/unstable.png)](https://packagist.org/packages/spomky-labs/u2f-php)
-[![License](https://poser.pugx.org/spomky-labs/u2f-php/license.png)](https://packagist.org/packages/spomky-labs/u2f-php)
+[![License](https://poser.pugx.org/spomky-labs/u2f-php/license.png)](https://packagist.org/packages/spomky-labs/u2f-php) [![GuardRails badge](https://badges.production.guardrails.io/Spomky-Labs/u2f-php.svg)](https://www.guardrails.io)
 
 **FIDO U2F Support for PHP** is a **PHP library** that will help you to support compatible security tokens..
 
