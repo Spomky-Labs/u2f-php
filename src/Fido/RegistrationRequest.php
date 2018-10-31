@@ -30,13 +30,14 @@ class RegistrationRequest implements \JsonSerializable
     private $challenge;
 
     /**
-     * @var RegisteredKey[]
+     * @var array|RegisteredKey[]
      */
     private $registeredKeys = [];
 
     /**
      * RegistrationRequest constructor.
      *
+     * @param string $applicationId Domain URL
      * @param RegisteredKey[] $registeredKeys
      */
     private function __construct(string $applicationId, array $registeredKeys)
@@ -52,7 +53,8 @@ class RegistrationRequest implements \JsonSerializable
     }
 
     /**
-     * @param RegisteredKey[] $registeredKeys
+     * @param string $applicationId Domain URL
+     * @param array|RegisteredKey[] $registeredKeys
      *
      * @return RegistrationRequest
      */
@@ -61,24 +63,33 @@ class RegistrationRequest implements \JsonSerializable
         return new self($applicationId, $registeredKeys);
     }
 
+    /**
+     * @return string
+     */
     public function getApplicationId(): string
     {
         return $this->applicationId;
     }
 
+    /**
+     * @return string
+     */
     public function getChallenge(): string
     {
         return $this->challenge;
     }
 
     /**
-     * @return RegisteredKey[]
+     * @return array|RegisteredKey[]
      */
     public function getRegisteredKeys(): array
     {
         return $this->registeredKeys;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize(): array
     {
         return [
