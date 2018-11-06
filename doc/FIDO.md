@@ -11,13 +11,13 @@ The signature verification process will ask a user to sign a challenge. If the c
 
 ## Request Creation
 
-The `RegistrationRequest` class will prepare the request according to the application ID.
+The `RegistrationRequest` class will prepare the registration request for a given application ID.
 
 ```php
 <?php
 use U2FAuthentication\Fido\RegistrationRequest;
 
-$registrationRequest = RegistrationRequest::create(
+$registrationRequest = new RegistrationRequest(
     'https://www.example.com' //Application ID. Usually the application URL
 );
 ```
@@ -29,7 +29,7 @@ If the user requesting a registration already registered some keys, you can pass
 <?php
 use U2FAuthentication\Fido\RegistrationRequest;
 
-$registrationRequest = RegistrationRequest::create(
+$registrationRequest = new RegistrationRequest(
     'https://www.example.com',
     $registeredKeys            //List of registered keys
 );
@@ -46,7 +46,7 @@ Hereafter an example of registration page.
 <?php
 use U2FAuthentication\Fido\RegistrationRequest;
 
-$registrationRequest = RegistrationRequest::create(
+$registrationRequest = new RegistrationRequest(
     'https://www.example.com' //Application ID. Usually the application URL
 );
 
@@ -76,7 +76,7 @@ In the following examples, we consider the variable `$computedRequest` contains 
 <?php
 use U2FAuthentication\Fido\RegistrationResponse;
 
-$registrationResponse = RegistrationResponse::create(
+$registrationResponse = new RegistrationResponse(
     $computedRequest
 );
 ```
@@ -104,14 +104,14 @@ We now need to check if the response is valid against the registration request.
 use U2FAuthentication\Fido\RegistrationResponse;
 
 $registrationRequest = $_SESSION['u2f_registration_request']; // We retreive the registration request
-$registrationResponse = RegistrationResponse::create(
+$registrationResponse = new RegistrationResponse(
     $computedRequest
 );
 
 $isValid = $registrationResponse->isValid($registrationRequest);
 ```
 
-If the variable `&isValid` is `true`, you can safely associate the registered key to the user.
+If the variable `$isValid` is `true`, you can safely associate the registered key to the user.
 
 **TODO: DATA TO BE STORED SHOULD BE DESCRIBED.**
 
@@ -144,3 +144,129 @@ With this manufacturer certificates list, all devices from Yubico will be allowe
 
 You can also load the attestation certificate from the registered key object (method `$registeredKey->getAttestationCertificate()`)
 and check other parameters like the manufacture date or the serial number of the device contained in the certificate.
+
+# Signature
+
+## Request Creation
+
+
+The `SignatureRequest` class will prepare the signature request for a given application ID and registered devices.
+In the following example, the variable `$registeredKeys` contains a list of `U2FAuthentication\Fido\RegisteredKey` objects.
+
+```php
+<?php
+use U2FAuthentication\Fido\SignatureRequest;
+
+$signatureRequest = new SignatureRequest(
+    'https://www.example.com', //Application ID.
+    $registeredKeys
+);
+```
+
+The `$signatureRequest` can be serialized into JSON to ease its integration into a HTML page.
+
+**It is important to store this request in the session for the next step.**
+**This request object will be needed to check the response from the U2F device.**
+
+Hereafter an example of signature page.
+
+```php
+<?php
+use U2FAuthentication\Fido\SignatureRequest;
+
+$signatureRequest = new SignatureRequest(
+    'https://www.example.com', //Application ID.
+    $registeredKeys
+);
+
+$_SESSION['u2f_signature_request'] = $signatureRequest;
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>2nd Factor Verification</title>
+    </head>
+    <body>
+        <h1>Please use one of your registered keys to compolete your authentication</h1>
+        TO BE WRITTEN
+    </body>
+</html> 
+```
+
+## Response Handling
+
+The U2F device will compute the challenge sent in the previous step and will issue a signature response.
+The way you receive this response is out of scope of this library. For example, it can be done through a POST request body, a request header or in the quesry string.
+
+In the following examples, we consider the variable `$computedRequest` contains the raw data from the U2F device.
+
+```php
+<?php
+use U2FAuthentication\Fido\SignatureResponse;
+
+$signatureResponse = new SignatureResponse(
+    $computedRequest
+);
+```
+
+If no exception is thrown, the variable `$signatureResponse` contains the loaded signature response.
+The device used by the user is identified using its Key Handler and can be found with the method `$signatureResponse->getKeyHandle()`.
+
+You can now check if the response is valid against the signature request.
+
+```php
+<?php
+use U2FAuthentication\Fido\SignatureResponse;
+
+$signatureRequest = $_SESSION['u2f_signature_request']; // We retreive the signature request
+$signatureResponse = new SignatureResponse(
+    $computedRequest
+);
+
+$isValid = $signatureResponse->isValid($signatureRequest);
+```
+
+If the variable `$isValid` is `true`, you can complete the user authentication.
+
+### User Presence
+
+The presence of the user may be important in your security strategy.
+You can check if he/she was present during the signature process.
+
+The method `$signatureResponse->isUserPresent()` will return `true` if present, otherwise `false`.
+
+### Counter Support
+
+Most of the U2F devices count the number of signatures to prevent the use of cloned devices.
+We highly recommend you to enable tfe counter support for the registered keys.
+
+For each registered devices, you have to add an additional unsigned integer field.
+When registered, the counter for the device should be 0.
+
+When the signature response is loaded, you have to get the current counter for the given key handler.
+Then the counter is passed as second argument of the method `isValid`.
+
+After verification, the counter associated to the key handler has to be updated.
+
+```php
+<?php
+use U2FAuthentication\Fido\SignatureResponse;
+
+$signatureRequest = $_SESSION['u2f_signature_request']; // We retreive the signature request
+$signatureResponse = new SignatureResponse(
+    $computedRequest
+);
+
+//We retrieve the counter for the given key handler
+//The variable $counterRepository is a fictive counter repository.
+$currentCounter = $counterRepository->findCounterFor($signatureResponse->getKeyHandle());
+
+$isValid = $signatureResponse->isValid(
+    $signatureRequest, //Signature request
+    $currentCounter
+);
+
+//We update the counter for that key handler
+$counterRepository->updateCounterFor($signatureResponse->getKeyHandle(), $signatureResponse->getCounter());
+```
