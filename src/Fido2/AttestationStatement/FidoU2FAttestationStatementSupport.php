@@ -49,7 +49,7 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
     {
         foreach (['sig', 'x5c'] as $key) {
             if (!$attestationStatement->has($key)) {
-                throw new \InvalidArgumentException(sprintf('The attestation statement value "%s" is missing.', $key));
+                throw new \InvalidArgumentException(\Safe\sprintf('The attestation statement value "%s" is missing.', $key));
             }
         }
         $certificates = $attestationStatement->get('x5c');

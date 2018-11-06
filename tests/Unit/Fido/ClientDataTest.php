@@ -24,8 +24,8 @@ final class ClientDataTest extends TestCase
 {
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid client data.
+     * @expectedException \Safe\Exceptions\JsonException
+     * @expectedExceptionMessage Syntax error
      */
     public function theClientDataIsNotBase64UrlEncoded()
     {
@@ -36,8 +36,8 @@ final class ClientDataTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid client data.
+     * @expectedException \Safe\Exceptions\JsonException
+     * @expectedExceptionMessage Syntax error
      */
     public function theClientDataIsNotAnArray()
     {

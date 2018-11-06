@@ -29,7 +29,7 @@ class CollectedClientData
 
     public static function createFormJson(string $data): self
     {
-        $json = json_decode(Base64Url::decode($data), true);
+        $json = \Safe\json_decode(Base64Url::decode($data), true);
 
         if (!array_key_exists('type', $json)) {
             throw new \InvalidArgumentException();
@@ -83,7 +83,7 @@ class CollectedClientData
     public function get(string $key)
     {
         if (!$this->has($key)) {
-            throw new \InvalidArgumentException(sprintf('The collected client data has no key "%s".', $key));
+            throw new \InvalidArgumentException(\Safe\sprintf('The collected client data has no key "%s".', $key));
         }
 
         return $this->data[$key];
