@@ -32,7 +32,7 @@ final class RegistrationRequestTest extends TestCase
      */
     public function theRegistrationRequestDoesNotContainValidRegisteredKeys()
     {
-        RegistrationRequest::create('https://twofactors:4043', ['bad value']);
+        new RegistrationRequest('https://twofactors:4043', ['bad value']);
     }
 
     /**
@@ -40,13 +40,13 @@ final class RegistrationRequestTest extends TestCase
      */
     public function iCanCreateARegistrationRequestAndUseIt()
     {
-        $registered_key = RegisteredKey::create(
+        $registered_key = new RegisteredKey(
             'U2F_V2',
-            KeyHandler::create('foo'),
-            PublicKey::create('bar'),
+            new KeyHandler('foo'),
+            new PublicKey('bar'),
             'bar'
         );
-        $request = RegistrationRequest::create(
+        $request = new RegistrationRequest(
             'https://twofactors:4043',
             [$registered_key]
         );
