@@ -32,7 +32,7 @@ final class SignatureRequestTest extends TestCase
      */
     public function theSignatureRequestDoesNotContainValidRegisteredKeys()
     {
-        SignatureRequest::create('https://twofactors:4043', ['foo']);
+        new SignatureRequest('https://twofactors:4043', ['foo']);
     }
 
     /**
@@ -42,8 +42,8 @@ final class SignatureRequestTest extends TestCase
      */
     public function theSignatureRequestDoesNotContainTheRegisteredKey()
     {
-        $request = SignatureRequest::create('https://twofactors:4043', []);
-        $request->getRegisteredKey(KeyHandler::create('foo'));
+        $request = new SignatureRequest('https://twofactors:4043', []);
+        $request->getRegisteredKey(new KeyHandler('foo'));
     }
 
     /**
@@ -51,17 +51,17 @@ final class SignatureRequestTest extends TestCase
      */
     public function iCanCreateASignatureRequestAndUseIt()
     {
-        $key_handle = KeyHandler::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ'));
-        $registered_key = RegisteredKey::create(
+        $key_handle = new KeyHandler(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ'));
+        $registered_key = new RegisteredKey(
             'U2F_V2',
             $key_handle,
-            PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+            new PublicKey(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
             '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
             'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
             'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
             '-----END PUBLIC KEY-----'.PHP_EOL
         );
-        $request = SignatureRequest::create('https://twofactors:4043', [$registered_key]);
+        $request = new SignatureRequest('https://twofactors:4043', [$registered_key]);
         $request->addRegisteredKey(
             $registered_key
         );

@@ -13,28 +13,17 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Base64Url\Base64Url;
+
 class KeyHandler implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $value;
 
-    /**
-     * KeyHandle constructor.
-     */
-    private function __construct(string $keyHandle)
+    public function __construct(string $keyHandle)
     {
         $this->value = $keyHandle;
     }
 
-    /**
-     * @return KeyHandler
-     */
-    public static function create(string $keyHandle): self
-    {
-        return new self($keyHandle);
-    }
 
     public function getValue(): string
     {
@@ -43,7 +32,7 @@ class KeyHandler implements \JsonSerializable
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return Base64Url::encode($this->value);
     }
 
     public function __toString(): string

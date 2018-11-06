@@ -29,7 +29,7 @@ final class ClientDataTest extends TestCase
      */
     public function theClientDataIsNotBase64UrlEncoded()
     {
-        ClientData::create(
+        new ClientData(
             'foo'
         );
     }
@@ -41,7 +41,7 @@ final class ClientDataTest extends TestCase
      */
     public function theClientDataIsNotAnArray()
     {
-        ClientData::create(
+        new ClientData(
             Base64Url::encode('foo')
         );
     }
@@ -53,7 +53,7 @@ final class ClientDataTest extends TestCase
      */
     public function theClientDataDoesNotContainTheMandatoryKeys()
     {
-        ClientData::create(
+        new ClientData(
             Base64Url::encode(json_encode([]))
         );
     }
@@ -69,7 +69,7 @@ final class ClientDataTest extends TestCase
             'origin' => 'here',
             'cid_pubkey' => 'none',
         ]);
-        $client_data = ClientData::create(
+        $client_data = new ClientData(
             Base64Url::encode($data)
         );
 

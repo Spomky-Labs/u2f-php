@@ -43,10 +43,7 @@ class RegistrationResponse
      */
     private $signature;
 
-    /**
-     * RegistrationChallengeMiddleware constructor.
-     */
-    private function __construct(array $data)
+    public function __construct(array $data)
     {
         if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
             throw new \InvalidArgumentException('Invalid response.');
@@ -60,16 +57,8 @@ class RegistrationResponse
         list($publicKey, $keyHandle, $pemCert, $signature) = $this->extractKeyData($data);
 
         $this->clientData = $clientData;
-        $this->registeredKey = RegisteredKey::create($data['version'], $keyHandle, $publicKey, $pemCert);
+        $this->registeredKey = new RegisteredKey($data['version'], $keyHandle, $publicKey, $pemCert);
         $this->signature = $signature;
-    }
-
-    /**
-     * @return RegistrationResponse
-     */
-    public static function create(array $data): self
-    {
-        return new self($data);
     }
 
     public function getClientData(): ClientData
@@ -96,7 +85,7 @@ class RegistrationResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        return ClientData::create($data['clientData']);
+        return new ClientData($data['clientData']);
     }
 
     /**
@@ -184,8 +173,8 @@ class RegistrationResponse
         fclose($stream);
 
         return [
-            PublicKey::create($publicKey),
-            KeyHandler::create($keyHandle),
+            new PublicKey($publicKey),
+            new KeyHandler($keyHandle),
             $pemCert,
             $signature,
         ];
