@@ -35,7 +35,7 @@ class AttestationStatementSupportManager
     public function get(string $name): AttestationStatementSupport
     {
         if (!$this->has($name)) {
-            throw new \InvalidArgumentException(sprintf('The attestation statement format "%s" is not supported.', $name));
+            throw new \InvalidArgumentException(\Safe\sprintf('The attestation statement format "%s" is not supported.', $name));
         }
 
         return $this->attestationStatementSupports[$name];
@@ -45,7 +45,7 @@ class AttestationStatementSupportManager
     {
         $fmt = $attestationStatement->getFmt();
         if (!array_key_exists($fmt, $this->attestationStatementSupports)) {
-            throw new \InvalidArgumentException(sprintf('The attestation format "%s" is not supported.', $fmt));
+            throw new \InvalidArgumentException(\Safe\sprintf('The attestation format "%s" is not supported.', $fmt));
         }
 
         return $this->attestationStatementSupports[$fmt]->isValid($clientDataJSONHash, $attestationStatement, $authenticatorData);

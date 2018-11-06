@@ -59,7 +59,7 @@ class ClientData
     public static function create(string $clientData): self
     {
         $rawData = Base64Url::decode($clientData);
-        $clientData = json_decode($rawData, true);
+        $clientData = \Safe\json_decode($rawData, true);
         if (!\is_array($clientData)) {
             throw new \InvalidArgumentException('Invalid client data.');
         }

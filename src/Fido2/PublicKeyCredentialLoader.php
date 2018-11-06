@@ -36,7 +36,7 @@ class PublicKeyCredentialLoader
 
     public function load(string $data): PublicKeyCredential
     {
-        $json = json_decode($data, true);
+        $json = \Safe\json_decode($data, true);
         if (!array_key_exists('id', $json)) {
             throw new \InvalidArgumentException();
         }
