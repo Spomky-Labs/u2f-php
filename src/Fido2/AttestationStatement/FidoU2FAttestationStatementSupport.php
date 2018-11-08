@@ -52,15 +52,15 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
                 throw new \InvalidArgumentException(sprintf('The attestation statement value "%s" is missing.', $key));
             }
         }
-        $x5c = $attestationStatement->get('x5c');
-        if (!\is_array($x5c) || empty($x5c)) {
-            throw new \InvalidArgumentException('The attestation statement value "x5c" must be a list with at least one certificate.');
+        $certificates = $attestationStatement->get('x5c');
+        if (!\is_array($certificates) || 1 !== \count($certificates)) {
+            throw new \InvalidArgumentException('The attestation statement value "x5c" must be a list with one certificate.');
         }
 
-        reset($x5c);
-        $x5c = $this->getPublicKeyAsPem(current($x5c));
+        reset($certificates);
+        $certificate = $this->getCertificateAsPem(current($certificates));
 
-        if (!empty($this->attestationCertificates) && true !== openssl_x509_checkpurpose($x5c, X509_PURPOSE_ANY, $this->attestationCertificates)) {
+        if (!empty($this->attestationCertificates) && 1 !== openssl_x509_checkpurpose($certificate, X509_PURPOSE_ANY, $this->attestationCertificates)) {
             return false;
         }
 
@@ -70,12 +70,13 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         $dataToVerify .= $authenticatorData->getAttestedCredentialData()->getCredentialId();
         $dataToVerify .= $this->extractPublicKey($authenticatorData->getAttestedCredentialData()->getCredentialPublicKey());
 
-        return 1 === openssl_verify($dataToVerify, $attestationStatement->get('sig'), $x5c, OPENSSL_ALGO_SHA256);
+        return 1 === openssl_verify($dataToVerify, $attestationStatement->get('sig'), $certificate, OPENSSL_ALGO_SHA256);
     }
 
-    private function getPublicKeyAsPem(string $publicKey): string
+    private function getCertificateAsPem(string $publicKey): string
     {
         $derCertificate = $this->unusedBytesFix($publicKey);
+
         $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
         $pemCert .= chunk_split(base64_encode($derCertificate), 64, PHP_EOL);
         $pemCert .= '-----END CERTIFICATE-----'.PHP_EOL;

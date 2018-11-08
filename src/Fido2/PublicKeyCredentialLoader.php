@@ -45,9 +45,6 @@ class PublicKeyCredentialLoader
             throw new \InvalidArgumentException();
         }
         $rawId = Base64Url::decode($json['rawId']);
-        if (!array_key_exists('type', $json)) {
-            throw new \InvalidArgumentException();
-        }
         if (!hash_equals($id, $rawId)) {
             throw new \InvalidArgumentException();
         }
@@ -57,7 +54,7 @@ class PublicKeyCredentialLoader
 
         $publicKeyCredential = new PublicKeyCredential(
             $json['id'],
-            $json['type'],
+            $json['type'] ?? 'public-key',
             $rawId,
             $this->createResponse($json['response'])
         );
