@@ -135,7 +135,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         $last_subject = null;
         foreach ($x5c as $cert) {
             $current_cert = $this->getX509Certificate($cert);
-            $x509 = \openssl_x509_read($current_cert);
+            $x509 = \Safe\openssl_x509_read($current_cert);
             if (false === $x509) {
                 $last_issuer = null;
                 $last_subject = null;
@@ -156,7 +156,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
                 $last_issuer = $parsed['issuer'];
                 $certificate = $current_cert;
             } else {
-                if (\json_encode($last_issuer) === \json_encode($parsed['subject'])) {
+                if (\Safe\json_encode($last_issuer) === \Safe\json_encode($parsed['subject'])) {
                     $last_subject = $parsed['subject'];
                     $last_issuer = $parsed['issuer'];
                 } else {
@@ -172,7 +172,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
             case null !== $certificate && 1 === \count($x5c):
                 return $certificate;
             case null === $certificate:
-            case \json_encode($last_issuer) !== \json_encode($last_subject):
+            case \Safe\json_encode($last_issuer) !== \Safe\json_encode($last_subject):
                 throw new \InvalidArgumentException('Invalid certificate chain.');
             default:
                 return $certificate;
