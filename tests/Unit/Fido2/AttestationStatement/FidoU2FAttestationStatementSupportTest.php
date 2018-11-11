@@ -70,7 +70,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
     /**
      * @test
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The attestation statement value "x5c" must be a list with at least one certificate.
+     * @expectedExceptionMessage The attestation statement value "x5c" must be a list with one certificate.
      */
     public function theAttestationStatementDoesNotContainAValidCertificateList()
     {
@@ -93,7 +93,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
     /**
      * @test
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The attestation statement value "x5c" must be a list with at least one certificate.
+     * @expectedExceptionMessage The attestation statement value "x5c" must be a list with one certificate.
      */
     public function theAttestationStatementContainsAnEmptyCertificateList()
     {
