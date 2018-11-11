@@ -20,8 +20,7 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "spomky-labs/base64url": "^2.0",
-        "spomky-labs/cbor-php": "^1.0",
-        "thecodingmachine/safe": "^0.1.6"
+        "spomky-labs/cbor-php": "^1.0"
     },
     "require-dev": {
         "thecodingmachine/safe": "^0.1.6",
