@@ -76,9 +76,6 @@ class RegistrationResponse
         return $this->signature;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function retrieveClientData(array $data): ClientData
     {
         if (!array_key_exists('clientData', $data) || !\is_string($data['clientData'])) {
@@ -88,9 +85,6 @@ class RegistrationResponse
         return new ClientData($data['clientData']);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function checkVersion(array $data): void
     {
         if (!array_key_exists('version', $data) || !\is_string($data['version'])) {
@@ -101,53 +95,47 @@ class RegistrationResponse
         }
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function extractKeyData(array $data): array
     {
         if (!array_key_exists('registrationData', $data) || !\is_string($data['registrationData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
-        $stream = fopen('php://memory', 'r+');
-        if (false === $stream) {
-            throw new \InvalidArgumentException('Unable to load the registration data.');
-        }
+        $stream = \Safe\fopen('php://memory', 'r+');
         $registrationData = Base64Url::decode($data['registrationData']);
-        fwrite($stream, $registrationData);
-        rewind($stream);
+        \Safe\fwrite($stream, $registrationData);
+        \Safe\rewind($stream);
 
-        $reservedByte = fread($stream, 1);
+        $reservedByte = \Safe\fread($stream, 1);
         if ("\x05" !== $reservedByte) { // 1 byte reserved with value x05
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad reserved byte.');
         }
 
-        $publicKey = fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
+        $publicKey = \Safe\fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
         if (self::PUBLIC_KEY_LENGTH !== mb_strlen($publicKey, '8bit')) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad public key length.');
         }
 
-        $keyHandleLength = fread($stream, 1); // 1 byte for the key handle length
+        $keyHandleLength = \Safe\fread($stream, 1); // 1 byte for the key handle length
         if (0 === \ord($keyHandleLength)) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad key handle length.');
         }
 
-        $keyHandle = fread($stream, \ord($keyHandleLength)); // x bytes for the key handle
+        $keyHandle = \Safe\fread($stream, \ord($keyHandleLength)); // x bytes for the key handle
         if (mb_strlen($keyHandle, '8bit') !== \ord($keyHandleLength)) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad key handle.');
         }
 
-        $certHeader = fread($stream, 4); // 4 bytes for the certificate header
+        $certHeader = \Safe\fread($stream, 4); // 4 bytes for the certificate header
         if (4 !== mb_strlen($certHeader, '8bit')) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad certificate header.');
         }
@@ -155,9 +143,9 @@ class RegistrationResponse
         $highOrder = \ord($certHeader[2]) << 8;
         $lowOrder = \ord($certHeader[3]);
         $certLength = $highOrder + $lowOrder;
-        $certBody = fread($stream, $certLength); // x bytes for the certificate
+        $certBody = \Safe\fread($stream, $certLength); // x bytes for the certificate
         if (mb_strlen($certBody, '8bit') !== $certLength) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Bad certificate.');
         }
@@ -168,9 +156,9 @@ class RegistrationResponse
 
         $signature = ''; // The rest is the signature
         while (!feof($stream)) {
-            $signature .= fread($stream, 1024);
+            $signature .= \Safe\fread($stream, 1024);
         }
-        fclose($stream);
+        \Safe\fclose($stream);
 
         return [
             new PublicKey($publicKey),
