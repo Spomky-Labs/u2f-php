@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use CBOR\Decoder;
 use CBOR\MapObject;
+use CBOR\StringStream;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 final class FidoU2FAttestationStatementSupport implements AttestationStatementSupport
@@ -27,17 +29,11 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         'ca993121846c464d666096d35f13bf44c1b05af205f9b4a1e00cf6cc10c5e511',
     ];
 
-    /**
-     * @var string[]
-     */
-    private $attestationCertificates = [];
+    private $decoder;
 
-    /**
-     * @param string[] $attestationCertificates
-     */
-    public function __construct(array $attestationCertificates = [])
+    public function __construct(Decoder $decoder)
     {
-        $this->attestationCertificates = $attestationCertificates;
+        $this->decoder = $decoder;
     }
 
     public function name(): string
@@ -60,10 +56,6 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         reset($x5c);
         $x5c = $this->getPublicKeyAsPem(current($x5c));
 
-        if (!empty($this->attestationCertificates) && true !== openssl_x509_checkpurpose($x5c, X509_PURPOSE_ANY, $this->attestationCertificates)) {
-            return false;
-        }
-
         $dataToVerify = "\0";
         $dataToVerify .= $authenticatorData->getRpIdHash();
         $dataToVerify .= $clientDataJSONHash;
@@ -83,10 +75,15 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
         return $pemCert;
     }
 
-    private function extractPublicKey(?MapObject $publicKey): string
+    private function extractPublicKey(?string $publicKey): string
     {
+        if (!$publicKey) {
+            throw new \InvalidArgumentException('The attestated credential data does not contain a valid public key.');
+        }
+
+        $publicKey = $this->decoder->decode(new StringStream($publicKey));
         if (!$publicKey instanceof MapObject) {
-            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
+            throw new \InvalidArgumentException('The attestated credential data does not contain a valid public key.');
         }
 
         $publicKey = $publicKey->getNormalizedData();

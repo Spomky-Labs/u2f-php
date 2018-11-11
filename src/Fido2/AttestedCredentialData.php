@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-use CBOR\MapObject;
+use Base64Url\Base64Url;
 
 /**
  * @see https://www.w3.org/TR/webauthn/#sec-attested-credential-data
@@ -26,7 +26,7 @@ class AttestedCredentialData implements \JsonSerializable
 
     private $credentialPublicKey;
 
-    public function __construct(string $aaguid, string $credentialId, ?MapObject $credentialPublicKey)
+    public function __construct(string $aaguid, string $credentialId, ?string $credentialPublicKey)
     {
         $this->aaguid = $aaguid;
         $this->credentialId = $credentialId;
@@ -43,7 +43,7 @@ class AttestedCredentialData implements \JsonSerializable
         return $this->credentialId;
     }
 
-    public function getCredentialPublicKey(): ?MapObject
+    public function getCredentialPublicKey(): ?string
     {
         return $this->credentialPublicKey;
     }
@@ -51,11 +51,11 @@ class AttestedCredentialData implements \JsonSerializable
     public function jsonSerialize()
     {
         $result = [
-            'aaguid' => base64_encode($this->aaguid),
-            'credentialId' => base64_encode($this->credentialId),
+            'aaguid' => Base64Url::encode($this->aaguid),
+            'credentialId' => Base64Url::encode($this->credentialId),
         ];
         if (null !== $this->credentialPublicKey) {
-            $result['credentialPublicKey'] = base64_encode((string) $this->credentialPublicKey);
+            $result['credentialPublicKey'] = Base64Url::encode($this->credentialPublicKey);
         }
 
         return $result;

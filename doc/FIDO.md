@@ -68,7 +68,7 @@ $_SESSION['u2f_registration_request'] = $registrationRequest;
 ## Response Handling
 
 The U2F device will compute the challenge sent in the previous step and will issue a registration response.
-The way you receive this response is out of scope of this library. For example, it can be done through a POST request body, a request header or in the quesry string.
+The way you receive this response is out of scope of this library. For example, it can be done through a POST request body, a request header or in the query string.
 
 In the following examples, we consider the variable `$computedRequest` contains the raw data from the U2F device.
 
@@ -197,7 +197,7 @@ $_SESSION['u2f_signature_request'] = $signatureRequest;
 ## Response Handling
 
 The U2F device will compute the challenge sent in the previous step and will issue a signature response.
-The way you receive this response is out of scope of this library. For example, it can be done through a POST request body, a request header or in the quesry string.
+The way you receive this response is out of scope of this library. For example, it can be done through a POST request body, a request header or in the query string.
 
 In the following examples, we consider the variable `$computedRequest` contains the raw data from the U2F device.
 

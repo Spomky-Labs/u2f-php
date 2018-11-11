@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Base64Url\Base64Url;
+
 class PublicKeyCredentialDescriptor implements \JsonSerializable
 {
-    public const PUBLIC_KEY_CREDENTIAL_TYPE_PUBLIC_KEY = 'public-key';
+    public const CREDENTIAL_TYPE_PUBLIC_KEY = 'public-key';
 
     public const AUTHENTICATOR_TRANSPORT_USB = 'usb';
     public const AUTHENTICATOR_TRANSPORT_NFC = 'nfc';
@@ -63,7 +65,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     {
         $json = [
             'type' => $this->type,
-            'id' => base64_encode($this->id),
+            'id' => Base64Url::encode($this->id),
         ];
         if (!empty($this->transports)) {
             $json['transports'] = $this->transports;

@@ -44,7 +44,7 @@ class PublicKeyCredential extends Credential
      */
     public function getPublicKeyCredentialDescriptor(array $transport = []): PublicKeyCredentialDescriptor
     {
-        return new PublicKeyCredentialDescriptor($this->getType(), $this->getId(), $transport);
+        return new PublicKeyCredentialDescriptor($this->getType(), $this->getRawId(), $transport);
     }
 
     public function jsonSerialize(): array

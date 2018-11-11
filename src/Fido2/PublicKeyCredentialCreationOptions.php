@@ -56,9 +56,9 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
         $this->rp = $rp;
         $this->user = $user;
         $this->challenge = $challenge;
-        $this->pubKeyCredParams = $pubKeyCredParams;
+        $this->pubKeyCredParams = array_values($pubKeyCredParams);
         $this->timeout = $timeout;
-        $this->excludeCredentials = $excludeCredentials;
+        $this->excludeCredentials = array_values($excludeCredentials);
         $this->authenticatorSelection = $authenticatorSelection;
         $this->attestation = $attestation;
         $this->extensions = $extensions;

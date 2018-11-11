@@ -108,7 +108,7 @@ class AuthenticatorAttestationResponseValidator
         /** @see 7.1.16 */
         /** @see 7.1.17 */
         $credentialId = $attestationObject->getAuthData()->getAttestedCredentialData()->getCredentialId();
-        if ($this->credentialRepository->hasCredential($credentialId)) {
+        if ($this->credentialRepository->has($credentialId)) {
             throw new \InvalidArgumentException('The credential ID already exists.');
         }
 
