@@ -39,7 +39,7 @@ class RegisteredKey implements \JsonSerializable
     public static function createFromJson(string $data, int $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): self
     {
         try {
-            $json = json_decode($data, true, 512, $options);
+            $json = \Safe\json_decode($data, true, 512, $options);
             extract($json);
 
             return new self(

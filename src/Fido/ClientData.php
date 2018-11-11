@@ -45,7 +45,7 @@ class ClientData
     public function __construct(string $clientData)
     {
         $this->rawData = Base64Url::decode($clientData);
-        $clientData = json_decode($this->rawData, true);
+        $clientData = \Safe\json_decode($this->rawData, true);
         if (!\is_array($clientData)) {
             throw new \InvalidArgumentException('Invalid client data.');
         }
