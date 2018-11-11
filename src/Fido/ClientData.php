@@ -42,24 +42,10 @@ class ClientData
      */
     private $cid_pubkey;
 
-    /**
-     * ClientData constructor.
-     */
-    private function __construct(string $rawData, array $clientData)
+    public function __construct(string $clientData)
     {
-        $this->rawData = $rawData;
-        foreach ($clientData as $k => $v) {
-            $this->$k = $v;
-        }
-    }
-
-    /**
-     * @return ClientData
-     */
-    public static function create(string $clientData): self
-    {
-        $rawData = Base64Url::decode($clientData);
-        $clientData = json_decode($rawData, true);
+        $this->rawData = Base64Url::decode($clientData);
+        $clientData = json_decode($this->rawData, true);
         if (!\is_array($clientData)) {
             throw new \InvalidArgumentException('Invalid client data.');
         }
@@ -71,7 +57,9 @@ class ClientData
             throw new \InvalidArgumentException('Invalid client data.');
         }
 
-        return new self($rawData, $clientData);
+        foreach ($clientData as $k => $v) {
+            $this->$k = $v;
+        }
     }
 
     public function getRawData(): string
