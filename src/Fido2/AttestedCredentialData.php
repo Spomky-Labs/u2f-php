@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-use Base64Url\Base64Url;
-
 /**
  * @see https://www.w3.org/TR/webauthn/#sec-attested-credential-data
  */
@@ -51,11 +49,11 @@ class AttestedCredentialData implements \JsonSerializable
     public function jsonSerialize()
     {
         $result = [
-            'aaguid' => Base64Url::encode($this->aaguid),
-            'credentialId' => Base64Url::encode($this->credentialId),
+            'aaguid' => base64_encode($this->aaguid),
+            'credentialId' => base64_encode($this->credentialId),
         ];
         if (null !== $this->credentialPublicKey) {
-            $result['credentialPublicKey'] = Base64Url::encode($this->credentialPublicKey);
+            $result['credentialPublicKey'] = base64_encode($this->credentialPublicKey);
         }
 
         return $result;
