@@ -34,7 +34,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theSignatureRequestContainsAnError()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'errorCode' => 1,
         ]);
     }
@@ -46,7 +46,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theClientDataIsMissing()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'keyHandle' => 'Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ',
             'signatureData' => 'AQAAALowRQIgU-oyzSNitffUGZgRSEijbBytbz8ZwxZvnKSVC90oAm8CIQDoMW5ZtwUooptNB5M-2W_jSjT0yNOkWnU_w1e9aj7vMA',
         ]);
@@ -59,7 +59,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theKeyHandleIsMissing()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'clientData' => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9',
             'signatureData' => 'AQAAALowRQIgU-oyzSNitffUGZgRSEijbBytbz8ZwxZvnKSVC90oAm8CIQDoMW5ZtwUooptNB5M-2W_jSjT0yNOkWnU_w1e9aj7vMA',
         ]);
@@ -72,7 +72,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theSignatureDataIsMissing()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'keyHandle' => 'Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ',
             'clientData' => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9',
         ]);
@@ -85,7 +85,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theTypeOfResponseIsInvalid()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'keyHandle' => 'Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ',
             'clientData' => 'eyJ0eXAiOiJiYWQudHlwZSIsImNoYWxsZW5nZSI6IkYtemtzUmg1dGh6S3laUjZPMEZyN1F4bFoteEVYOV9tTkg4SDNjSG5fUG8iLCJvcmlnaW4iOiJodHRwczovL3R3b2ZhY3RvcnM6NDA0MyIsImNpZF9wdWJrZXkiOiJ1bnVzZWQifQ',
             'signatureData' => 'AQAAALowRQIgU-oyzSNitffUGZgRSEijbBytbz8ZwxZvnKSVC90oAm8CIQDoMW5ZtwUooptNB5M-2W_jSjT0yNOkWnU_w1e9aj7vMA',
@@ -99,7 +99,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theUserPresenceByteIsInvalid()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'keyHandle' => 'Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ',
             'clientData' => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9',
             'signatureData' => '',
@@ -113,7 +113,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theCounterBytesAreInvalid()
     {
-        SignatureResponse::create([
+        new SignatureResponse([
             'keyHandle' => 'Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ',
             'clientData' => 'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiRi16a3NSaDV0aHpLeVpSNk8wRnI3UXhsWi14RVg5X21OSDhIM2NIbl9QbyIsIm9yaWdpbiI6Imh0dHBzOi8vdHdvZmFjdG9yczo0MDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9',
             'signatureData' => 'AQAA',
@@ -125,7 +125,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function iCanCreateASignatureResponseAndUseIt()
     {
-        $response = SignatureResponse::create(
+        $response = new SignatureResponse(
             $this->getValidSignatureResponse()
         );
 
@@ -145,10 +145,10 @@ final class SignatureResponseTest extends TestCase
         $request->getApplicationId()->willReturn('https://twofactors:4043');
         $request->hasRegisteredKey(Argument::type(KeyHandler::class))->willReturn(true);
         $request->getRegisteredKey(Argument::type(KeyHandler::class))->willReturn(
-            RegisteredKey::create(
+            new RegisteredKey(
                 'U2F_V2',
-                KeyHandler::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
-                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                new KeyHandler(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                new PublicKey(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
                 '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
                 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
                 'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
@@ -164,7 +164,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theChallengeInTheRequestDoesNotMatchTheChallengeInTheClientData()
     {
-        $response = SignatureResponse::create(
+        $response = new SignatureResponse(
             $this->getValidSignatureResponse()
         );
 
@@ -173,10 +173,10 @@ final class SignatureResponseTest extends TestCase
         $request->getApplicationId()->willReturn('https://twofactors:4043');
         $request->hasRegisteredKey(Argument::type(KeyHandler::class))->willReturn(true);
         $request->getRegisteredKey(Argument::type(KeyHandler::class))->willReturn(
-            RegisteredKey::create(
+            new RegisteredKey(
                 'U2F_V2',
-                KeyHandler::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
-                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                new KeyHandler(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                new PublicKey(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
                 '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
                 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
                 'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
@@ -192,7 +192,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theApplicationIdInTheRequestDoesNotMatchTheApplicationIdInTheClientData()
     {
-        $response = SignatureResponse::create(
+        $response = new SignatureResponse(
             $this->getValidSignatureResponse()
         );
 
@@ -201,10 +201,10 @@ final class SignatureResponseTest extends TestCase
         $request->getApplicationId()->willReturn('https://no-factors:443');
         $request->hasRegisteredKey(Argument::type(KeyHandler::class))->willReturn(true);
         $request->getRegisteredKey(Argument::type(KeyHandler::class))->willReturn(
-            RegisteredKey::create(
+            new RegisteredKey(
                 'U2F_V2',
-                KeyHandler::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
-                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                new KeyHandler(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                new PublicKey(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
                 '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
                 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
                 'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.
@@ -220,7 +220,7 @@ final class SignatureResponseTest extends TestCase
      */
     public function theCounterIsInvalid()
     {
-        $response = SignatureResponse::create(
+        $response = new SignatureResponse(
             $this->getValidSignatureResponse()
         );
 
@@ -229,10 +229,10 @@ final class SignatureResponseTest extends TestCase
         $request->getApplicationId()->willReturn('https://twofactors:4043');
         $request->hasRegisteredKey(Argument::type(KeyHandler::class))->willReturn(true);
         $request->getRegisteredKey(Argument::type(KeyHandler::class))->willReturn(
-            RegisteredKey::create(
+            new RegisteredKey(
                 'U2F_V2',
-                KeyHandler::create(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
-                PublicKey::create(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
+                new KeyHandler(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ')),
+                new PublicKey(Base64Url::decode('BFeWllSolex8diHswKHW6z7KmtrMypMnKNZehwDSP9RPn3GbMeB_WaRP0Ovzaca1g9ff3o-tRDHj_niFpNmjyDo')),
                 '-----BEGIN PUBLIC KEY-----'.PHP_EOL.
                 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV5aWVKiV7Hx2IezAodbrPsqa2szK'.PHP_EOL.
                 'kyco1l6HANI/1E+fcZsx4H9ZpE/Q6/NpxrWD19/ej61EMeP+eIWk2aPIOg=='.PHP_EOL.

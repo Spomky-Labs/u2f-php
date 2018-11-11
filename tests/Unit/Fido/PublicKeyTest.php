@@ -26,12 +26,12 @@ final class PublicKeyTest extends TestCase
      */
     public function aPublicKeyCanBeCreatedAndSerialized()
     {
-        $key = PublicKey::create(
+        $key = new PublicKey(
             'foo'
         );
 
         static::assertEquals('foo', $key->getValue());
-        static::assertEquals('foo', $key->jsonSerialize());
+        static::assertEquals('Zm9v', $key->jsonSerialize());
         static::assertEquals('foo', $key->__toString());
     }
 }

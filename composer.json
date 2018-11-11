@@ -3,7 +3,7 @@
     "type": "library",
     "license": "MIT",
     "description": "FIDO/FIDO2 U2F Support For PHP",
-    "keywords": ["FIDO", "U2F"],
+    "keywords": ["FIDO", "FIDO2", "U2F", "webauthn"],
     "homepage": "https://github.com/Spomky-Labs/u2f-php",
     "authors": [
         {
@@ -23,6 +23,10 @@
         "spomky-labs/cbor-php": "^1.0"
     },
     "require-dev": {
+        "thecodingmachine/safe": "^0.1.6",
+        "symfony/var-dumper": "^4.0",
+        "phpunit/phpunit": "^7.0",
+        "rector/rector": "^0.3"
     },
     "autoload": {
         "psr-4": {

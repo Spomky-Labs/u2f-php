@@ -24,24 +24,24 @@ final class ClientDataTest extends TestCase
 {
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid client data.
+     * @expectedException \Safe\Exceptions\JsonException
+     * @expectedExceptionMessage Syntax error
      */
     public function theClientDataIsNotBase64UrlEncoded()
     {
-        ClientData::create(
+        new ClientData(
             'foo'
         );
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid client data.
+     * @expectedException \Safe\Exceptions\JsonException
+     * @expectedExceptionMessage Syntax error
      */
     public function theClientDataIsNotAnArray()
     {
-        ClientData::create(
+        new ClientData(
             Base64Url::encode('foo')
         );
     }
@@ -53,7 +53,7 @@ final class ClientDataTest extends TestCase
      */
     public function theClientDataDoesNotContainTheMandatoryKeys()
     {
-        ClientData::create(
+        new ClientData(
             Base64Url::encode(json_encode([]))
         );
     }
@@ -69,7 +69,7 @@ final class ClientDataTest extends TestCase
             'origin' => 'here',
             'cid_pubkey' => 'none',
         ]);
-        $client_data = ClientData::create(
+        $client_data = new ClientData(
             Base64Url::encode($data)
         );
 

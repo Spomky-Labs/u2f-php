@@ -17,30 +17,15 @@ use Base64Url\Base64Url;
 
 class RegisteredKey implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $version;
 
-    /**
-     * @var KeyHandler
-     */
     private $keyHandler;
 
-    /**
-     * @var PublicKey
-     */
     private $publicKey;
 
-    /**
-     * @var string
-     */
     private $attestationCertificate;
 
-    /**
-     * RegisteredKey constructor.
-     */
-    private function __construct(string $version, KeyHandler $keyHandler, PublicKey $publicKey, string $attestationCertificate)
+    public function __construct(string $version, KeyHandler $keyHandler, PublicKey $publicKey, string $attestationCertificate)
     {
         $this->version = $version;
         $this->keyHandler = $keyHandler;
@@ -51,9 +36,21 @@ class RegisteredKey implements \JsonSerializable
     /**
      * @return RegisteredKey
      */
-    public static function create(string $version, KeyHandler $keyHandler, PublicKey $publicKey, string $certificate): self
+    public static function createFromJson(string $data, int $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): self
     {
-        return new self($version, $keyHandler, $publicKey, $certificate);
+        try {
+            $json = \Safe\json_decode($data, true, 512, $options);
+            extract($json);
+
+            return new self(
+                $version,
+                new KeyHandler(Base64Url::decode($keyHandle)),
+                new PublicKey(Base64Url::decode($publicKey)),
+                $attestationCertificate
+            );
+        }catch (\Throwable $e) {
+            throw new \InvalidArgumentException('Invalid data', $e);
+        }
     }
 
     public function getVersion(): string
@@ -93,7 +90,9 @@ class RegisteredKey implements \JsonSerializable
     {
         return [
             'version' => $this->version,
-            'keyHandle' => Base64Url::encode((string) $this->keyHandler),
+            'keyHandle' => $this->keyHandler,
+            'publicKey' => $this->publicKey,
+            'attestationCertificate' => $this->attestationCertificate,
         ];
     }
 }

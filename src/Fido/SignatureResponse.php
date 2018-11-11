@@ -52,10 +52,7 @@ class SignatureResponse
      */
     private $signature;
 
-    /**
-     * RegistrationChallengeMiddleware constructor.
-     */
-    private function __construct(array $data)
+    public function __construct(array $data)
     {
         if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
             throw new \InvalidArgumentException('Invalid response.');
@@ -67,14 +64,6 @@ class SignatureResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
         list($this->userPresence, $this->userPresenceByte, $this->counter, $this->counterBytes, $this->signature) = $this->extractSignatureData($data);
-    }
-
-    /**
-     * @return SignatureResponse
-     */
-    public static function create(array $data): self
-    {
-        return new self($data);
     }
 
     public function getClientData(): ClientData
@@ -102,67 +91,55 @@ class SignatureResponse
         return $this->signature;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function retrieveKeyHandle(array $data): KeyHandler
     {
         if (!array_key_exists('keyHandle', $data) || !\is_string($data['keyHandle'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        return KeyHandler::create(Base64Url::decode($data['keyHandle']));
+        return new KeyHandler(Base64Url::decode($data['keyHandle']));
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function retrieveClientData(array $data): ClientData
     {
         if (!array_key_exists('clientData', $data) || !\is_string($data['clientData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        return ClientData::create($data['clientData']);
+        return new ClientData($data['clientData']);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     private function extractSignatureData(array $data): array
     {
         if (!array_key_exists('signatureData', $data) || !\is_string($data['signatureData'])) {
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        $stream = fopen('php://memory', 'r+');
-        if (false === $stream) {
-            throw new \InvalidArgumentException('Unable to load the registration data.');
-        }
+        $stream = \Safe\fopen('php://memory', 'r+');
         $signatureData = Base64Url::decode($data['signatureData']);
-        fwrite($stream, $signatureData);
-        rewind($stream);
+        \Safe\fwrite($stream, $signatureData);
+        \Safe\rewind($stream);
 
-        $userPresenceByte = fread($stream, 1);
+        $userPresenceByte = \Safe\fread($stream, 1);
         if (1 !== mb_strlen($userPresenceByte, '8bit')) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Invalid response.');
         }
         $userPresence = (bool) \ord($userPresenceByte);
 
-        $counterBytes = fread($stream, 4);
+        $counterBytes = \Safe\fread($stream, 4);
         if (4 !== mb_strlen($counterBytes, '8bit')) {
-            fclose($stream);
+            \Safe\fclose($stream);
 
             throw new \InvalidArgumentException('Invalid response.');
         }
         $counter = unpack('Nctr', $counterBytes)['ctr'];
         $signature = '';
         while (!feof($stream)) {
-            $signature .= fread($stream, 1024);
+            $signature .= \Safe\fread($stream, 1024);
         }
-        fclose($stream);
+        \Safe\fclose($stream);
 
         return [
             $userPresence,

@@ -43,7 +43,7 @@ class AttestationStatement
     public function get(string $key)
     {
         if (!$this->has($key)) {
-            throw new \InvalidArgumentException(sprintf('The attestation statement has no key "%s".', $key));
+            throw new \InvalidArgumentException(\Safe\sprintf('The attestation statement has no key "%s".', $key));
         }
 
         return $this->attStmt[$key];

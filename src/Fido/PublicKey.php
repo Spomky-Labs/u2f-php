@@ -13,27 +13,15 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Base64Url\Base64Url;
+
 class PublicKey implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $value;
 
-    /**
-     * PublicKey constructor.
-     */
-    private function __construct(string $publicKey)
+    public function __construct(string $publicKey)
     {
         $this->value = $publicKey;
-    }
-
-    /**
-     * @return PublicKey
-     */
-    public static function create(string $publicKey): self
-    {
-        return new self($publicKey);
     }
 
     public function getValue(): string
@@ -43,7 +31,7 @@ class PublicKey implements \JsonSerializable
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return Base64Url::encode($this->value);
     }
 
     public function __toString(): string
