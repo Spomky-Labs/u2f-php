@@ -19,14 +19,8 @@ class RegistrationRequest implements \JsonSerializable
 {
     private const PROTOCOL_VERSION = 'U2F_V2';
 
-    /**
-     * @var string
-     */
     private $applicationId;
 
-    /**
-     * @var string
-     */
     private $challenge;
 
     /**
@@ -35,11 +29,9 @@ class RegistrationRequest implements \JsonSerializable
     private $registeredKeys = [];
 
     /**
-     * RegistrationRequest constructor.
-     *
      * @param RegisteredKey[] $registeredKeys
      */
-    private function __construct(string $applicationId, array $registeredKeys)
+    public function __construct(string $applicationId, array $registeredKeys)
     {
         $this->applicationId = $applicationId;
         $this->challenge = random_bytes(32);
@@ -49,16 +41,6 @@ class RegistrationRequest implements \JsonSerializable
             }
             $this->registeredKeys[Base64Url::encode((string) $registeredKey->getKeyHandler())] = $registeredKey;
         }
-    }
-
-    /**
-     * @param RegisteredKey[] $registeredKeys
-     *
-     * @return RegistrationRequest
-     */
-    public static function create(string $applicationId, array $registeredKeys = []): self
-    {
-        return new self($applicationId, $registeredKeys);
     }
 
     public function getApplicationId(): string

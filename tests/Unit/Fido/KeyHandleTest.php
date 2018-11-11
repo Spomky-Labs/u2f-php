@@ -26,12 +26,12 @@ final class KeyHandleTest extends TestCase
      */
     public function aKeyHandleCanBeCreatedAndSerialized()
     {
-        $handle = KeyHandler::create(
+        $handle = new KeyHandler(
             'foo'
         );
 
         static::assertEquals('foo', $handle->getValue());
-        static::assertEquals('foo', $handle->jsonSerialize());
+        static::assertEquals('Zm9v', $handle->jsonSerialize());
         static::assertEquals('foo', $handle->__toString());
     }
 }

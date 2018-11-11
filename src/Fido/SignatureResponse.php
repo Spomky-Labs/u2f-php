@@ -52,10 +52,7 @@ class SignatureResponse
      */
     private $signature;
 
-    /**
-     * RegistrationChallengeMiddleware constructor.
-     */
-    private function __construct(array $data)
+    public function __construct(array $data)
     {
         if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
             throw new \InvalidArgumentException('Invalid response.');
@@ -67,14 +64,6 @@ class SignatureResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
         list($this->userPresence, $this->userPresenceByte, $this->counter, $this->counterBytes, $this->signature) = $this->extractSignatureData($data);
-    }
-
-    /**
-     * @return SignatureResponse
-     */
-    public static function create(array $data): self
-    {
-        return new self($data);
     }
 
     public function getClientData(): ClientData
@@ -108,7 +97,7 @@ class SignatureResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        return KeyHandler::create(Base64Url::decode($data['keyHandle']));
+        return new KeyHandler(Base64Url::decode($data['keyHandle']));
     }
 
     private function retrieveClientData(array $data): ClientData
@@ -117,7 +106,7 @@ class SignatureResponse
             throw new \InvalidArgumentException('Invalid response.');
         }
 
-        return ClientData::create($data['clientData']);
+        return new ClientData($data['clientData']);
     }
 
     private function extractSignatureData(array $data): array

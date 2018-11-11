@@ -33,13 +33,9 @@ class SignatureRequest implements \JsonSerializable
     private $registeredKeys = [];
 
     /**
-     * SignatureRequest constructor.
-     *
      * @param RegisteredKey[] $registeredKeys
-     *
-     * @throws \Exception
      */
-    private function __construct(string $applicationId, array $registeredKeys)
+    public function __construct(string $applicationId, array $registeredKeys)
     {
         $this->applicationId = $applicationId;
         foreach ($registeredKeys as $registeredKey) {
@@ -49,18 +45,6 @@ class SignatureRequest implements \JsonSerializable
             $this->registeredKeys[Base64Url::encode((string) $registeredKey->getKeyHandler())] = $registeredKey;
         }
         $this->challenge = random_bytes(32);
-    }
-
-    /**
-     * @param RegisteredKey[] $registeredKeys
-     *
-     * @throws \Exception
-     *
-     * @return SignatureRequest
-     */
-    public static function create(string $applicationId, array $registeredKeys): self
-    {
-        return new self($applicationId, $registeredKeys);
     }
 
     public function addRegisteredKey(RegisteredKey $registeredKey): void
