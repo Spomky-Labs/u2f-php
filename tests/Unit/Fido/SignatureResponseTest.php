@@ -138,7 +138,7 @@ final class SignatureResponseTest extends TestCase
 
         static::assertEquals(Base64Url::decode('Ws1pyRaocwNNxYIXIHttjOO1628kVQ2EK6EVVZ_wWKs089-rszT2fkSnSfm4V6wV9ryz2-K8Vm5Fs_r7ctAcoQ'), $response->getKeyHandle()->getValue());
         static::assertEquals(186, $response->getCounter());
-        static::assertTrue($response->isUserPresence());
+        static::assertTrue($response->isUserPresent());
 
         $request = $this->prophesize(SignatureRequest::class);
         $request->getChallenge()->willReturn(Base64Url::decode('F-zksRh5thzKyZR6O0Fr7QxlZ-xEX9_mNH8H3cHn_Po'));

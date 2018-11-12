@@ -13,13 +13,18 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use CBOR\Decoder;
+use CBOR\StringStream;
+
 class AuthenticatorAssertionResponseValidator
 {
     private $credentialRepository;
+    private $decoder;
 
-    public function __construct(CredentialRepository $credentialRepository)
+    public function __construct(CredentialRepository $credentialRepository, Decoder $decoder)
     {
         $this->credentialRepository = $credentialRepository;
+        $this->decoder = $decoder;
     }
 
     /**
@@ -37,10 +42,13 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /* @see 7.2.3 */
-        if (!$this->credentialRepository->hasCredential($credentialId)) {
+        if (!$this->credentialRepository->has($credentialId)) {
             throw new \InvalidArgumentException('No credential public key available for the given credential ID.');
         }
-        $credentialPublicKey = $this->credentialRepository->getCredentialPublicKey($credentialId);
+        $attestedCredentialData = $this->credentialRepository->get($credentialId);
+        $credentialPublicKey = $this->decoder->decode(
+            new StringStream($attestedCredentialData->getCredentialPublicKey())
+        );
 
         /** @see 7.2.4 */
         /** @see 7.2.5 */
@@ -109,12 +117,12 @@ class AuthenticatorAssertionResponseValidator
         }
 
         /* @see 7.2.17 */
-        $storedCounter = $this->credentialRepository->getCredentialCounter($credentialId);
+        $storedCounter = $this->credentialRepository->getCounterFor($credentialId);
         $currentCounter = $authenticatorAssertionResponse->getAuthenticatorData()->getSignCount();
         if ($storedCounter >= $currentCounter) {
             throw new \InvalidArgumentException('Invalid counter.');
         }
-        $this->credentialRepository->updateCredentialCounter($credentialId, $currentCounter);
+        $this->credentialRepository->updateCounterFor($credentialId, $currentCounter);
 
         /* @see 7.2.18 */
         //Great!

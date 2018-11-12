@@ -15,9 +15,12 @@ namespace U2FAuthentication\Tests\Unit\Fido\AttestationStatement;
 
 use Base64Url\Base64Url;
 use CBOR\ByteStringObject;
+use CBOR\Decoder;
 use CBOR\MapItem;
 use CBOR\MapObject;
+use CBOR\OtherObject\OtherObjectManager;
 use CBOR\SignedIntegerObject;
+use CBOR\Tag\TagObjectManager;
 use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 use U2FAuthentication\Fido2\AttestationStatement\FidoU2FAttestationStatementSupport;
@@ -37,7 +40,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
      */
     public function theAttestationStatementDoesNotContainTheRequiredSignature()
     {
-        $support = new FidoU2FAttestationStatementSupport();
+        $support = new FidoU2FAttestationStatementSupport($this->getDecoder());
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn();
@@ -55,7 +58,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
      */
     public function theAttestationStatementDoesNotContainTheRequiredCertificateList()
     {
-        $support = new FidoU2FAttestationStatementSupport();
+        $support = new FidoU2FAttestationStatementSupport($this->getDecoder());
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn();
@@ -74,7 +77,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
      */
     public function theAttestationStatementDoesNotContainAValidCertificateList()
     {
-        $support = new FidoU2FAttestationStatementSupport();
+        $support = new FidoU2FAttestationStatementSupport($this->getDecoder());
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn([
@@ -97,7 +100,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
      */
     public function theAttestationStatementContainsAnEmptyCertificateList()
     {
-        $support = new FidoU2FAttestationStatementSupport();
+        $support = new FidoU2FAttestationStatementSupport($this->getDecoder());
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn([
@@ -118,7 +121,7 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
      */
     public function theAttestationStatementContain()
     {
-        $support = new FidoU2FAttestationStatementSupport();
+        $support = new FidoU2FAttestationStatementSupport($this->getDecoder());
 
         $attestationStatement = $this->prophesize(AttestationStatement::class);
         $attestationStatement->getAttStmt()->willReturn([
@@ -147,5 +150,13 @@ class FidoU2FAttestationStatementSupportTest extends TestCase
 
         static::assertEquals('fido-u2f', $support->name());
         static::assertFalse($support->isValid('FOO', $attestationStatement->reveal(), $authenticatorData->reveal()));
+    }
+
+    private function getDecoder(): Decoder
+    {
+        return new Decoder(
+            new TagObjectManager(),
+            new OtherObjectManager()
+        );
     }
 }

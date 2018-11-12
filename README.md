@@ -22,7 +22,8 @@ This project follows the [semantic versioning](http://semver.org/) strictly.
 
 # Documentation
 
-To Be Written
+* For FIDO (U2F) support, please [read this page](doc/FIDO.md).
+* For FIDO2 (Webauthn) support, please [read this page](doc/FIDO2.md).
 
 # Contributing
 

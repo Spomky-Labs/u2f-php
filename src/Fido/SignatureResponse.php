@@ -76,7 +76,7 @@ class SignatureResponse
         return $this->keyHandle;
     }
 
-    public function isUserPresence(): bool
+    public function isUserPresent(): bool
     {
         return $this->userPresence;
     }

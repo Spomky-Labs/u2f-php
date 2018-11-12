@@ -15,7 +15,7 @@ namespace U2FAuthentication\Fido2;
 
 class PublicKeyCredentialDescriptor implements \JsonSerializable
 {
-    public const PUBLIC_KEY_CREDENTIAL_TYPE_PUBLIC_KEY = 'public-key';
+    public const CREDENTIAL_TYPE_PUBLIC_KEY = 'public-key';
 
     public const AUTHENTICATOR_TRANSPORT_USB = 'usb';
     public const AUTHENTICATOR_TRANSPORT_NFC = 'nfc';

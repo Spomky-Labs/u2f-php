@@ -32,6 +32,11 @@ class AttestationObjectLoader
         $this->decoder = $decoder;
     }
 
+    public function getDecoder(): Decoder
+    {
+        return $this->decoder;
+    }
+
     public function load(string $data): AttestationObject
     {
         $decodedData = Base64Url::decode($data);
@@ -54,7 +59,7 @@ class AttestationObjectLoader
             if (!$credentialPublicKey instanceof MapObject) {
                 throw new \InvalidArgumentException('The data does not contain a valid credential public key.');
             }
-            $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, $credentialPublicKey);
+            $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, (string) $credentialPublicKey);
         } else {
             $attestedCredentialData = null;
         }
