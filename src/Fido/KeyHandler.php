@@ -24,7 +24,6 @@ class KeyHandler implements \JsonSerializable
         $this->value = $keyHandle;
     }
 
-
     public function getValue(): string
     {
         return $this->value;

@@ -46,8 +46,12 @@ class AuthenticatorAssertionResponseValidator
             throw new \InvalidArgumentException('No credential public key available for the given credential ID.');
         }
         $attestedCredentialData = $this->credentialRepository->get($credentialId);
+        $credentialPublicKey = $attestedCredentialData->getCredentialPublicKey();
+        if (null === $credentialPublicKey) {
+            throw new \RuntimeException('No public key available.');
+        }
         $credentialPublicKey = $this->decoder->decode(
-            new StringStream($attestedCredentialData->getCredentialPublicKey())
+            new StringStream($credentialPublicKey)
         );
 
         /** @see 7.2.4 */

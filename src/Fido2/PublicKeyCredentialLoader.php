@@ -115,5 +115,6 @@ class PublicKeyCredentialLoader
                 $response['userHandle'] ?? null
             );
         }
+        throw new \InvalidArgumentException();
     }
 }
