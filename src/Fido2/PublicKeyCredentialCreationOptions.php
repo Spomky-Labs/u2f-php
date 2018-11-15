@@ -130,7 +130,7 @@ class PublicKeyCredentialCreationOptions implements \JsonSerializable
             $json['excludeCredentials'] = $this->excludeCredentials;
         }
 
-        if (!empty($this->extensions)) {
+        if (0 !== $this->extensions->count()) {
             $json['extensions'] = $this->extensions;
         }
 

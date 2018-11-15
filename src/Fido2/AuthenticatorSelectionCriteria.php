@@ -15,6 +15,7 @@ namespace U2FAuthentication\Fido2;
 
 class AuthenticatorSelectionCriteria implements \JsonSerializable
 {
+    public const AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE = null;
     public const AUTHENTICATOR_ATTACHMENT_PLATFORM = 'platform';
     public const AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM = 'cross-platform';
 
