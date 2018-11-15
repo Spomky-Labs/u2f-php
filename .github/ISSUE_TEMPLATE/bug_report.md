@@ -5,6 +5,15 @@ labels:
 
 ---
 
+<!--
+Fill in this template according to your issue.
+
+Please consider the following requirements
+* You MUST never send security issues here. If you think that your issue is a security one then contact Spomky in private at https://gitter.im/Spomky/
+* You should not post many lines of source code or console logs. Small inputs (approx 5 lines) are acceptable otherwise you should use a third party service (e.g. Pastebin, Chop…).
+-->
+
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
