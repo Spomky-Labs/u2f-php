@@ -88,7 +88,7 @@ class AuthenticatorAttestationResponseValidator
         }
 
         /* @see 7.1.12 */
-        if (0 !== $publicKeyCredentialCreationOptions->getExtensions()->count()) {
+        if (null !== $attestationObject->getAuthData()->getExtensions()) {
             throw new \InvalidArgumentException('Extensions not supported.');
         }
 
