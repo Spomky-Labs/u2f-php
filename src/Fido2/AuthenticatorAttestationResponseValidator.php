@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Assert\Assertion;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportManager;
 
 class AuthenticatorAttestationResponseValidator
@@ -38,32 +39,22 @@ class AuthenticatorAttestationResponseValidator
         $C = $authenticatorAttestationResponse->getClientDataJSON();
 
         /* @see 7.1.3 */
-        if ('webauthn.create' !== $C->getType()) {
-            throw new \InvalidArgumentException('The client data type is not "webauthn.create".');
-        }
+        Assertion::eq('webauthn.create', $C->getType(), 'The client data type is not "webauthn.create".');
 
         /* @see 7.1.4 */
-        if (!hash_equals($publicKeyCredentialCreationOptions->getChallenge(), $C->getChallenge())) {
-            throw new \InvalidArgumentException('Invalid challenge.');
-        }
+        Assertion::true(hash_equals($publicKeyCredentialCreationOptions->getChallenge(), $C->getChallenge()), 'Invalid challenge.');
 
         /** @see 7.1.5 */
         $rpId = $rpId ?? $publicKeyCredentialCreationOptions->getRp()->getId();
-        if (null === $rpId) {
-            throw new \InvalidArgumentException('No rpId.');
-        }
+        Assertion::notNull($rpId, 'No rpId.');
+
         $parsedRelyingPartyId = parse_url($C->getOrigin());
-        if (!array_key_exists('host', $parsedRelyingPartyId) || !\is_string($parsedRelyingPartyId['host'])) {
-            throw new \InvalidArgumentException('Invalid origin rpId.');
-        }
-        if (null !== $rpId && $parsedRelyingPartyId['host'] !== $rpId) {
-            throw new \InvalidArgumentException('rpId mismatch.');
-        }
+        Assertion::true(array_key_exists('host', $parsedRelyingPartyId) && \is_string($parsedRelyingPartyId['host']), 'Invalid origin rpId.');
+
+        Assertion::false(null !== $rpId && $parsedRelyingPartyId['host'] !== $rpId, 'rpId mismatch.');
 
         /* @see 7.1.6 */
-        if ($C->getTokenBinding()) {
-            throw new \InvalidArgumentException('Token binding not supported.');
-        }
+        Assertion::null($C->getTokenBinding(), 'Token binding not supported.');
 
         /** @see 7.1.7 */
         $getClientDataJSONHash = hash('sha256', $authenticatorAttestationResponse->getClientDataJSON()->getRawData(), true);
@@ -73,44 +64,30 @@ class AuthenticatorAttestationResponseValidator
 
         /** @see 7.1.9 */
         $rpIdHash = hash('sha256', $rpId, true);
-        if (!hash_equals($rpIdHash, $attestationObject->getAuthData()->getRpIdHash())) {
-            throw new \InvalidArgumentException('rpId hash mismatch.');
-        }
+        Assertion::true(hash_equals($rpIdHash, $attestationObject->getAuthData()->getRpIdHash()), 'rpId hash mismatch.');
 
         /* @see 7.1.10 */
-        if (!$attestationObject->getAuthData()->isUserPresent()) {
-            throw new \InvalidArgumentException('User was not present');
-        }
+        Assertion::true($attestationObject->getAuthData()->isUserPresent(), 'User was not present');
 
         /* @see 7.1.11 */
-        if (AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED === $publicKeyCredentialCreationOptions->getAuthenticatorSelection()->getUserVerification() && !$attestationObject->getAuthData()->isUserVerified()) {
-            throw new \InvalidArgumentException('User authentication required.');
-        }
+        Assertion::false(AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED === $publicKeyCredentialCreationOptions->getAuthenticatorSelection()->getUserVerification() && !$attestationObject->getAuthData()->isUserVerified(), 'User authentication required.');
 
         /* @see 7.1.12 */
-        if (null !== $attestationObject->getAuthData()->getExtensions()) {
-            throw new \InvalidArgumentException('Extensions not supported.');
-        }
+        Assertion::null($attestationObject->getAuthData()->getExtensions(), 'Extensions not supported.');
 
         /** @see 7.1.13 */
         $fmt = $attestationObject->getAttStmt()->getFmt();
-        if (!$this->attestationStatementSupportManager->has($fmt)) {
-            throw new \InvalidArgumentException('Unsuppoorted attestation statement format.');
-        }
+        Assertion::true($this->attestationStatementSupportManager->has($fmt), 'Unsuppoorted attestation statement format.');
 
         /** @see 7.1.14 */
         $attestationStatementSupport = $this->attestationStatementSupportManager->get($fmt);
-        if (!$attestationStatementSupport->isValid($getClientDataJSONHash, $attestationObject->getAttStmt(), $attestationObject->getAuthData())) {
-            throw new \InvalidArgumentException('Unvalid attestation statement.');
-        }
+        Assertion::true($attestationStatementSupport->isValid($getClientDataJSONHash, $attestationObject->getAttStmt(), $attestationObject->getAuthData()), 'Invalid attestation statement.');
 
         /** @see 7.1.15 */
         /** @see 7.1.16 */
         /** @see 7.1.17 */
         $credentialId = $attestationObject->getAuthData()->getAttestedCredentialData()->getCredentialId();
-        if ($this->credentialRepository->has($credentialId)) {
-            throw new \InvalidArgumentException('The credential ID already exists.');
-        }
+        Assertion::false($this->credentialRepository->has($credentialId), 'The credential ID already exists.');
 
         /* @see 7.1.18 */
         /* @see 7.1.19 */

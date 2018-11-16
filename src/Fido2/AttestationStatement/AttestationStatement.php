@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use Assert\Assertion;
+
 class AttestationStatement
 {
     private $fmt;
@@ -42,9 +44,7 @@ class AttestationStatement
 
     public function get(string $key)
     {
-        if (!$this->has($key)) {
-            throw new \InvalidArgumentException(\Safe\sprintf('The attestation statement has no key "%s".', $key));
-        }
+        Assertion::true($this->has($key), \Safe\sprintf('The attestation statement has no key "%s".', $key));
 
         return $this->attStmt[$key];
     }

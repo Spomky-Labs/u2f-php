@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use Assert\Assertion;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 final class PackedAttestationStatementSupport implements AttestationStatementSupport
@@ -33,9 +34,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
 
     public function isValid(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
     {
-        if (!$attestationStatement->has('sig')) {
-            throw new \InvalidArgumentException('The attestation statement value "sig" is missing.');
-        }
+        Assertion::true($attestationStatement->has('sig'), 'The attestation statement value "sig" is missing.');
 
         switch (true) {
             case $attestationStatement->has('x5c'):
@@ -50,9 +49,8 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
     private function processWithCertificate(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
     {
         $certificates = $attestationStatement->get('x5c');
-        if (!\is_array($certificates) || empty($certificates)) {
-            throw new \InvalidArgumentException('The attestation statement value "x5c" must be a list with at least one certificate.');
-        }
+        Assertion::isArray($certificates, 'The attestation statement value "x5c" must be a list with at least one certificate.');
+        Assertion::notEmpty($certificates, 'The attestation statement value "x5c" must be a list with at least one certificate.');
 
         //Check certificate CA chain and returns the Attestation Certificate
         $attestnCert = $this->loadFromX5C($certificates);
@@ -73,29 +71,19 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         $parsed = openssl_x509_parse($attestnCert);
 
         //Check version
-        if (!isset($parsed['version']) || 2 !== $parsed['version']) {
-            throw new \InvalidArgumentException('TInvalid certificate version');
-        }
+        Assertion::false(!isset($parsed['version']) || 2 !== $parsed['version'], 'Invalid certificate version');
 
         //Check subject field
-        if (!isset($parsed['name']) || false === mb_strpos($parsed['name'], '/OU=Authenticator Attestation')) {
-            throw new \InvalidArgumentException('Invalid certificate name. The Subject Organization Unit must be "Authenticator Attestation"');
-        }
+        Assertion::false(!isset($parsed['name']) || false === mb_strpos($parsed['name'], '/OU=Authenticator Attestation'), 'Invalid certificate name. The Subject Organization Unit must be "Authenticator Attestation"');
 
         //Check extensions
-        if (!isset($parsed['extensions']) || !\is_array($parsed['extensions'])) {
-            throw new \InvalidArgumentException('Certificate extensions are missing');
-        }
+        Assertion::false(!isset($parsed['extensions']) || !\is_array($parsed['extensions']), 'Certificate extensions are missing');
 
         //Check certificate is not a CA cert
-        if (!isset($parsed['extensions']['basicConstraints']) || 'CA:FALSE' !== $parsed['extensions']['basicConstraints']) {
-            throw new \InvalidArgumentException('The Basic Constraints extension must have the CA component set to false');
-        }
+        Assertion::false(!isset($parsed['extensions']['basicConstraints']) || 'CA:FALSE' !== $parsed['extensions']['basicConstraints'], 'The Basic Constraints extension must have the CA component set to false');
 
         // id-fido-gen-ce-aaguid OID check
-        if (\in_array('1.3.6.1.4.1.45724.1.1.4', $parsed['extensions'], true) && !hash_equals($authenticatorData->getAttestedCredentialData()->getAaguid(), $parsed['extensions']['1.3.6.1.4.1.45724.1.1.4'])) {
-            throw new \InvalidArgumentException('The value of the "aaguid" does not match with the certificate');
-        }
+        Assertion::false(\in_array('1.3.6.1.4.1.45724.1.1.4', $parsed['extensions'], true) && !hash_equals($authenticatorData->getAttestedCredentialData()->getAaguid(), $parsed['extensions']['1.3.6.1.4.1.45724.1.1.4']), 'The value of the "aaguid" does not match with the certificate');
     }
 
     private function processWithECDAA(): bool

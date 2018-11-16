@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use Assert\Assertion;
 use CBOR\Decoder;
 use CBOR\MapObject;
 use CBOR\StringStream;
@@ -44,14 +45,11 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
     public function isValid(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
     {
         foreach (['sig', 'x5c'] as $key) {
-            if (!$attestationStatement->has($key)) {
-                throw new \InvalidArgumentException(\Safe\sprintf('The attestation statement value "%s" is missing.', $key));
-            }
+            Assertion::true($attestationStatement->has($key), \Safe\sprintf('The attestation statement value "%s" is missing.', $key));
         }
         $certificates = $attestationStatement->get('x5c');
-        if (!\is_array($certificates) || 1 !== \count($certificates)) {
-            throw new \InvalidArgumentException('The attestation statement value "x5c" must be a list with one certificate.');
-        }
+        Assertion::isArray($certificates, 'The attestation statement value "x5c" must be a list with one certificate.');
+        Assertion::count($certificates, 1, 'The attestation statement value "x5c" must be a list with one certificate.');
 
         reset($certificates);
         $certificate = $this->getCertificateAsPem(current($certificates));
@@ -78,22 +76,14 @@ final class FidoU2FAttestationStatementSupport implements AttestationStatementSu
 
     private function extractPublicKey(?string $publicKey): string
     {
-        if (!$publicKey) {
-            throw new \InvalidArgumentException('The attestated credential data does not contain a valid public key.');
-        }
+        Assertion::notNull($publicKey, 'The attestated credential data does not contain a valid public key.');
 
         $publicKey = $this->decoder->decode(new StringStream($publicKey));
-        if (!$publicKey instanceof MapObject) {
-            throw new \InvalidArgumentException('The attestated credential data does not contain a valid public key.');
-        }
+        Assertion::isInstanceOf($publicKey, MapObject::class, 'The attestated credential data does not contain a valid public key.');
 
         $publicKey = $publicKey->getNormalizedData();
-        if (!array_key_exists(-2, $publicKey) || !\is_string($publicKey[-2]) || 32 !== mb_strlen($publicKey[-2], '8bit')) {
-            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
-        }
-        if (!array_key_exists(-3, $publicKey) || !\is_string($publicKey[-3]) || 32 !== mb_strlen($publicKey[-3], '8bit')) {
-            throw new \InvalidArgumentException('The public key of the attestation statement is not valid.');
-        }
+        Assertion::false(!array_key_exists(-2, $publicKey) || !\is_string($publicKey[-2]) || 32 !== mb_strlen($publicKey[-2], '8bit'), 'The public key of the attestation statement is not valid.');
+        Assertion::false(!array_key_exists(-3, $publicKey) || !\is_string($publicKey[-3]) || 32 !== mb_strlen($publicKey[-3], '8bit'), 'The public key of the attestation statement is not valid.');
 
         return "\x04".$publicKey[-2].$publicKey[-3];
     }
