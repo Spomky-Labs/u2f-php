@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AuthenticationExtensions;
 
-class AuthenticationExtensionsClient implements \JsonSerializable
+class AuthenticationExtension implements \JsonSerializable
 {
     private $name;
 

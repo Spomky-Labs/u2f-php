@@ -11,10 +11,10 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication\Tests\Unit\Fido\AttestationStatement;
+namespace U2FAuthentication\Tests\Unit\Fido2\AuthenticationExtensions;
 
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClient;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtension;
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs;
 
@@ -29,7 +29,7 @@ class AuthenticationExtensionsClientTest extends TestCase
      */
     public function anAuthenticationExtensionsClientCanBeCreatedAndValueAccessed()
     {
-        $extension = new AuthenticationExtensionsClient('name', ['value']);
+        $extension = new AuthenticationExtension('name', ['value']);
 
         static::assertEquals('name', $extension->name());
         static::assertEquals(['value'], $extension->value());
@@ -41,7 +41,7 @@ class AuthenticationExtensionsClientTest extends TestCase
      */
     public function theAuthenticationExtensionsClientInputsCanManageExtensions()
     {
-        $extension = new AuthenticationExtensionsClient('name', ['value']);
+        $extension = new AuthenticationExtension('name', ['value']);
 
         $inputs = new AuthenticationExtensionsClientInputs();
         $inputs->add($extension);
@@ -49,7 +49,7 @@ class AuthenticationExtensionsClientTest extends TestCase
         static::assertEquals(1, $inputs->count());
         static::assertEquals('{"name":["value"]}', \Safe\json_encode($inputs));
         foreach ($inputs as $k => $input) {
-            static::assertInstanceOf(AuthenticationExtensionsClient::class, $input);
+            static::assertInstanceOf(AuthenticationExtension::class, $input);
         }
     }
 
@@ -58,7 +58,7 @@ class AuthenticationExtensionsClientTest extends TestCase
      */
     public function theAuthenticationExtensionsClientOutputsCanManageExtensions()
     {
-        $extension = new AuthenticationExtensionsClient('name', ['value']);
+        $extension = new AuthenticationExtension('name', ['value']);
 
         $inputs = new AuthenticationExtensionsClientOutputs();
         $inputs->add($extension);
@@ -66,7 +66,7 @@ class AuthenticationExtensionsClientTest extends TestCase
         static::assertEquals(1, $inputs->count());
         static::assertEquals('{"name":["value"]}', \Safe\json_encode($inputs));
         foreach ($inputs as $k => $input) {
-            static::assertInstanceOf(AuthenticationExtensionsClient::class, $input);
+            static::assertInstanceOf(AuthenticationExtension::class, $input);
         }
     }
 }

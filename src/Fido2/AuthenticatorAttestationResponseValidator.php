@@ -56,7 +56,7 @@ class AuthenticatorAttestationResponseValidator
         if (!array_key_exists('host', $parsedRelyingPartyId) || !\is_string($parsedRelyingPartyId['host'])) {
             throw new \InvalidArgumentException('Invalid origin rpId.');
         }
-        if (null !==  $rpId && $parsedRelyingPartyId['host'] !== $rpId) {
+        if (null !== $rpId && $parsedRelyingPartyId['host'] !== $rpId) {
             throw new \InvalidArgumentException('rpId mismatch.');
         }
 

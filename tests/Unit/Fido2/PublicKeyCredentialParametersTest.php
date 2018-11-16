@@ -11,7 +11,7 @@ declare(strict_types=1);
  * of the MIT license.  See the LICENSE file for details.
  */
 
-namespace U2FAuthentication\Tests\Unit\Fido\AttestationStatement;
+namespace U2FAuthentication\Tests\Unit\Fido2;
 
 use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido2\PublicKeyCredentialParameters;
