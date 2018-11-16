@@ -41,7 +41,11 @@ Instead, all security issues must be sent to security [at] spomky-labs.com.
 
 # Support
 
-No support is provided on this repository. Commercial support is available at [https://spomky-labs.com](https://spomky-labs.com) (English or French).
+I bring solutions to your problems and answer your questions.
+
+If you really love that project and the work I have done or if you want I prioritize your issues, then you can help me out for a couple of :beers: or more!
+
+[![Become a Patreon](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/FlorentMorselli)
 
 # Licence
 
