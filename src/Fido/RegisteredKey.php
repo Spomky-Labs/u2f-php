@@ -49,7 +49,7 @@ class RegisteredKey implements \JsonSerializable
                 $attestationCertificate
             );
         } catch (\Throwable $e) {
-            throw new \InvalidArgumentException('Invalid data', $e);
+            throw new \InvalidArgumentException('Invalid data', 0, $e);
         }
     }
 
