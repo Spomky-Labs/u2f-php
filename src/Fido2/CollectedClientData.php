@@ -38,7 +38,7 @@ class CollectedClientData
     {
         $rawData = Base64Url::decode($data);
         $json = \Safe\json_decode($rawData, true);
-        if (\is_array($json)) {
+        if (!\is_array($json)) {
             throw new \InvalidArgumentException('Invalid collected client data');
         }
 
