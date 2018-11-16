@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 use CBOR\Decoder;
 use CBOR\MapObject;
@@ -45,38 +46,24 @@ class AttestationObjectLoader
         $signCount = $authDataStream->read(4);
         $signCount = unpack('N', $signCount)[1];
 
+        $attestedCredentialData = null;
         if (\ord($flags) & self::FLAG_AT) {
             $aaguid = $authDataStream->read(16);
             $credentialLength = $authDataStream->read(2);
             $credentialLength = unpack('n', $credentialLength)[1];
             $credentialId = $authDataStream->read($credentialLength);
             $credentialPublicKey = $this->decoder->decode($authDataStream);
-            if (!$credentialPublicKey instanceof MapObject) {
-                throw new \InvalidArgumentException('The data does not contain a valid credential public key.');
-            }
+            Assertion::isInstanceOf($credentialPublicKey, MapObject::class, 'The data does not contain a valid credential public key.');
             $attestedCredentialData = new AttestedCredentialData($aaguid, $credentialId, (string) $credentialPublicKey);
-        } else {
-            $attestedCredentialData = null;
         }
 
+        $extension = null;
         if (\ord($flags) & self::FLAG_ED) {
             $extension = $this->decoder->decode($authDataStream);
-        } else {
-            $extension = null;
         }
-        $authenticatorData = new AuthenticatorData(
-            $authData,
-            $rp_id_hash,
-            $flags,
-            $signCount,
-            $attestedCredentialData,
-            $extension
-        );
 
-        return new AttestationObject(
-            $data,
-            new AttestationStatement($attestationObject['fmt'], $attestationObject['attStmt']),
-            $authenticatorData
-        );
+        $authenticatorData = new AuthenticatorData($authData, $rp_id_hash, $flags, $signCount, $attestedCredentialData, $extension);
+
+        return new AttestationObject($data, new AttestationStatement($attestationObject['fmt'], $attestationObject['attStmt']), $authenticatorData);
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Assert\Assertion;
 use CBOR\Decoder;
 use CBOR\StringStream;
 
@@ -33,23 +34,18 @@ class AuthenticatorAssertionResponseValidator
     public function check(string $credentialId, AuthenticatorAssertionResponse $authenticatorAssertionResponse, PublicKeyCredentialRequestOptions $publicKeyCredentialRequestOptions, ?string $rpId = null): void
     {
         /* @see 7.2.1 */
-        if (!$this->isCredentialIdAllowed($credentialId, $publicKeyCredentialRequestOptions->getAllowCredentials())) {
-            throw new \InvalidArgumentException('The credential ID is not allowed.');
-        }
+        Assertion::true($this->isCredentialIdAllowed($credentialId, $publicKeyCredentialRequestOptions->getAllowCredentials()), 'The credential ID is not allowed.');
+
         /* @see 7.2.2 */
-        if (!empty($authenticatorAssertionResponse->getUserHandle())) {
-            throw new \RuntimeException('User Handle not supported.'); //TODO: implementation shall be done.
-        }
+        Assertion::null($authenticatorAssertionResponse->getUserHandle(), 'User Handle not supported.'); //TODO: implementation shall be done.
 
         /* @see 7.2.3 */
-        if (!$this->credentialRepository->has($credentialId)) {
-            throw new \InvalidArgumentException('No credential public key available for the given credential ID.');
-        }
+        Assertion::true($this->credentialRepository->has($credentialId), 'No credential public key available for the given credential ID.');
+
         $attestedCredentialData = $this->credentialRepository->get($credentialId);
         $credentialPublicKey = $attestedCredentialData->getCredentialPublicKey();
-        if (null === $credentialPublicKey) {
-            throw new \RuntimeException('No public key available.');
-        }
+        Assertion::notNull($credentialPublicKey, 'No public key available.');
+
         $credentialPublicKey = $this->decoder->decode(
             new StringStream($credentialPublicKey)
         );
@@ -62,53 +58,35 @@ class AuthenticatorAssertionResponseValidator
         $C = $authenticatorAssertionResponse->getClientDataJSON();
 
         /* @see 7.2.7 */
-        if ('webauthn.get' !== $C->getType()) {
-            throw new \InvalidArgumentException('The client data type is not "webauthn.get".');
-        }
+        Assertion::eq('webauthn.get', $C->getType(), 'The client data type is not "webauthn.get".');
 
         /* @see 7.2.8 */
-        if (!hash_equals($publicKeyCredentialRequestOptions->getChallenge(), $C->getChallenge())) {
-            throw new \InvalidArgumentException('Invalid challenge.');
-        }
+        Assertion::true(hash_equals($publicKeyCredentialRequestOptions->getChallenge(), $C->getChallenge()), 'Invalid challenge.');
 
         /** @see 7.2.9 */
         $rpId = $rpId ?? $publicKeyCredentialRequestOptions->getRpId();
-        if (null === $rpId) {
-            throw new \InvalidArgumentException('No rpId.');
-        }
+        Assertion::notNull($rpId, 'No rpId.');
+
         $parsedRelyingPartyId = parse_url($C->getOrigin());
-        if (!array_key_exists('host', $parsedRelyingPartyId) || !\is_string($parsedRelyingPartyId['host'])) {
-            throw new \InvalidArgumentException('Invalid origin rpId.');
-        }
-        if ($parsedRelyingPartyId['host'] !== $rpId) {
-            throw new \InvalidArgumentException('rpId mismatch.');
-        }
+        Assertion::true(array_key_exists('host', $parsedRelyingPartyId) && \is_string($parsedRelyingPartyId['host']), 'Invalid origin rpId.');
+
+        Assertion::eq($parsedRelyingPartyId['host'], $rpId, 'rpId mismatch.');
 
         /* @see 7.2.10 */
-        if ($C->getTokenBinding()) {
-            throw new \InvalidArgumentException('Token binding not supported.');
-        }
+        Assertion::null($C->getTokenBinding(), 'Token binding not supported.');
 
         /** @see 7.2.11 */
         $rpIdHash = hash('sha256', $rpId, true);
-        if (!hash_equals($rpIdHash, $authenticatorAssertionResponse->getAuthenticatorData()->getRpIdHash())) {
-            throw new \InvalidArgumentException('rpId hash mismatch.');
-        }
+        Assertion::true(hash_equals($rpIdHash, $authenticatorAssertionResponse->getAuthenticatorData()->getRpIdHash()), 'rpId hash mismatch.');
 
         /* @see 7.2.12 */
-        if (!$authenticatorAssertionResponse->getAuthenticatorData()->isUserPresent()) {
-            throw new \InvalidArgumentException('User was not present');
-        }
+        Assertion::true($authenticatorAssertionResponse->getAuthenticatorData()->isUserPresent(), 'User was not present');
 
         /* @see 7.2.13 */
-        if (AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED === $publicKeyCredentialRequestOptions->getUserVerification() && !$authenticatorAssertionResponse->getAuthenticatorData()->isUserVerified()) {
-            throw new \InvalidArgumentException('User authentication required.');
-        }
+        Assertion::false(AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED === $publicKeyCredentialRequestOptions->getUserVerification() && !$authenticatorAssertionResponse->getAuthenticatorData()->isUserVerified(), 'User authentication required.');
 
         /* @see 7.2.14 */
-        if (0 !== $publicKeyCredentialRequestOptions->getExtensions()->count()) {
-            throw new \InvalidArgumentException('Extensions not supported.');
-        }
+        Assertion::eq(0, $publicKeyCredentialRequestOptions->getExtensions()->count(), 'Extensions not supported.');
 
         /** @see 7.2.15 */
         $getClientDataJSONHash = hash('sha256', $authenticatorAssertionResponse->getClientDataJSON()->getRawData(), true);
@@ -116,20 +94,16 @@ class AuthenticatorAssertionResponseValidator
         /* @see 7.2.16 */
         $coseKey = $credentialPublicKey->getNormalizedData();
         $key = "\04".$coseKey[-2].$coseKey[-3];
-        if (1 !== openssl_verify($authenticatorAssertionResponse->getAuthenticatorData()->getAuthData().$getClientDataJSONHash, $authenticatorAssertionResponse->getSignature(), $this->getPublicKeyAsPem($key), OPENSSL_ALGO_SHA256)) {
-            throw new \InvalidArgumentException('Invalid signature.');
-        }
+        Assertion::eq(1, openssl_verify($authenticatorAssertionResponse->getAuthenticatorData()->getAuthData().$getClientDataJSONHash, $authenticatorAssertionResponse->getSignature(), $this->getPublicKeyAsPem($key), OPENSSL_ALGO_SHA256), 'Invalid signature.');
 
         /* @see 7.2.17 */
         $storedCounter = $this->credentialRepository->getCounterFor($credentialId);
         $currentCounter = $authenticatorAssertionResponse->getAuthenticatorData()->getSignCount();
-        if ($storedCounter >= $currentCounter) {
-            throw new \InvalidArgumentException('Invalid counter.');
-        }
+        Assertion::greaterThan($currentCounter, $storedCounter, 'Invalid counter.');
+
         $this->credentialRepository->updateCounterFor($credentialId, $currentCounter);
 
         /* @see 7.2.18 */
-        //Great!
     }
 
     private function getPublicKeyAsPem(string $key): string

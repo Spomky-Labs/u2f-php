@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class CollectedClientData
@@ -38,9 +39,7 @@ class CollectedClientData
     {
         $rawData = Base64Url::decode($data);
         $json = \Safe\json_decode($rawData, true);
-        if (!\is_array($json)) {
-            throw new \InvalidArgumentException('Invalid collected client data');
-        }
+        Assertion::isArray($json, 'Invalid collected client data');
 
         return new self($rawData, $json);
     }
