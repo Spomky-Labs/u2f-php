@@ -16,13 +16,13 @@ namespace U2FAuthentication\Fido2\AuthenticationExtensions;
 class AuthenticationExtensionsClientOutputs implements \JsonSerializable, \Countable, \IteratorAggregate
 {
     /**
-     * @var AuthenticationExtensionsClient[]
+     * @var AuthenticationExtension[]
      */
     private $extensions = [];
 
-    public function add(AuthenticationExtensionsClient $extension)
+    public function add(AuthenticationExtension $extension)
     {
-        $this->extensions[$extension->getName()] = $extension->getValue();
+        $this->extensions[$extension->name()] = $extension;
     }
 
     public function jsonSerialize()

@@ -32,12 +32,4 @@ class AuthenticatorAttestationResponse extends AuthenticatorResponse
     {
         return $this->attestationObject;
     }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'clientDataJSON' => $this->getClientDataJSON(),
-            'attestationObject' => $this->attestationObject,
-        ];
-    }
 }

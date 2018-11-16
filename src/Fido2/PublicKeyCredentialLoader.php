@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace U2FAuthentication\Fido2;
 
 use Base64Url\Base64Url;
+use CBOR\Decoder;
 use CBOR\MapObject;
 use CBOR\StringStream;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationObjectLoader;
@@ -24,10 +25,12 @@ class PublicKeyCredentialLoader
     private const FLAG_ED = 0b10000000;
 
     private $attestationObjectLoader;
+    private $decoder;
 
-    public function __construct(AttestationObjectLoader $attestationObjectLoader)
+    public function __construct(AttestationObjectLoader $attestationObjectLoader, Decoder $decoder)
     {
         $this->attestationObjectLoader = $attestationObjectLoader;
+        $this->decoder = $decoder;
     }
 
     public function load(string $data): PublicKeyCredential
@@ -85,7 +88,7 @@ class PublicKeyCredentialLoader
                 $credentialLength = $authDataStream->read(2);
                 $credentialLength = unpack('n', $credentialLength)[1];
                 $credentialId = $authDataStream->read($credentialLength);
-                $credentialPublicKey = $this->attestationObjectLoader->getDecoder()->decode($authDataStream);
+                $credentialPublicKey = $this->decoder->decode($authDataStream);
                 if (!$credentialPublicKey instanceof MapObject) {
                     throw new \InvalidArgumentException('The data does not contain a valid credential public key.');
                 }
@@ -95,7 +98,7 @@ class PublicKeyCredentialLoader
             }
 
             if (\ord($flags) & self::FLAG_ED) {
-                $extension = $this->attestationObjectLoader->getDecoder()->decode($authDataStream);
+                $extension = $this->decoder->decode($authDataStream);
             } else {
                 $extension = null;
             }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Base64Url\Base64Url;
+
 class TokenBinding
 {
     public const TOKEN_BINDING_STATUS_PRESENT = 'present';
@@ -25,6 +27,9 @@ class TokenBinding
 
     public function __construct(string $status, ?string $id)
     {
+        if (self::TOKEN_BINDING_STATUS_PRESENT === $status && !$id) {
+            throw new \InvalidArgumentException('The member "is" is required when status is "present"');
+        }
         $this->status = $status;
         $this->id = $id;
     }
@@ -32,13 +37,12 @@ class TokenBinding
     public static function createFormJson(array $json): self
     {
         if (!array_key_exists('status', $json)) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('The member "status" is required');
         }
+        $status = $json['status'];
+        $id = array_key_exists('id', $json) ? Base64Url::decode($json['id']) : null;
 
-        return new self(
-            $json['status'],
-            array_key_exists('id', $json) ? $json['status'] : null
-        );
+        return new self($status, $id);
     }
 
     public function getStatus(): string

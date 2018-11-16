@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2\AuthenticationExtensions;
 
-class AuthenticationExtensionsClient implements \JsonSerializable
+class AuthenticationExtension implements \JsonSerializable
 {
     private $name;
 
@@ -25,12 +25,12 @@ class AuthenticationExtensionsClient implements \JsonSerializable
         $this->value = $value;
     }
 
-    public function getName(): string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function getValue()
+    public function value()
     {
         return $this->value;
     }
