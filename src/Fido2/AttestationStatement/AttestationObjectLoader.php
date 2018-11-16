@@ -32,11 +32,6 @@ class AttestationObjectLoader
         $this->decoder = $decoder;
     }
 
-    public function getDecoder(): Decoder
-    {
-        return $this->decoder;
-    }
-
     public function load(string $data): AttestationObject
     {
         $decodedData = Base64Url::decode($data);

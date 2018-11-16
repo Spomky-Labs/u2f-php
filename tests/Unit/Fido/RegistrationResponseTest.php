@@ -15,7 +15,6 @@ namespace U2FAuthentication\Tests\Unit\Fido;
 
 use Base64Url\Base64Url;
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\Fido\RegisteredKey;
 use U2FAuthentication\Fido\RegistrationRequest;
 use U2FAuthentication\Fido\RegistrationResponse;
 

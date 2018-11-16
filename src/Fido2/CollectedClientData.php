@@ -18,61 +18,64 @@ use Base64Url\Base64Url;
 class CollectedClientData
 {
     private $rawData;
-
     private $data;
+    private $type;
+    private $challenge;
+    private $origin;
+    private $tokenBinding;
 
     public function __construct(string $rawData, array $data)
     {
+        $validators = $this->dataValidators();
+        foreach ($validators as $parameter => $validator) {
+            $this->$parameter = $validator($data);
+        }
         $this->rawData = $rawData;
         $this->data = $data;
     }
 
     public static function createFormJson(string $data): self
     {
-        $json = \Safe\json_decode(Base64Url::decode($data), true);
-
-        if (!array_key_exists('type', $json)) {
-            throw new \InvalidArgumentException();
-        }
-        if (!array_key_exists('challenge', $json)) {
-            throw new \InvalidArgumentException();
-        }
-        $json['challenge'] = Base64Url::decode($json['challenge']);
-        if (!array_key_exists('origin', $json)) {
-            throw new \InvalidArgumentException();
-        }
-        if (array_key_exists('tokenBinding', $json)) {
-            $json['tokenBinding'] = TokenBinding::createFormJson($json['tokenBinding']);
-        } else {
-            $json['tokenBinding'] = null;
+        $rawData = Base64Url::decode($data);
+        $json = \Safe\json_decode($rawData, true);
+        if (\is_array($json)) {
+            throw new \InvalidArgumentException('Invalid collected client data');
         }
 
-        return new self(Base64Url::decode($data), $json);
+        return new self($rawData, $json);
     }
 
     public function getType(): string
     {
-        return $this->data['type'];
+        return $this->type;
     }
 
     public function getChallenge(): string
     {
-        return $this->data['challenge'];
+        return $this->challenge;
     }
 
     public function getOrigin(): string
     {
-        return $this->data['origin'];
+        return $this->origin;
     }
 
     public function getTokenBinding(): ?TokenBinding
     {
-        return $this->data['tokenBinding'];
+        return $this->tokenBinding ? TokenBinding::createFormJson($this->tokenBinding) : null;
     }
 
     public function getRawData(): string
     {
         return $this->rawData;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function all(): array
+    {
+        return array_keys($this->data);
     }
 
     public function has(string $key): bool
@@ -83,9 +86,44 @@ class CollectedClientData
     public function get(string $key)
     {
         if (!$this->has($key)) {
-            throw new \InvalidArgumentException(\Safe\sprintf('The collected client data has no key "%s".', $key));
+            throw new \InvalidArgumentException(\Safe\sprintf('The key "%s" is missing', $key));
         }
 
         return $this->data[$key];
+    }
+
+    /**
+     * @return callable[]
+     */
+    private function dataValidators(): array
+    {
+        return [
+            'type' => $this->requiredData('type'),
+            'challenge' => $this->requiredData('challenge', true),
+            'origin' => $this->requiredData('origin'),
+            'tokenBinding' => $this->optionalData('tokenBinding'),
+        ];
+    }
+
+    private function requiredData($key, bool $isB64 = false): callable
+    {
+        return function ($json) use ($key, $isB64) {
+            if (!array_key_exists($key, $json)) {
+                throw new \InvalidArgumentException(\Safe\sprintf('The key "%s" is missing', $key));
+            }
+
+            return $isB64 ? Base64Url::decode($json[$key]) : $json[$key];
+        };
+    }
+
+    private function optionalData($key): callable
+    {
+        return function ($json) use ($key) {
+            if (!array_key_exists($key, $json)) {
+                return;
+            }
+
+            return $json[$key];
+        };
     }
 }

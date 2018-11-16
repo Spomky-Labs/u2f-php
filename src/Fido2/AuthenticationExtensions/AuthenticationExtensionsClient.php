@@ -25,12 +25,12 @@ class AuthenticationExtensionsClient implements \JsonSerializable
         $this->value = $value;
     }
 
-    public function getName(): string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function getValue()
+    public function value()
     {
         return $this->value;
     }

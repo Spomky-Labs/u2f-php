@@ -48,7 +48,7 @@ class RegisteredKey implements \JsonSerializable
                 new PublicKey(Base64Url::decode($publicKey)),
                 $attestationCertificate
             );
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             throw new \InvalidArgumentException('Invalid data', $e);
         }
     }

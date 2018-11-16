@@ -24,9 +24,6 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
 
     private $userHandle;
 
-    /**
-     * AuthenticatorAssertionResponse constructor.
-     */
     public function __construct(CollectedClientData $clientDataJSON, AuthenticatorData $authenticatorData, string $signature, ?string $userHandle)
     {
         parent::__construct($clientDataJSON);
@@ -48,19 +45,5 @@ class AuthenticatorAssertionResponse extends AuthenticatorResponse
     public function getUserHandle(): ?string
     {
         return $this->userHandle;
-    }
-
-    public function jsonSerialize(): array
-    {
-        $json = [
-            'clientDataJSON' => $this->getClientDataJSON(),
-            'authenticatorData' => $this->authenticatorData,
-            'signature' => $this->signature,
-        ];
-        if ($this->userHandle) {
-            $json['userHandle'] = $this->userHandle;
-        }
-
-        return $json;
     }
 }

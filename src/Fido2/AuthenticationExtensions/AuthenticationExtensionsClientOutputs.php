@@ -22,7 +22,7 @@ class AuthenticationExtensionsClientOutputs implements \JsonSerializable, \Count
 
     public function add(AuthenticationExtensionsClient $extension)
     {
-        $this->extensions[$extension->getName()] = $extension->getValue();
+        $this->extensions[$extension->name()] = $extension;
     }
 
     public function jsonSerialize()

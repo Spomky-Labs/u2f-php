@@ -21,7 +21,7 @@
         "ext-openssl": "*",
         "spomky-labs/base64url": "^2.0",
         "spomky-labs/cbor-php": "^1.0",
-        "thecodingmachine/safe": "^0.1.6"
+        "thecodingmachine/safe": "^0.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.0",

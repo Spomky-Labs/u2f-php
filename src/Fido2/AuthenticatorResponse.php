@@ -16,7 +16,7 @@ namespace U2FAuthentication\Fido2;
 /**
  * @see https://www.w3.org/TR/webauthn/#authenticatorresponse
  */
-abstract class AuthenticatorResponse implements \JsonSerializable
+abstract class AuthenticatorResponse
 {
     private $clientDataJSON;
 
