@@ -16,7 +16,7 @@ namespace U2FAuthentication\Fido2;
 /**
  * @see https://w3c.github.io/webappsec-credential-management/#credential
  */
-abstract class Credential implements \JsonSerializable
+abstract class Credential
 {
     private $id;
 
