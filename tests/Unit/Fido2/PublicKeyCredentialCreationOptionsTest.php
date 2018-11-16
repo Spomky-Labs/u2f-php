@@ -62,6 +62,6 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
         static::assertInstanceOf(PublicKeyCredentialRpEntity::class, $options->getRp());
         static::assertInstanceOf(PublicKeyCredentialUserEntity::class, $options->getUser());
         static::assertInstanceOf(AuthenticatorSelectionCriteria::class, $options->getAuthenticatorSelection());
-        static::assertEquals('{"rp":["RP"],"pubKeyCredParams":[{"type":"type","alg":-100}],"challenge":"Y2hhbGxlbmdl","attestation":"attestation","user":["USER"],"authenticatorSelection":{"requireResidentKey":false,"userVerification":"preferred"},"excludeCredentials":[{"type":"type","id":"aWQ=","transports":["transport"]}],"extensions":[],"timeout":1000}', \Safe\json_encode($options));
+        static::assertEquals('{"rp":["RP"],"pubKeyCredParams":[{"type":"type","alg":-100}],"challenge":"Y2hhbGxlbmdl","attestation":"attestation","user":["USER"],"authenticatorSelection":{"requireResidentKey":false,"userVerification":"preferred"},"excludeCredentials":[{"type":"type","id":"aWQ=","transports":["transport"]}],"timeout":1000}', \Safe\json_encode($options));
     }
 }
