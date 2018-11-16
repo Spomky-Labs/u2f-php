@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Tests\Functional\Fido2;
 
+use Base64Url\Base64Url;
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 use U2FAuthentication\Fido2\AuthenticatorAttestationResponse;
 use U2FAuthentication\Fido2\AuthenticatorSelectionCriteria;
 use U2FAuthentication\Fido2\CredentialRepository;
 use U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions;
+use U2FAuthentication\Fido2\PublicKeyCredentialDescriptor;
 use U2FAuthentication\Fido2\PublicKeyCredentialParameters;
 use U2FAuthentication\Fido2\PublicKeyCredentialRpEntity;
 use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
@@ -125,5 +127,12 @@ class attestationTest extends Fido2TestCase
             $publicKeyCredentialCreationOptions,
             'localhost'
         );
+
+        $publicKeyCredentialDescriptor = $publicKeyCredential->getPublicKeyCredentialDescriptor(['usb']);
+
+        static::assertEquals(\Safe\base64_decode('xYw3gEj0LVL83JXz7oKL14XQjh9W1NMFrTALWI+lqXl7ndKW+n8JFYsBCuKbZA3zRAUxAZDHG/tXHsAi6TbO0Q==', true), Base64Url::decode($publicKeyCredential->getId()));
+        static::assertEquals(\Safe\base64_decode('xYw3gEj0LVL83JXz7oKL14XQjh9W1NMFrTALWI+lqXl7ndKW+n8JFYsBCuKbZA3zRAUxAZDHG/tXHsAi6TbO0Q==', true), $publicKeyCredentialDescriptor->getId());
+        static::assertEquals(PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY, $publicKeyCredentialDescriptor->getType());
+        static::assertEquals(['usb'], $publicKeyCredentialDescriptor->getTransports());
     }
 }
