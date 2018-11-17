@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class RegistrationRequest implements \JsonSerializable
@@ -36,9 +37,7 @@ class RegistrationRequest implements \JsonSerializable
         $this->applicationId = $applicationId;
         $this->challenge = random_bytes(32);
         foreach ($registeredKeys as $registeredKey) {
-            if (!$registeredKey instanceof RegisteredKey) {
-                throw new \InvalidArgumentException('Invalid registered keys list.');
-            }
+            Assertion::isInstanceOf($registeredKey, RegisteredKey::class, 'Invalid registered keys list.');
             $this->registeredKeys[Base64Url::encode((string) $registeredKey->getKeyHandler())] = $registeredKey;
         }
     }

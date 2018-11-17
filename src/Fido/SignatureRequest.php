@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class SignatureRequest implements \JsonSerializable
@@ -39,9 +40,7 @@ class SignatureRequest implements \JsonSerializable
     {
         $this->applicationId = $applicationId;
         foreach ($registeredKeys as $registeredKey) {
-            if (!$registeredKey instanceof RegisteredKey) {
-                throw new \InvalidArgumentException('Invalid registered keys list.');
-            }
+            Assertion::isInstanceOf($registeredKey, RegisteredKey::class, 'Invalid registered keys list.');
             $this->registeredKeys[Base64Url::encode((string) $registeredKey->getKeyHandler())] = $registeredKey;
         }
         $this->challenge = random_bytes(32);
@@ -59,9 +58,7 @@ class SignatureRequest implements \JsonSerializable
 
     public function getRegisteredKey(KeyHandler $keyHandle): RegisteredKey
     {
-        if (!$this->hasRegisteredKey($keyHandle)) {
-            throw new \InvalidArgumentException('Unsupported key handle.');
-        }
+        Assertion::true($this->hasRegisteredKey($keyHandle), 'Unsupported key handle.');
 
         return $this->registeredKeys[Base64Url::encode($keyHandle->getValue())];
     }

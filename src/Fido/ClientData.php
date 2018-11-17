@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class ClientData
@@ -46,16 +47,12 @@ class ClientData
     {
         $this->rawData = Base64Url::decode($clientData);
         $clientData = \Safe\json_decode($this->rawData, true);
-        if (!\is_array($clientData)) {
-            throw new \InvalidArgumentException('Invalid client data.');
-        }
+        Assertion::isArray($clientData, 'Invalid client data.');
 
         $diff = array_diff_key(get_class_vars(self::class), $clientData);
         unset($diff['rawData'], $diff['cid_pubkey']);
 
-        if (!empty($diff)) {
-            throw new \InvalidArgumentException('Invalid client data.');
-        }
+        Assertion::noContent($diff, 'Invalid client data.');
 
         foreach ($clientData as $k => $v) {
             $this->$k = $v;
