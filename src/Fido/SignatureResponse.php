@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class SignatureResponse
@@ -54,15 +55,11 @@ class SignatureResponse
 
     public function __construct(array $data)
     {
-        if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(array_key_exists('errorCode', $data) && 0 !== $data['errorCode'], 'Invalid response.');
 
         $this->keyHandle = $this->retrieveKeyHandle($data);
         $this->clientData = $this->retrieveClientData($data);
-        if ('navigator.id.getAssertion' !== $this->clientData->getType()) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::eq('navigator.id.getAssertion', $this->clientData->getType(), 'Invalid response.');
         list($this->userPresence, $this->userPresenceByte, $this->counter, $this->counterBytes, $this->signature) = $this->extractSignatureData($data);
     }
 
@@ -93,53 +90,44 @@ class SignatureResponse
 
     private function retrieveKeyHandle(array $data): KeyHandler
     {
-        if (!array_key_exists('keyHandle', $data) || !\is_string($data['keyHandle'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(!array_key_exists('keyHandle', $data) || !\is_string($data['keyHandle']), 'Invalid response.');
 
         return new KeyHandler(Base64Url::decode($data['keyHandle']));
     }
 
     private function retrieveClientData(array $data): ClientData
     {
-        if (!array_key_exists('clientData', $data) || !\is_string($data['clientData'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(!array_key_exists('clientData', $data) || !\is_string($data['clientData']), 'Invalid response.');
 
         return new ClientData($data['clientData']);
     }
 
     private function extractSignatureData(array $data): array
     {
-        if (!array_key_exists('signatureData', $data) || !\is_string($data['signatureData'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(!array_key_exists('signatureData', $data) || !\is_string($data['signatureData']), 'Invalid response.');
 
         $stream = \Safe\fopen('php://memory', 'r+');
         $signatureData = Base64Url::decode($data['signatureData']);
         \Safe\fwrite($stream, $signatureData);
         \Safe\rewind($stream);
 
-        $userPresenceByte = \Safe\fread($stream, 1);
-        if (1 !== mb_strlen($userPresenceByte, '8bit')) {
+        try {
+            $userPresenceByte = \Safe\fread($stream, 1);
+            Assertion::eq(1, mb_strlen($userPresenceByte, '8bit'), 'Invalid response.');
+            $userPresence = (bool) \ord($userPresenceByte);
+
+            $counterBytes = \Safe\fread($stream, 4);
+            Assertion::eq(4, mb_strlen($counterBytes, '8bit'), 'Invalid response.');
+            $counter = unpack('Nctr', $counterBytes)['ctr'];
+            $signature = '';
+            while (!feof($stream)) {
+                $signature .= \Safe\fread($stream, 1024);
+            }
             \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Invalid response.');
-        }
-        $userPresence = (bool) \ord($userPresenceByte);
-
-        $counterBytes = \Safe\fread($stream, 4);
-        if (4 !== mb_strlen($counterBytes, '8bit')) {
+        } catch (\Throwable $throwable) {
             \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Invalid response.');
+            throw $throwable;
         }
-        $counter = unpack('Nctr', $counterBytes)['ctr'];
-        $signature = '';
-        while (!feof($stream)) {
-            $signature .= \Safe\fread($stream, 1024);
-        }
-        \Safe\fclose($stream);
 
         return [
             $userPresence,

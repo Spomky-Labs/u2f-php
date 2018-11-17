@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido;
 
+use Assert\Assertion;
 use Base64Url\Base64Url;
 
 class RegistrationResponse
@@ -45,15 +46,11 @@ class RegistrationResponse
 
     public function __construct(array $data)
     {
-        if (array_key_exists('errorCode', $data) && 0 !== $data['errorCode']) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(array_key_exists('errorCode', $data) && 0 !== $data['errorCode'], 'Invalid response.');
 
         $this->checkVersion($data);
         $clientData = $this->retrieveClientData($data);
-        if ('navigator.id.finishEnrollment' !== $clientData->getType()) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::eq('navigator.id.finishEnrollment', $clientData->getType(), 'Invalid response.');
         list($publicKey, $keyHandle, $pemCert, $signature) = $this->extractKeyData($data);
 
         $this->clientData = $clientData;
@@ -87,68 +84,45 @@ class RegistrationResponse
 
     private function checkVersion(array $data): void
     {
-        if (!array_key_exists('version', $data) || !\is_string($data['version'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
-        if (!\in_array($data['version'], self::SUPPORTED_PROTOCOL_VERSIONS, true)) {
-            throw new \InvalidArgumentException('Unsupported protocol version.');
-        }
+        Assertion::false(!array_key_exists('version', $data) || !\is_string($data['version']), 'Invalid response.');
+        Assertion::false(!\in_array($data['version'], self::SUPPORTED_PROTOCOL_VERSIONS, true), 'Unsupported protocol version.');
     }
 
     private function extractKeyData(array $data): array
     {
-        if (!array_key_exists('registrationData', $data) || !\is_string($data['registrationData'])) {
-            throw new \InvalidArgumentException('Invalid response.');
-        }
+        Assertion::false(!array_key_exists('registrationData', $data) || !\is_string($data['registrationData']), 'Invalid response.');
         $stream = \Safe\fopen('php://memory', 'r+');
         $registrationData = Base64Url::decode($data['registrationData']);
         \Safe\fwrite($stream, $registrationData);
         \Safe\rewind($stream);
 
         $reservedByte = \Safe\fread($stream, 1);
-        if ("\x05" !== $reservedByte) { // 1 byte reserved with value x05
-            \Safe\fclose($stream);
+        try {
+            // 1 byte reserved with value x05
+            Assertion::eq("\x05", $reservedByte, 'Bad reserved byte.');
 
-            throw new \InvalidArgumentException('Bad reserved byte.');
+            $publicKey = \Safe\fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
+            Assertion::eq(self::PUBLIC_KEY_LENGTH, mb_strlen($publicKey, '8bit'), 'Bad public key length.');
+
+            $keyHandleLength = \Safe\fread($stream, 1); // 1 byte for the key handle length
+            Assertion::notEq(0, \ord($keyHandleLength), 'Bad key handle length.');
+
+            $keyHandle = \Safe\fread($stream, \ord($keyHandleLength)); // x bytes for the key handle
+            Assertion::eq(mb_strlen($keyHandle, '8bit'), \ord($keyHandleLength), 'Bad key handle.');
+
+            $certHeader = \Safe\fread($stream, 4); // 4 bytes for the certificate header
+            Assertion::eq(4, mb_strlen($certHeader, '8bit'), 'Bad certificate header.');
+
+            $highOrder = \ord($certHeader[2]) << 8;
+            $lowOrder = \ord($certHeader[3]);
+            $certLength = $highOrder + $lowOrder;
+            $certBody = \Safe\fread($stream, $certLength); // x bytes for the certificate
+            Assertion::eq(mb_strlen($certBody, '8bit'), $certLength, 'Bad certificate.');
+        } catch (\Throwable $throwable) {
+            \Safe\fclose($stream);
+            throw $throwable;
         }
 
-        $publicKey = \Safe\fread($stream, self::PUBLIC_KEY_LENGTH); // 65 bytes for the public key
-        if (self::PUBLIC_KEY_LENGTH !== mb_strlen($publicKey, '8bit')) {
-            \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Bad public key length.');
-        }
-
-        $keyHandleLength = \Safe\fread($stream, 1); // 1 byte for the key handle length
-        if (0 === \ord($keyHandleLength)) {
-            \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Bad key handle length.');
-        }
-
-        $keyHandle = \Safe\fread($stream, \ord($keyHandleLength)); // x bytes for the key handle
-        if (mb_strlen($keyHandle, '8bit') !== \ord($keyHandleLength)) {
-            \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Bad key handle.');
-        }
-
-        $certHeader = \Safe\fread($stream, 4); // 4 bytes for the certificate header
-        if (4 !== mb_strlen($certHeader, '8bit')) {
-            \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Bad certificate header.');
-        }
-
-        $highOrder = \ord($certHeader[2]) << 8;
-        $lowOrder = \ord($certHeader[3]);
-        $certLength = $highOrder + $lowOrder;
-        $certBody = \Safe\fread($stream, $certLength); // x bytes for the certificate
-        if (mb_strlen($certBody, '8bit') !== $certLength) {
-            \Safe\fclose($stream);
-
-            throw new \InvalidArgumentException('Bad certificate.');
-        }
         $derCertificate = $this->unusedBytesFix($certHeader.$certBody);
         $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;
         $pemCert .= chunk_split(base64_encode($derCertificate), 64, PHP_EOL);
