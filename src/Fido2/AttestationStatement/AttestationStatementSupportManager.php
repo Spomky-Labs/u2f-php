@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Assert\Assertion;
-use U2FAuthentication\Fido2\AuthenticatorData;
 
 class AttestationStatementSupportManager
 {
@@ -38,13 +37,5 @@ class AttestationStatementSupportManager
         Assertion::true($this->has($name), \Safe\sprintf('The attestation statement format "%s" is not supported.', $name));
 
         return $this->attestationStatementSupports[$name];
-    }
-
-    public function isValid(string $clientDataJSONHash, AttestationStatement $attestationStatement, AuthenticatorData $authenticatorData): bool
-    {
-        $fmt = $attestationStatement->getFmt();
-        Assertion::keyExists($this->attestationStatementSupports, $fmt, \Safe\sprintf('The attestation format "%s" is not supported.', $fmt));
-
-        return $this->attestationStatementSupports[$fmt]->isValid($clientDataJSONHash, $attestationStatement, $authenticatorData);
     }
 }
