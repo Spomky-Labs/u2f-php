@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Assert\Assertion;
+
 /**
  * @see https://www.w3.org/TR/webauthn/#sec-attested-credential-data
  */
@@ -44,6 +46,20 @@ class AttestedCredentialData implements \JsonSerializable
     public function getCredentialPublicKey(): ?string
     {
         return $this->credentialPublicKey;
+    }
+
+    public static function createFromJson(string $json): self
+    {
+        $data = \Safe\json_decode($json, true);
+        Assertion::isArray($data, 'Invalid input.');
+        Assertion::keyExists($data, 'aaguid', 'Invalid input.');
+        Assertion::keyExists($data, 'credentialId', 'Invalid input.');
+
+        return new self(
+            \Safe\base64_decode($data['aaguid'], true),
+            \Safe\base64_decode($data['credentialId'], true),
+            $data['credentialPublicKey'] ? \Safe\base64_decode($data['credentialPublicKey'], true) : null
+        );
     }
 
     public function jsonSerialize()

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
+use Assert\Assertion;
+
 class PublicKeyCredentialDescriptor implements \JsonSerializable
 {
     public const CREDENTIAL_TYPE_PUBLIC_KEY = 'public-key';
@@ -57,6 +59,20 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
     public function getTransports(): array
     {
         return $this->transports;
+    }
+
+    public static function createFromJson(string $json): self
+    {
+        $data = \Safe\json_decode($json, true);
+        Assertion::isArray($data, 'Invalid input.');
+        Assertion::keyExists($data, 'type', 'Invalid input.');
+        Assertion::keyExists($data, 'id', 'Invalid input.');
+
+        return new self(
+            $data['type'],
+            \Safe\base64_decode($data['id'], true),
+            $data['transports'] ?? null
+        );
     }
 
     public function jsonSerialize()
