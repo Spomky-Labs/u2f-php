@@ -15,13 +15,13 @@ namespace U2FAuthentication;
 
 use Assert\Assertion;
 
-class CertificateChainChecker
+class CertificateToolbox
 {
-    public static function check(array $x5c): string
+    public static function checkChain(array $x5c): string
     {
         Assertion::notEmpty($x5c, 'The attestation statement value "x5c" must be a list with at least one certificate.');
         reset($x5c);
-        $currentCert = self::getX509Certificate(current($x5c));
+        $currentCert = self::convertDERToPEM(current($x5c));
         if (1 === \count($x5c)) {
             return $currentCert;
         }
@@ -34,7 +34,7 @@ class CertificateChainChecker
         while ($nextCert = next($x5c)) {
             $currentCertIssuer = \Safe\json_encode($currentCertParsed['issuer']);
 
-            $nextCertAsPem = self::getX509Certificate($nextCert);
+            $nextCertAsPem = self::convertDERToPEM($nextCert);
             $nextCertParsed = openssl_x509_parse($nextCertAsPem);
             $nextCertAsPemSubject = \Safe\json_encode($nextCertParsed['subject']);
 
@@ -67,7 +67,7 @@ class CertificateChainChecker
         return $firstCert;
     }
 
-    private static function getX509Certificate(string $publicKey): string
+    public static function convertDERToPEM(string $publicKey): string
     {
         $derCertificate = self::unusedBytesFix($publicKey);
         $pemCert = '-----BEGIN CERTIFICATE-----'.PHP_EOL;

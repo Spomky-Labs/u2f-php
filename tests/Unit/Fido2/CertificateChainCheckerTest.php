@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace U2FAuthentication\Tests\Unit\Fido2;
 
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\CertificateChainChecker;
+use U2FAuthentication\CertificateToolbox;
 
 /**
  * @group Unit
@@ -34,7 +34,7 @@ class CertificateChainCheckerTest extends TestCase
             \Safe\file_get_contents(__DIR__.'/../../certificates/chain/4.der'),
         ];
 
-        $cert = CertificateChainChecker::check($x5c);
+        $cert = CertificateToolbox::checkChain($x5c);
         static::assertEquals(
             \Safe\file_get_contents(__DIR__.'/../../certificates/chain/1.crt'),
             $cert

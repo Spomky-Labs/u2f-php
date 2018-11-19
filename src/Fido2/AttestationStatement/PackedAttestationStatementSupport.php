@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Assert\Assertion;
-use U2FAuthentication\CertificateChainChecker;
+use U2FAuthentication\CertificateToolbox;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 final class PackedAttestationStatementSupport implements AttestationStatementSupport
@@ -44,7 +44,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         Assertion::isArray($certificates, 'The attestation statement value "x5c" must be a list with at least one certificate.');
 
         //Check certificate CA chain and returns the Attestation Certificate
-        $attestnCert = CertificateChainChecker::check($certificates);
+        $attestnCert = CertificateToolbox::checkChain($certificates);
 
         $signedData = $authenticatorData->getAuthData().$clientDataJSONHash;
         $result = openssl_verify($signedData, $attestationStatement->get('sig'), $attestnCert, OPENSSL_ALGO_SHA256);
