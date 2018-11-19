@@ -36,8 +36,8 @@ class attestationTest extends Fido2TestCase
     public function aNoneAttestationCanBeVerified()
     {
         $publicKeyCredentialCreationOptions = new PublicKeyCredentialCreationOptions(
-            new PublicKeyCredentialRpEntity('My Application', null, null),
-            new PublicKeyCredentialUserEntity('test@foo.com', null, random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
+            new PublicKeyCredentialRpEntity('My Application'),
+            new PublicKeyCredentialUserEntity('test@foo.com', random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
             \Safe\base64_decode('9WqgpRIYvGMCUYiFT20o1U7hSD193k11zu4tKP7wRcrE26zs1zc4LHyPinvPGS86wu6bDvpwbt8Xp2bQ3VBRSQ==', true),
             [
                 new PublicKeyCredentialParameters('public-key', PublicKeyCredentialParameters::ALGORITHM_ES256),
@@ -69,8 +69,8 @@ class attestationTest extends Fido2TestCase
     public function aFidoU2FAttestationCanBeVerified()
     {
         $publicKeyCredentialCreationOptions = new PublicKeyCredentialCreationOptions(
-            new PublicKeyCredentialRpEntity('My Application', null, null),
-            new PublicKeyCredentialUserEntity('test@foo.com', null, random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
+            new PublicKeyCredentialRpEntity('My Application'),
+            new PublicKeyCredentialUserEntity('test@foo.com', random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
             \Safe\base64_decode('pGRaBff9zpaw3CDAsggpOMRonJaqMXYjkvIGTPt3rHH+53RCW7LQ9l4NmGcv8dNZSNLDrvQDKaSNhFjviggcZA==', true),
             [
                 new PublicKeyCredentialParameters('public-key', PublicKeyCredentialParameters::ALGORITHM_ES256),
@@ -102,8 +102,8 @@ class attestationTest extends Fido2TestCase
     public function aPackedAttestationCanBeVerified()
     {
         $publicKeyCredentialCreationOptions = new PublicKeyCredentialCreationOptions(
-            new PublicKeyCredentialRpEntity('My Application', null, null),
-            new PublicKeyCredentialUserEntity('test@foo.com', null, random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
+            new PublicKeyCredentialRpEntity('My Application'),
+            new PublicKeyCredentialUserEntity('test@foo.com', random_bytes(64), 'Test PublicKeyCredentialUserEntity'),
             \Safe\base64_decode('32urRB1LDfyfYeU9myCPfrhrvNoVI27//+PWWYVxAISpIm3GqgX+jNudPgvOZy96UPNvEkCWCArW0jtpQZFGAg==', true),
             [
                 new PublicKeyCredentialParameters('public-key', PublicKeyCredentialParameters::ALGORITHM_ES256),

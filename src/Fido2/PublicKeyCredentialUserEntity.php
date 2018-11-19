@@ -19,7 +19,7 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 
     private $displayName;
 
-    public function __construct(string $name, ?string $icon, string $id, string $displayName)
+    public function __construct(string $name, string $id, string $displayName, ?string $icon = null)
     {
         parent::__construct($name, $icon);
         $this->id = $id;

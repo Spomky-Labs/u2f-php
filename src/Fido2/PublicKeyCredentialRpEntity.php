@@ -17,7 +17,7 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 {
     private $id;
 
-    public function __construct(string $name, ?string $icon, ?string $id)
+    public function __construct(string $name, ?string $id = null, ?string $icon = null)
     {
         parent::__construct($name, $icon);
         $this->id = $id;

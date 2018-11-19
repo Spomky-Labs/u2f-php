@@ -28,7 +28,7 @@ class EntityTest extends TestCase
      */
     public function anPublicKeyCredentialUserEntityCanBeCreatedAndValueAccessed()
     {
-        $user = new PublicKeyCredentialUserEntity('name', 'icon', 'id', 'display_name');
+        $user = new PublicKeyCredentialUserEntity('name', 'id', 'display_name', 'icon');
 
         static::assertEquals('name', $user->getName());
         static::assertEquals('display_name', $user->getDisplayName());
@@ -42,7 +42,7 @@ class EntityTest extends TestCase
      */
     public function anPublicKeyCredentialRpEntityCanBeCreatedAndValueAccessed()
     {
-        $rp = new PublicKeyCredentialRpEntity('name', 'icon', 'id');
+        $rp = new PublicKeyCredentialRpEntity('name', 'id', 'icon');
 
         static::assertEquals('name', $rp->getName());
         static::assertEquals('icon', $rp->getIcon());

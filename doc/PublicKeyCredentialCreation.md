@@ -1,19 +1,25 @@
 Public Key Credential Creation
 ==============================
 
-# Request Creation
+During this step, your application will send a challenge to the device.
+The device will resolve this challenge by adding information and digitally signing the data.
 
-To associate a device to a user, you need to instatiate a `PublicKeyCredentialCreationOptions` object.
+The application will check the response from the device and get its credential ID.
+This ID will be used for further authentication requests.
+
+# Creation Request
+
+To associate a device to a user, you need to instantiate a `U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions` object.
 This object will need:
 
-* The Relaying Party data
+* The Relaying Party data (your application)
 * The User data
 * A challenge (random binary string)
 * A list of supported public key parameters (at least one)
 * A timeout (optional)
 * A list of public key credential to exclude from the registration process (optional)
 * The Authenticator Selection Criteria (e.g. user presence requirement)
-* Attestation conveyance preference
+* Attestation conveyance preference (optional)
 * Extensions (optional)
 
 The `PublicKeyCredentialCreationOptions` object and all objects below are designed to be easily serialized into a JSON object.
@@ -24,8 +30,8 @@ This behaviour will ease the integration of your creation options e.g. when inte
 The Relaying Party Entity corresponds to your application details.
 
 It needs 
-* a name (required)
-* an ID (required)
+* a name (required): your application name
+* an ID (optional): corresponds to the domain or sub-domain. If absent, the current domain is used.
 * an icon (optional)
 
 
@@ -35,22 +41,24 @@ use U2FAuthentication\Fido2\PublicKeyCredentialRpEntity;
 
 $rpEntity = new PublicKeyCredentialRpEntity(
     'My Super Secured Application', //Name
-    null,                           //Icon
-    'foo.example.com'               //ID
+    'foo.example.com',              //ID
+    null                            //Icon
 );
 ```
+
+The ID must be `null`, the domain or sub-domain **only** of your application.
+**The scheme, port, path, user… are not allowed**.
+
+It could be `www.sub.domain.com`, `sub.domain.com`, `domain.com` but **not** `www.sub.domain.com:1337`, `https://domain.com:443`, `sub.domain.com/index`.
 
 ## User Entity
 
 The User Entity needs the same information as the Relaying Party plus a display name:
 
-* a name (required)
-* an ID (required)
+* a name (required): this value corresponds to the username. **This value must be unique**.
+* an ID (required): this user ID. **This value must be unique**.
+* a display name (required): a human-palatable name for the user account, intended only for display. For example, "Alex P. Müller" or "田中 倫".
 * an icon (optional)
-* a display name (optional)
-
-The name corresponds to the username.
-The name and the ID must be unique.
 
 ```php
 <?php
@@ -58,9 +66,9 @@ use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
 
 $userEntity = new PublicKeyCredentialUserEntity(
     '@cypher-Angel-3000',                   //Name
-    null,                                   //Icon
     '123e4567-e89b-12d3-a456-426655440000', //ID
-    'Mighty Mike'                           //Display name
+    'Mighty Mike',                          //Display name
+    null                                    //Icon
 );
 ```
 
@@ -106,8 +114,9 @@ We recommend to set 60 seconds (60000 milliseconds).
 ## Excluded Credentials
 
 The user trying to register a device may have registered other devices.
-To limit the creation of multiple credentials for the same account on a single authenticator.
-You can then ignore these devices.
+To limit the creation of multiple credentials for the same account on a single authenticator, you can then ignore these devices.
+
+The usage `U2FAuthentication\Fido2\PublicKeyCredentialDescriptor` class is described in the response processing section.
 
 ```php
 <?php
@@ -131,8 +140,8 @@ $excludedCredentials =[
 
 The `U2FAuthentication\Fido2\AuthenticatorSelectionCriteria` object is intended to select the appropriate authenticators to participate in the creation operation.
 
-* Attachment: indicates if the device should be attached on the platform or not.
-* Resident key: requirements regarding resident credentials.
+* Attachment: indicates if the device should be attached on the platform or not or if there is no requirement about it.
+* Resident key: indicates if a resident key mandatory or not (default `false`).
 * User presence: requirements regarding the user verification. Eligible authenticators are filtered and only capable of satisfying this requirement will interact with the user.
 
 ```php
@@ -140,14 +149,14 @@ The `U2FAuthentication\Fido2\AuthenticatorSelectionCriteria` object is intended 
 use U2FAuthentication\Fido2\AuthenticatorSelectionCriteria;
 
 $excludedDevice = new AuthenticatorSelectionCriteria(
-    AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM,      // Attachment mode (default=null):
-                                                                            //   * 'platform' (const AUTHENTICATOR_ATTACHMENT_PLATFORM), 'cross-platform' or null
+    AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM,      // Attachment mode:
+                                                                            //   * null (const AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE) - default value
+                                                                            //   * 'platform' (const AUTHENTICATOR_ATTACHMENT_PLATFORM)
                                                                             //   * 'cross-platform' (const AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM)
-                                                                            //   * null (no preference)
-    false,                                                                  // Resident key (default=USER_VERIFICATION_REQUIREMENT_PREFERRED)
-    AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED // User presence (default=null):
+    false,                                                                  // Resident key (default=false)
+    AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED // User presence:
+                                                                            //   * 'preferred' (const USER_VERIFICATION_REQUIREMENT_PREFERRED) - default value
                                                                             //   * 'required' (const USER_VERIFICATION_REQUIREMENT_REQUIRED)
-                                                                            //   * 'preferred' (const USER_VERIFICATION_REQUIREMENT_PREFERRED)
                                                                             //   * 'discouraged' (const USER_VERIFICATION_REQUIREMENT_DISCOURAGED)
 );
 ```
@@ -157,11 +166,11 @@ $excludedDevice = new AuthenticatorSelectionCriteria(
 This parameter specify the preference regarding the attestation conveyance during credential generation.
 There are 3 possible values:
 
-* none: the Relying Party is not interested in authenticator attestation. For example, in order to potentially avoid having to obtain user consent to relay identifying information to the Relying Party, or to save a roundtrip to an Attestation CA.
-* indirect: the Relying Party prefers an attestation conveyance yielding verifiable attestation statements, but allows the client to decide how to obtain such attestation statements. The client MAY replace the authenticator-generated attestation statements with attestation statements generated by an Anonymization CA, in order to protect the user’s privacy, or to assist Relying Parties with attestation verification in a heterogeneous ecosystem. There is no guarantee that the Relying Party will obtain a verifiable attestation statement in this case. For example, in the case that the authenticator employs self attestation.
-* direct: the Relying Party wants to receive the attestation statement as generated by the authenticator.
+* none: the application is not interested in authenticator attestation. For example, in order to potentially avoid having to obtain user consent to relay identifying information to the Relying Party, or to save a roundtrip to an Attestation CA.
+* indirect: the application prefers an attestation conveyance yielding verifiable attestation statements, but allows the client to decide how to obtain such attestation statements. The client MAY replace the authenticator-generated attestation statements with attestation statements generated by an Anonymization CA, in order to protect the user’s privacy, or to assist the application with attestation verification in a heterogeneous ecosystem. There is no guarantee that the application will obtain a verifiable attestation statement in this case. For example, in the case that the authenticator employs self attestation.
+* direct: the application wants to receive the attestation statement as generated by the authenticator.
 
-Predefined constants are available through the `PublicKeyCredentialCreationOptions` class:
+Predefined constants are available through the `U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions` class:
 
 * `PublicKeyCredentialCreationOptions::ATTESTATION_CONVEYANCE_PREFERENCE_NONE`
 * `PublicKeyCredentialCreationOptions::ATTESTATION_CONVEYANCE_PREFERENCE_INDIRECT`
@@ -209,16 +218,16 @@ use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
 // RP Entity
 $rpEntity = new PublicKeyCredentialRpEntity(
     'My Super Secured Application', //Name
-    null,                           //Icon
-    'foo.example.com'               //ID
+    'foo.example.com',              //ID
+    null                            //Icon
 );
 
 // User Entity
 $userEntity = new PublicKeyCredentialUserEntity(
     '@cypher-Angel-3000',                   //Name
-    null,                                   //Icon
     '123e4567-e89b-12d3-a456-426655440000', //ID
-    'Mighty Mike'                           //Display name
+    'Mighty Mike',                          //Display name
+    null                                    //Icon
 );
 
 // Challenge
@@ -237,12 +246,8 @@ $excludedPublicKeyDescriptors = [
     new PublicKeyCredentialDescriptor(PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY, 'ABCDEFGH'),
 ];
 
-// Authenticator Selection Criteria
-$authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
-    null,
-    false,
-    AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED
-);
+// Authenticator Selection Criteria (we used default values)
+$authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria();
 
 // Extensions
 $extensions = new AuthenticationExtensionsClientInputs();
@@ -306,8 +311,7 @@ $publicKeyCredentialCreationOptions = new PublicKeyCredentialCreationOptions(
 </html>
 ```
 
-**It is important to store this request in the session for the next step.**
-**This request object will be needed to check the response from the device.**
+**It is important to store this request (variable `$publicKeyCredentialCreationOptions`) in the session for the next step; this object will be needed to check the response from the device.**
 
 # Response Handling
 
@@ -330,8 +334,8 @@ What you receive must be a JSON object that looks like as follow:
 
 There are two steps to perform with this object:
 
-* Data loading
-* Verification against the creation options and the challenge set above
+* Load the data
+* Verify the loaded data against the creation options set above
 
 ## Prerequisites
 
@@ -381,6 +385,8 @@ At the moment, only 3 Attestation Statement types are supported:
 
 We highly recommend to use them all.
 
+You just have to instantiate the classes and add these to the dedicated manager (`U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportManager` class).
+
 ```php
 <?php
 
@@ -397,10 +403,12 @@ $attestationStatementSupportManager->add(new FidoU2FAttestationStatementSupport(
 $attestationStatementSupportManager->add(new PackedAttestationStatementSupport());
 ```
 
+*Please note that at the moment the `packed` attestation statement does not support ECDAA and self attestation statements.
+
 ### Attestation Object Loader
 
 This object will load the Attestation statements received from the devices.
-It will need the CBOR Decoder an dependency.
+It will need the CBOR Decoder as dependency.
 
 ```php
 <?php
@@ -444,10 +452,13 @@ $authenticatorAttestationResponseValidator = new AuthenticatorAttestationRespons
 
 ## Data Loading
 
-Now that all components are set, we can load the data we received.
-For that, we just need the *Public Key Credential Loader* (variable `$publicKeyCredential`).
+Now that all components are set, we can load the data we receive using the *Public Key Credential Loader* service (variable `$publicKeyCredential`).
 
 ```php
+<?php
+
+declare(strict_types=1);
+
 $data = '
 {
     "id":"KVb8CnwDjpgAo[…]op61BTLaa0tczXvz4JrQ23usxVHA8QJZi3L9GZLsAtkcVvWObA",
@@ -464,15 +475,16 @@ $publicKeyCredential = $publicKeyCredentialLoader->load($data);
 
 If no exception is thrown, the `$publicKeyCredential` is a `U2FAuthentication\Fido2\PublicKeyCredential` object.
 
-You can call the following methods:
 
-* `$publicKeyCredential->getId()`: the ID of the public key (base64url safe encoded)
-* `$publicKeyCredential->getRawId()`: same as above, but as a binary string
-* `$publicKeyCredential->getType()`: usually 'public-key'
-* `$publicKeyCredential->getPublicKeyCredentialDescriptor()`: returns the descriptor of the key.
-* `$publicKeyCredential->getResponse()`: the authenticator response
+## Response Verification
 
-We need now to ensure that the authenticator response is of type `AuthenticatorAttestationResponse`.
+Now we have a fully loaded Public Key Credential object,
+but we need now to make sure that:
+
+1. The authenticator response is of type `AuthenticatorAttestationResponse`
+2. This response is valid.
+
+The first is easy to perform:
 
 ```php
 <?php
@@ -487,47 +499,90 @@ if (!$authenticatorAttestationResponse instanceof AuthenticatorAttestationRespon
 }
 ```
 
-## Response Verification
+The second step is the verification against the Creation Options we created earlier.
 
-Now we have a fully loaded Authenticator Attestation Response.
-The next step is the verification against the Creation Options we created earlier.
-
-The Authenticator Attestation Response Validator will check everything for you: challenge, origin, attestation statement and much more.
-In the following example, the variable `$publicKeyCredentialCreationOptions` corresponds to the Public Key Credential Creation Options object we created in the previous step.
-
-```php
-$authenticatorAttestationResponseValidator->check(
-    $authenticatorAttestationResponse,
-    $publicKeyCredentialCreationOptions
-);
-```
-
-If no exception is thrown, the response is valid and you can storeand associate those to the user:
-
-* The Public Key Descriptor: `$publicKeyCredential->getPublicKeyCredentialDescriptor()`
-* The Attested Credential Data: `$authenticatorAttestationResponse->getAttestationObject()->getAuthData()->getAttestedCredentialData()`
-
-### Public Key Descriptor
-
-The public key descriptor is an instance of `U2FAuthentication\Fido2\PublicKeyCredentialDescriptor`.
-This object can be retrieved using the method `$publicKeyCredential->getPublicKeyCredentialDescriptor()`.
-
+The Authenticator Attestation Response Validator service (variable `$authenticatorAttestationResponseValidator`)
+will check everything for you: challenge, origin, attestation statement and much more.
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-use U2FAuthentication\Fido2\AuthenticatorAttestationResponse;
+$authenticatorAttestationResponseValidator->check(
+    $authenticatorAttestationResponse,
+    $publicKeyCredentialCreationOptions
+);
+```
+
+If no exception is thrown, the response is valid and you can store and associate those to the user:
+
+* The Public Key Descriptor
+* The Attested Credential Data
+
+The way you store and associate these objects to the user is out of scope of this library.
+
+These to objects implement `\JsonSerializable` and have a static method `createFromJson(string $json)`.
+This will allow you to serialize the objects into JSON and easily go back an object.
+
+### Public Key Descriptor
+
+The public key descriptor is an instance of `U2FAuthentication\Fido2\PublicKeyCredentialDescriptor`.
+This object can be retrieved using the method `$publicKeyCredential->getPublicKeyCredentialDescriptor()`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
 use U2FAuthentication\Fido2\PublicKeyCredential;
 
 
 /** PublicKeyCredential $publicKeyCredential */
 $publicKeyCredentialDescriptor = $publicKeyCredential->getPublicKeyCredentialDescriptor();
-
-
-/** @var AuthenticatorAttestationResponse $authenticatorAttestationResponse */
-$attestedCredentialData = $authenticatorAttestationResponse->getAttestationObject()->getAuthData()->getAttestedCredentialData();
 ```
 
+You can limit the transportation mode of this credential by indicating the allowed transports for this descriptor.
+In the following example, the device can only be used through Bluetooth LE or USB
 
+```php
+<?php
+
+declare(strict_types=1);
+
+use U2FAuthentication\Fido2\PublicKeyCredential;
+use U2FAuthentication\Fido2\PublicKeyCredentialDescriptor;
+
+
+/** PublicKeyCredential $publicKeyCredential */
+$publicKeyCredentialDescriptor = $publicKeyCredential->getPublicKeyCredentialDescriptor([
+    PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_BLE,
+    PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_USB,
+]);
+```
+
+Possible transports are:
+
+* `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_BLE`: Bluetooth Low Energy (BLE)
+* `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_USB`: USB
+* `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_INTERNAL`: internal (embed device)
+* `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_NFC`: NFC (Near Field Communication)
+
+**Be careful when using transport values: if you select a wrong mode, the device won’t be usable if used with another transport mode.**
+
+### Attested Credential Data
+
+The attested credential data is an instance of `U2FAuthentication\Fido2\AttestedCredentialData`.
+It carries the public keys associated to the Public Key Credential Descriptor.
+This object can be retrieved using the method `$publicKeyCredential$authenticatorAttestationResponse->getAttestationObject()->getAuthData()->getAttestedCredentialData()`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use U2FAuthentication\Fido2\PublicKeyCredential;
+
+/** PublicKeyCredential $publicKeyCredential */
+$attestedCredentialData = $publicKeyCredential->getResponse()->getAttestationObject()->getAuthData()->getAttestedCredentialData();
+```
