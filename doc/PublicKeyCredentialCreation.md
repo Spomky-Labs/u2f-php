@@ -475,7 +475,6 @@ $publicKeyCredential = $publicKeyCredentialLoader->load($data);
 
 If no exception is thrown, the `$publicKeyCredential` is a `U2FAuthentication\Fido2\PublicKeyCredential` object.
 
-
 ## Response Verification
 
 Now we have a fully loaded Public Key Credential object,
@@ -568,7 +567,7 @@ Possible transports are:
 * `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_INTERNAL`: internal (embed device)
 * `PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_NFC`: NFC (Near Field Communication)
 
-**Be careful when using transport values: if you select a wrong mode, the device won’t be usable if used with another transport mode.**
+**Be careful when using transport values: if you select a wrong mode, the device won’t be usable if used with another mode.**
 
 ### Attested Credential Data
 
@@ -585,4 +584,116 @@ use U2FAuthentication\Fido2\PublicKeyCredential;
 
 /** PublicKeyCredential $publicKeyCredential */
 $attestedCredentialData = $publicKeyCredential->getResponse()->getAttestationObject()->getAuthData()->getAttestedCredentialData();
+```
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use CBOR\Decoder;
+use CBOR\OtherObject\OtherObjectManager;
+use CBOR\Tag\TagObjectManager;
+use U2FAuthentication\Fido2\AttestationStatement\AttestationObjectLoader;
+use U2FAuthentication\Fido2\AttestationStatement\AttestationStatementSupportManager;
+use U2FAuthentication\Fido2\AttestationStatement\FidoU2FAttestationStatementSupport;
+use U2FAuthentication\Fido2\AttestationStatement\NoneAttestationStatementSupport;
+use U2FAuthentication\Fido2\AttestationStatement\PackedAttestationStatementSupport;
+use U2FAuthentication\Fido2\AuthenticatorAttestationResponse;
+use U2FAuthentication\Fido2\AuthenticatorAttestationResponseValidator;
+use U2FAuthentication\Fido2\PublicKeyCredentialLoader;
+
+
+// Retrieve the PublicKeyCredentialCreationOptions object created earlier
+$request = /** This data depends on the way you store it */;
+
+// Retrieve de data sent by the device
+$data = /** This step depends on the way you transmit the data */;
+
+// Create a CBOR Decoder object
+$otherObjectManager = new OtherObjectManager();
+$tagObjectManager = new TagObjectManager();
+$decoder = new Decoder($tagObjectManager, $otherObjectManager);
+
+// Attestation Statement Support Manager
+$attestationStatementSupportManager = new AttestationStatementSupportManager();
+$attestationStatementSupportManager->add(new NoneAttestationStatementSupport());
+$attestationStatementSupportManager->add(new FidoU2FAttestationStatementSupport($decoder));
+$attestationStatementSupportManager->add(new PackedAttestationStatementSupport());
+
+// Attestation Object Loader
+$attestationObjectLoader = new AttestationObjectLoader($decoder);
+
+// Public Key Credential Loader
+$publicKeyCredentialLoader = new PublicKeyCredentialLoader($attestationObjectLoader, $decoder);
+
+// Credential Repository
+$credentialRepository = /** The Credential Repository of your application */;
+
+// Authenticator Attestation Response Validator
+$authenticatorAttestationResponseValidator = new AuthenticatorAttestationResponseValidator(
+    $attestationStatementSupportManager,
+    $credentialRepository
+);
+
+try {
+    // Load the data
+    $publicKeyCredential = $publicKeyCredentialLoader->load($data);
+    $response = $publicKeyCredential->getResponse();
+    
+    // Check if the response is an Authenticator Attestation Response
+    if (!$response instanceof AuthenticatorAttestationResponse) {
+        throw new \RuntimeException('Not an authenticator attestation response');
+    }
+
+    // Check the response against the request
+    $authenticatorAttestationResponseValidator->check($response, $request);
+    // If you did not set an application ID (i.e. the domain) to the PublicKeyCredentialRpEntity, you MUST set it here
+    //$authenticatorAttestationResponseValidator->check($response, $request, 'foo.example.com');
+} catch (\Throwable $exception) {
+    ?>
+    <html>
+    <head>
+        <title>Device registration</title>
+    </head>
+    <body>
+    <h1>The device cannot be registered</h1>
+    <p>The error message is: <?= $exception->getMessage(); ?></p>
+    <p><a href="/request">Go back to registration page</a></p>
+    </body>
+    <?php
+    exit();
+}
+
+// Everything is OK here. You can get the PublicKeyCredentialDescriptor.
+$publicKeyCredentialDescriptor = $publicKeyCredential->getPublicKeyCredentialDescriptor();
+
+// Normally this condition should be true. Just make sure you received the credential data
+$attestedCredentialData = null;
+if ($response->getAttestationObject()->getAuthData()->hasAttestedCredentialData()) {
+    $attestedCredentialData = $response->getAttestationObject()->getAuthData()->getAttestedCredentialData();
+}
+
+//You could also access to the following information.
+$response->getAttestationObject()->getAuthData()->getSignCount(); // Current counter
+$response->getAttestationObject()->getAuthData()->isUserVerified(); // Indicates if the user was verified
+$response->getAttestationObject()->getAuthData()->isUserPresent(); // Indicates if the user was present
+$response->getAttestationObject()->getAuthData()->hasExtensions(); // Extensions are available
+$response->getAttestationObject()->getAuthData()->getExtensions(); // The extensions
+$response->getAttestationObject()->getAuthData()->getReservedForFutureUse1(); //Not used at the moment
+$response->getAttestationObject()->getAuthData()->getReservedForFutureUse2(); //Not used at the moment
+
+header('Content-Type: text/html');
+?>
+    <html>
+    <head>
+        <title>Device registration</title>
+    </head>
+    <body>
+    <h1>OK registered</h1>
+    <p><a href="/login">Go to login now</a></p>
+    </body>
+</html>
 ```
