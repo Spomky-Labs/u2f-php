@@ -300,7 +300,7 @@ final class RegistrationResponseTest extends TestCase
         $request = $this->prophesize(RegistrationRequest::class);
         $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
         $request->getApplicationId()->willReturn('https://twofactors:4043');
-        static::assertTrue($response->isValid($request->reveal(), [__DIR__.'/../../certificates/yubico.crt']));
+        static::assertTrue($response->isValid($request->reveal()));
     }
 
     /**
@@ -331,21 +331,6 @@ final class RegistrationResponseTest extends TestCase
         $request->getApplicationId()->willReturn('https://no-factors:443');
 
         static::assertFalse($response->isValid($request->reveal()));
-    }
-
-    /**
-     * @test
-     */
-    public function theAttestationCertificateIsRejected()
-    {
-        $response = new RegistrationResponse(
-            $this->getValidRegistrationResponse()
-        );
-        $request = $this->prophesize(RegistrationRequest::class);
-        $request->getChallenge()->willReturn(Base64Url::decode('3lp3lcuYSHo3yrGfuLvQ5NEd-LWDTHRVaDIKXfBvh8s'));
-        $request->getApplicationId()->willReturn('https://twofactors:4043');
-
-        static::assertFalse($response->isValid($request->reveal(), [__DIR__.'/../../certificates/frank4dd-cacert.crt']));
     }
 
     private function getValidRegistrationResponse(): array

@@ -155,16 +155,12 @@ class RegistrationResponse
     /**
      * @param string[] $attestationCertificates
      */
-    public function isValid(RegistrationRequest $challenge, array $attestationCertificates = []): bool
+    public function isValid(RegistrationRequest $challenge): bool
     {
         if (!hash_equals($challenge->getChallenge(), $this->clientData->getChallenge())) {
             return false;
         }
         if (!hash_equals($challenge->getApplicationId(), $this->clientData->getOrigin())) {
-            return false;
-        }
-
-        if (!empty($attestationCertificates) && true !== openssl_x509_checkpurpose($this->registeredKey->getAttestationCertificate(), X509_PURPOSE_ANY, $attestationCertificates)) {
             return false;
         }
 

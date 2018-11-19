@@ -117,33 +117,11 @@ If the variable `$isValid` is `true`, you can safely associate the registered ke
 
 ### Device Registration Restrictions
 
-#### Vendor Verification
+You can get the attestation certificate from the registered key object (method `$registeredKey->getAttestationCertificate()`)
+and check information like the manufacturer, the manufacture date or the serial number of the device contained in the certificate.
 
-In some cases, you may need to restrict the registered U2F devices to a limited set of vendors.
-This can be acheived using the optional root attestation certificates passed as second argument of the `isValid` method.
-In the following example, we will only allow devices [manufactured by Yubico](https://developers.yubico.com/U2F/Attestation_and_Metadata/).
-
-> The root attestation certificates are not managed here. Please ask the manufacturer to provide it.
-
-```php
-<?php
-
-$manufacturerCertificates = [
-    __DIR__.'/certificates/yubico.crt',
-];
-
-$isValid = $registrationResponse->isValid(
-  $registrationRequest,
-  $manufacturerCertificates
-);
-```
-
-With this manufacturer certificates list, all devices from Yubico will be allowed otherwise rejected.
-
-#### Other Verifications
-
-You can also load the attestation certificate from the registered key object (method `$registeredKey->getAttestationCertificate()`)
-and check other parameters like the manufacture date or the serial number of the device contained in the certificate.
+If the manufacturer provides root certificates (devices [manufactured by Yubico](https://developers.yubico.com/U2F/Attestation_and_Metadata/)),
+you can verify the attestation certificate validity.
 
 # Signature
 

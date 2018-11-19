@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace U2FAuthentication\Tests\Unit\Fido2;
 
 use PHPUnit\Framework\TestCase;
-use U2FAuthentication\Fido2\CertificateChainChecker;
+use U2FAuthentication\CertificateChainChecker;
 
 /**
  * @group Unit

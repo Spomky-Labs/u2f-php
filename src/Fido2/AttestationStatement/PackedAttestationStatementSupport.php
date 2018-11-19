@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Assert\Assertion;
+use U2FAuthentication\CertificateChainChecker;
 use U2FAuthentication\Fido2\AuthenticatorData;
-use U2FAuthentication\Fido2\CertificateChainChecker;
 
 final class PackedAttestationStatementSupport implements AttestationStatementSupport
 {
