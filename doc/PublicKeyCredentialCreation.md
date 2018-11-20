@@ -182,7 +182,7 @@ The mechanism for generating public key credentials, as well as requesting and g
 can be extended to suit particular use cases.
 Each case is addressed by defining a registration extension.
 
-The extensions are not yet supported by this library, but is ready to handle them.
+**The extensions are not yet supported by this library, but is ready to handle them.**
 
 The Following example is totally fictive.
 
@@ -498,7 +498,7 @@ if (!$authenticatorAttestationResponse instanceof AuthenticatorAttestationRespon
 }
 ```
 
-The second step is the verification against the Creation Options we created earlier.
+The second step is the verification against the Public Key Creation Options we created earlier.
 
 The Authenticator Attestation Response Validator service (variable `$authenticatorAttestationResponseValidator`)
 will check everything for you: challenge, origin, attestation statement and much more.
@@ -511,6 +511,21 @@ declare(strict_types=1);
 $authenticatorAttestationResponseValidator->check(
     $authenticatorAttestationResponse,
     $publicKeyCredentialCreationOptions
+);
+```
+
+If the Relaying Party Entity set in the `$publicKeyCredentialCreationOptions` have no ID (i.e. uses the current domain),
+you MUST set it here as third argument.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+$authenticatorAttestationResponseValidator->check(
+    $authenticatorAttestationResponse,
+    $publicKeyCredentialCreationOptions,
+    'foo.example.com'
 );
 ```
 
@@ -607,7 +622,7 @@ use U2FAuthentication\Fido2\PublicKeyCredentialLoader;
 
 
 // Retrieve the PublicKeyCredentialCreationOptions object created earlier
-$request = /** This data depends on the way you store it */;
+$publicKeyCredentialCreationOptions = /** This data depends on the way you store it */;
 
 // Retrieve de data sent by the device
 $data = /** This step depends on the way you transmit the data */;
@@ -649,9 +664,9 @@ try {
     }
 
     // Check the response against the request
-    $authenticatorAttestationResponseValidator->check($response, $request);
+    $authenticatorAttestationResponseValidator->check($response, $publicKeyCredentialCreationOptions);
     // If you did not set an application ID (i.e. the domain) to the PublicKeyCredentialRpEntity, you MUST set it here
-    //$authenticatorAttestationResponseValidator->check($response, $request, 'foo.example.com');
+    //$authenticatorAttestationResponseValidator->check($response, $publicKeyCredentialCreationOptions, 'foo.example.com');
 } catch (\Throwable $exception) {
     ?>
     <html>
