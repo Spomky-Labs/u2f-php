@@ -19,6 +19,8 @@ use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\AttestationStatement\AttestationStatement
  */
 class AttestationStatementTest extends TestCase
 {

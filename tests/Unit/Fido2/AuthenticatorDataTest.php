@@ -21,6 +21,8 @@ use U2FAuthentication\Fido2\AuthenticatorData;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\AttestedCredentialData
  */
 class AuthenticatorDataTest extends TestCase
 {

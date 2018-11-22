@@ -30,6 +30,8 @@ use U2FAuthentication\Fido2\AuthenticatorData;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\AttestationStatement\FidoU2FAttestationStatementSupport
  */
 class FidoU2FAttestationStatementSupportTest extends TestCase
 {

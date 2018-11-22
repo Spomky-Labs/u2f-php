@@ -19,6 +19,8 @@ use U2FAuthentication\Fido2\AttestedCredentialData;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\AttestedCredentialData
  */
 class AttestedCredentialDataTest extends TestCase
 {

@@ -26,6 +26,8 @@ class AuthenticationExtensionsClientTest extends TestCase
 {
     /**
      * @test
+     *
+     * @covers \U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtension
      */
     public function anAuthenticationExtensionsClientCanBeCreatedAndValueAccessed()
     {
@@ -33,11 +35,13 @@ class AuthenticationExtensionsClientTest extends TestCase
 
         static::assertEquals('name', $extension->name());
         static::assertEquals(['value'], $extension->value());
-        static::assertEquals('["value"]', \Safe\json_encode($extension->value()));
+        static::assertEquals('["value"]', \Safe\json_encode($extension));
     }
 
     /**
      * @test
+     *
+     * @covers \U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs
      */
     public function theAuthenticationExtensionsClientInputsCanManageExtensions()
     {
@@ -55,6 +59,8 @@ class AuthenticationExtensionsClientTest extends TestCase
 
     /**
      * @test
+     *
+     * @covers \U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs
      */
     public function theAuthenticationExtensionsClientOutputsCanManageExtensions()
     {

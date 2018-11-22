@@ -22,6 +22,8 @@ use U2FAuthentication\Fido2\PublicKeyCredentialRequestOptions;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\PublicKeyCredentialRequestOptions
  */
 class PublicKeyCredentialRequestOptionsTest extends TestCase
 {

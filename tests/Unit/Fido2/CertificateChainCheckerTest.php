@@ -24,6 +24,8 @@ class CertificateChainCheckerTest extends TestCase
 {
     /**
      * @test
+     *
+     * @use \U2FAuthentication\Fido2\CertificateToolbox::checkChain
      */
     public function anCertificateChainCheckerCanBeCreatedAndValueAccessed()
     {

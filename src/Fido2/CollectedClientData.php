@@ -61,7 +61,7 @@ class CollectedClientData
 
     public function getTokenBinding(): ?TokenBinding
     {
-        return $this->tokenBinding ? TokenBinding::createFormJson($this->tokenBinding) : null;
+        return $this->tokenBinding ? TokenBinding::createFormArray($this->tokenBinding) : null;
     }
 
     public function getRawData(): string

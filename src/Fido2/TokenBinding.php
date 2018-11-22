@@ -28,12 +28,12 @@ class TokenBinding
 
     public function __construct(string $status, ?string $id)
     {
-        Assertion::false(self::TOKEN_BINDING_STATUS_PRESENT === $status && !$id, 'The member "is" is required when status is "present"');
+        Assertion::false(self::TOKEN_BINDING_STATUS_PRESENT === $status && !$id, 'The member "id" is required when status is "present"');
         $this->status = $status;
         $this->id = $id;
     }
 
-    public static function createFormJson(array $json): self
+    public static function createFormArray(array $json): self
     {
         Assertion::keyExists($json, 'status', 'The member "status" is required');
         $status = $json['status'];

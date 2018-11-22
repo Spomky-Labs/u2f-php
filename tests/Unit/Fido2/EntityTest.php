@@ -25,6 +25,9 @@ class EntityTest extends TestCase
 {
     /**
      * @test
+     *
+     * @covers \U2FAuthentication\Fido2\PublicKeyCredentialEntity
+     * @covers \U2FAuthentication\Fido2\PublicKeyCredentialUserEntity
      */
     public function anPublicKeyCredentialUserEntityCanBeCreatedAndValueAccessed()
     {
@@ -39,6 +42,9 @@ class EntityTest extends TestCase
 
     /**
      * @test
+     *
+     * @covers \U2FAuthentication\Fido2\PublicKeyCredentialEntity
+     * @covers \U2FAuthentication\Fido2\PublicKeyCredentialRpEntity
      */
     public function anPublicKeyCredentialRpEntityCanBeCreatedAndValueAccessed()
     {

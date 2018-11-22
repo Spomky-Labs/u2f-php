@@ -19,6 +19,8 @@ use U2FAuthentication\Fido2\PublicKeyCredentialDescriptor;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\PublicKeyCredentialDescriptor
  */
 class PublicKeyCredentialDescriptorTest extends TestCase
 {

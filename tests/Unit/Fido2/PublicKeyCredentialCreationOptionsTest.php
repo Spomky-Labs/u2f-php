@@ -25,6 +25,8 @@ use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
 /**
  * @group Unit
  * @group Fido2
+ *
+ * @covers \U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions
  */
 class PublicKeyCredentialCreationOptionsTest extends TestCase
 {
