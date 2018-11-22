@@ -23,9 +23,6 @@ use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsCli
 
 class PublicKeyCredentialLoader
 {
-    private const FLAG_AT = 0b01000000;
-    private const FLAG_ED = 0b10000000;
-
     private $attestationObjectLoader;
     private $decoder;
 
@@ -74,7 +71,7 @@ class PublicKeyCredentialLoader
                 $signCount = unpack('N', $signCount)[1];
 
                 $attestedCredentialData = null;
-                if (\ord($flags) & self::FLAG_AT) {
+                if (\ord($flags) & 0b01000000) {
                     $aaguid = $authDataStream->read(16);
                     $credentialLength = $authDataStream->read(2);
                     $credentialLength = unpack('n', $credentialLength)[1];
@@ -85,7 +82,7 @@ class PublicKeyCredentialLoader
                 }
 
                 $extension = null;
-                if (\ord($flags) & self::FLAG_ED) {
+                if (\ord($flags) & 0b10000000) {
                     $extension = $this->decoder->decode($authDataStream);
                     $extension = AuthenticationExtensionsClientOutputsLoader::load($extension);
                 }
