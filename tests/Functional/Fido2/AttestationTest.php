@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace U2FAuthentication\Tests\Functional\Fido2;
 
 use Base64Url\Base64Url;
+use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 use U2FAuthentication\Fido2\AuthenticatorAttestationResponse;
+use U2FAuthentication\Fido2\AuthenticatorData;
 use U2FAuthentication\Fido2\AuthenticatorSelectionCriteria;
 use U2FAuthentication\Fido2\CredentialRepository;
 use U2FAuthentication\Fido2\PublicKeyCredentialCreationOptions;
@@ -134,5 +136,19 @@ class attestationTest extends Fido2TestCase
         static::assertEquals(\Safe\base64_decode('xYw3gEj0LVL83JXz7oKL14XQjh9W1NMFrTALWI+lqXl7ndKW+n8JFYsBCuKbZA3zRAUxAZDHG/tXHsAi6TbO0Q==', true), $publicKeyCredentialDescriptor->getId());
         static::assertEquals(PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY, $publicKeyCredentialDescriptor->getType());
         static::assertEquals(['usb'], $publicKeyCredentialDescriptor->getTransports());
+
+        /** @var AuthenticatorData $authenticatorData */
+        $authenticatorData = $publicKeyCredential->getResponse()->getAttestationObject()->getAuthData();
+
+        static::assertEquals(\Safe\hex2bin('49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763'), $authenticatorData->getRpIdHash());
+        static::assertTrue($authenticatorData->isUserPresent());
+        static::assertFalse($authenticatorData->isUserVerified());
+        static::assertTrue($authenticatorData->hasAttestedCredentialData());
+        static::assertEquals(0, $authenticatorData->getReservedForFutureUse1());
+        static::assertEquals(0, $authenticatorData->getReservedForFutureUse2());
+        static::assertEquals(124, $authenticatorData->getSignCount());
+        static::assertInstanceOf(AttestedCredentialData::class, $authenticatorData->getAttestedCredentialData());
+        static::assertFalse($authenticatorData->hasExtensions());
+        static::assertNull($authenticatorData->getExtensions());
     }
 }

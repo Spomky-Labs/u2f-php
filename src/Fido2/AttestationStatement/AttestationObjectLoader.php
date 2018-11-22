@@ -15,10 +15,13 @@ namespace U2FAuthentication\Fido2\AttestationStatement;
 
 use Assert\Assertion;
 use Base64Url\Base64Url;
+use CBOR\CBORObject;
 use CBOR\Decoder;
 use CBOR\MapObject;
 use CBOR\StringStream;
 use U2FAuthentication\Fido2\AttestedCredentialData;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtension;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 class AttestationObjectLoader
@@ -60,10 +63,25 @@ class AttestationObjectLoader
         $extension = null;
         if (\ord($flags) & self::FLAG_ED) {
             $extension = $this->decoder->decode($authDataStream);
+            $extension = $this->retrieveExtensions($extension);
         }
 
         $authenticatorData = new AuthenticatorData($authData, $rp_id_hash, $flags, $signCount, $attestedCredentialData, $extension);
 
         return new AttestationObject($data, new AttestationStatement($attestationObject['fmt'], $attestationObject['attStmt']), $authenticatorData);
+    }
+
+    private function retrieveExtensions(CBORObject $object): AuthenticationExtensionsClientOutputs
+    {
+        Assertion::isInstanceOf(MapObject::class, $object, 'Invalid extension object');
+        $data = $object->getNormalizedData();
+        Assertion::isArray($data, 'Invalid extension object');
+        $extensions = new AuthenticationExtensionsClientOutputs();
+        foreach ($data as $key => $value) {
+            Assertion::string($key, 'Invalid extension key');
+            $extensions->add(new AuthenticationExtension($key, $value));
+        }
+
+        return $extensions;
     }
 }

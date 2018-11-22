@@ -13,9 +13,13 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Tests\Unit\Fido2;
 
-use CBOR\CBORObject;
+use CBOR\ByteStringObject;
+use CBOR\MapItem;
+use CBOR\MapObject;
+use CBOR\OtherObject\TrueObject;
 use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido2\AttestedCredentialData;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 /**
@@ -32,7 +36,7 @@ class AuthenticatorDataTest extends TestCase
     public function anAuthenticatorDataCanBeCreatedAndValueAccessed()
     {
         $attestedCredentialData = $this->prophesize(AttestedCredentialData::class);
-        $extensions = $this->prophesize(CBORObject::class);
+        $extensions = $this->prophesize(AuthenticationExtensionsClientOutputs::class);
 
         $authenticatorData = new AuthenticatorData('auth_data', 'rp_id_hash', 'A', 100, $attestedCredentialData->reveal(), $extensions->reveal());
 
@@ -46,6 +50,15 @@ class AuthenticatorDataTest extends TestCase
         static::assertTrue($authenticatorData->hasAttestedCredentialData());
         static::assertInstanceOf(AttestedCredentialData::class, $authenticatorData->getAttestedCredentialData());
         static::assertFalse($authenticatorData->hasExtensions());
-        static::assertInstanceOf(CBORObject::class, $authenticatorData->getExtensions());
+        static::assertInstanceOf(AuthenticationExtensionsClientOutputs::class, $authenticatorData->getExtensions());
+    }
+
+    private function buildExtensions(): MapObject
+    {
+        $map = new MapObject([
+            new MapItem(new ByteStringObject('loc'), new TrueObject()),
+        ]);
+
+        return $map;
     }
 }

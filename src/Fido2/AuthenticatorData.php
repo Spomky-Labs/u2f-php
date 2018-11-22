@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace U2FAuthentication\Fido2;
 
-use CBOR\CBORObject;
+use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs;
 
 /**
  * @see https://www.w3.org/TR/webauthn/#sec-authenticator-data
@@ -39,7 +39,7 @@ class AuthenticatorData
     private const FLAG_AT = 0b01000000;
     private const FLAG_ED = 0b10000000;
 
-    public function __construct(string $authData, string $rpIdHash, string $flags, int $signCount, ?AttestedCredentialData $attestedCredentialData, ?CBORObject $extensions)
+    public function __construct(string $authData, string $rpIdHash, string $flags, int $signCount, ?AttestedCredentialData $attestedCredentialData, ?AuthenticationExtensionsClientOutputs $extensions)
     {
         $this->rpIdHash = $rpIdHash;
         $this->flags = $flags;
@@ -99,7 +99,7 @@ class AuthenticatorData
         return $this->attestedCredentialData;
     }
 
-    public function getExtensions()
+    public function getExtensions(): ?AuthenticationExtensionsClientOutputs
     {
         return $this->extensions;
     }
