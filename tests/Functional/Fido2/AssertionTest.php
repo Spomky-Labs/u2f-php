@@ -23,7 +23,7 @@ use U2FAuthentication\Fido2\PublicKeyCredentialDescriptor;
 use U2FAuthentication\Fido2\PublicKeyCredentialRequestOptions;
 
 /**
- * @group Functional
+ * @group functional
  * @group Fido2
  */
 class AssertionTest extends Fido2TestCase

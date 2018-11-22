@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido\ClientData;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class ClientDataTest extends TestCase
 {

@@ -25,7 +25,7 @@ use U2FAuthentication\Fido2\PublicKeyCredentialRpEntity;
 use U2FAuthentication\Fido2\PublicKeyCredentialUserEntity;
 
 /**
- * @group Functional
+ * @group functional
  * @group Fido2
  */
 class attestationTest extends Fido2TestCase

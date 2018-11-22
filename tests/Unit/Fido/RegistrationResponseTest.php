@@ -19,7 +19,7 @@ use U2FAuthentication\Fido\RegistrationRequest;
 use U2FAuthentication\Fido\RegistrationResponse;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class RegistrationResponseTest extends TestCase
 {

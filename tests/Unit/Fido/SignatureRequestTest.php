@@ -21,7 +21,7 @@ use U2FAuthentication\Fido\RegisteredKey;
 use U2FAuthentication\Fido\SignatureRequest;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class SignatureRequestTest extends TestCase
 {

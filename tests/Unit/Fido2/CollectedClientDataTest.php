@@ -19,7 +19,7 @@ use U2FAuthentication\Fido2\CollectedClientData;
 use U2FAuthentication\Fido2\TokenBinding;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  *
  * @covers \U2FAuthentication\Fido2\CollectedClientData

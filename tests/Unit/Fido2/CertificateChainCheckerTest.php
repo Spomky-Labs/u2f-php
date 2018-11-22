@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\CertificateToolbox;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  */
 class CertificateChainCheckerTest extends TestCase

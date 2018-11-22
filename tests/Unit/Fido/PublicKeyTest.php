@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido\PublicKey;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class PublicKeyTest extends TestCase
 {

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido2\AttestationStatement\AttestationStatement;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  *
  * @covers \U2FAuthentication\Fido2\AttestationStatement\AttestationStatement

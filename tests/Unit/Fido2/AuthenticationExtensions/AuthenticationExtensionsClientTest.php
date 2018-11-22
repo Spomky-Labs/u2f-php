@@ -19,7 +19,7 @@ use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsCli
 use U2FAuthentication\Fido2\AuthenticationExtensions\AuthenticationExtensionsClientOutputs;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  */
 class AuthenticationExtensionsClientTest extends TestCase

@@ -23,7 +23,7 @@ use U2FAuthentication\Fido\SignatureRequest;
 use U2FAuthentication\Fido\SignatureResponse;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class SignatureResponseTest extends TestCase
 {

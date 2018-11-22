@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use U2FAuthentication\Fido\KeyHandler;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class KeyHandleTest extends TestCase
 {

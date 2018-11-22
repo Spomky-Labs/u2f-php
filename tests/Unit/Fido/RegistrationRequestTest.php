@@ -21,7 +21,7 @@ use U2FAuthentication\Fido\RegisteredKey;
 use U2FAuthentication\Fido\RegistrationRequest;
 
 /**
- * @group Unit
+ * @group unit
  */
 final class RegistrationRequestTest extends TestCase
 {

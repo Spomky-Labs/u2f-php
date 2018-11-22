@@ -28,7 +28,7 @@ use U2FAuthentication\Fido2\AttestedCredentialData;
 use U2FAuthentication\Fido2\AuthenticatorData;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  *
  * @covers \U2FAuthentication\Fido2\AttestationStatement\FidoU2FAttestationStatementSupport

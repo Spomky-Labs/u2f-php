@@ -19,7 +19,7 @@ use U2FAuthentication\Fido2\AuthenticatorAttestationResponse;
 use U2FAuthentication\Fido2\CollectedClientData;
 
 /**
- * @group Unit
+ * @group unit
  * @group Fido2
  *
  * @covers \U2FAuthentication\Fido2\AuthenticatorAttestationResponse

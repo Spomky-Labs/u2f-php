@@ -28,7 +28,7 @@ use U2FAuthentication\Fido2\CredentialRepository;
 use U2FAuthentication\Fido2\PublicKeyCredentialLoader;
 
 /**
- * @group Functional
+ * @group functional
  * @group Fido2
  */
 abstract class Fido2TestCase extends TestCase
