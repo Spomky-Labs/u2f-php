@@ -71,7 +71,7 @@ class PublicKeyCredentialDescriptor implements \JsonSerializable
         return new self(
             $data['type'],
             \Safe\base64_decode($data['id'], true),
-            $data['transports'] ?? null
+            $data['transports'] ?? []
         );
     }
 
