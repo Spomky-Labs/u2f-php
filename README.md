@@ -1,6 +1,14 @@
 FIDO/FIDO2 U2F Support for PHP
 ==============================
 
+---
+
+<p align="center">
+  <b>THIS LIBRARY IS NOW DEPRECATED. PLEASE USE <a href="https://github.com/web-auth">WEB-AUTH</a> INSTEAD</b>
+</p>
+
+---
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d79e00af48ec4ca49b0d99a711282e77)](https://app.codacy.com/app/Spomky/u2f-php?utm_source=github.com&utm_medium=referral&utm_content=Spomky-Labs/u2f-php&utm_campaign=Badge_Grade_Dashboard)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spomky-Labs/u2f-php/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/Spomky-Labs/u2f-php/badge.svg?branch=master)](https://coveralls.io/github/Spomky-Labs/u2f-php?branch=master)
